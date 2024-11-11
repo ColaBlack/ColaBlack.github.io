@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pages on ColaBlack个人文档</title>
+        <link>http://localhost:1313/page/</link>
+        <description>Recent content in Pages on ColaBlack个人文档</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>ColaBlack</copyright>
+        <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>关于</title>
+        <link>http://localhost:1313/%E5%85%B3%E4%BA%8E/</link>
+        <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/%E5%85%B3%E4%BA%8E/</guid>
+        <description>&lt;h1 id=&#34;-hi-im-colablack&#34;&gt;👋 Hi, I’m @ColaBlack
+&lt;/h1&gt;&lt;h3 id=&#34;我的个人分享文档&#34;&gt;我的个人分享文档
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;个人文档分享&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;我的项目&#34;&gt;我的项目
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;teaai
+&lt;blockquote&gt;
+&lt;p&gt;teaai是一个基于chat-glm的智能问答平台，提供ai赋能的答题出题功能。&lt;/p&gt;
+&lt;p&gt;后端基于java语言开发，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/tea_ai_backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目地址&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;前端基于vue开发，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/tea_ai_frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目地址&lt;/a&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;model系列项目
+&lt;blockquote&gt;
+&lt;p&gt;基于teaai项目，进一步抽象了几个模版项目，用来提高web项目的开发效率。&lt;/p&gt;
+&lt;p&gt;spring-model是从中抽象出的通用后端项目模版，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/spring-model&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;地址&lt;/a&gt;，具有用户管理、单点登录、接口文档生成等特性。&lt;/p&gt;
+&lt;p&gt;no-crud是为了进一步提高开发效率，减少重复劳作开发的模版，基于模版引擎自动生成常见的crud代码，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/nocrud&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;地址&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;ColaGenerate是no-crud的加强版，预期做到能够自动生成类似no-crud的模版，也就是说它是“做模版的模版”，目前仍在开发中，暂不开源。&lt;/p&gt;
+&lt;p&gt;Template Stack是ColaGenerate的进一步设想，希望能提供一个平台供大家自由交换、分享自己生成的各种模版，会在ColaGenerate项目完成之后进行开发。&lt;/p&gt;
+&lt;p&gt;vue-model是从中抽象出的通用前端项目模版，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/vue-model&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;地址&lt;/a&gt;，具有请求函数生成、全局路由管理、全局状态管理、用户管理等特性。&lt;/p&gt;
+&lt;p&gt;react-model是预期制作的react项目模版，预期从Template Stack项目中抽象。&lt;/p&gt;
+&lt;p&gt;VScode_conf是为了解决编程新手难以配置C语言 vscode 环境的问题，提供了一套个人自用的配置，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/VScode_conf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;地址&lt;/a&gt;即下即用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;ZAFUnity
+&lt;blockquote&gt;
+&lt;p&gt;是一个基于安卓的校友圈应用，正在开发阶段。&lt;/p&gt;
+&lt;p&gt;前端使用uniapp基于wot-design-uni开发。&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/ZAFUnity-frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目地址&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;后端基于kotlin和java混合开发，是一个分布式微服务项目。&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/ZAFUnity-backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目地址&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;google-dinosaur
+&lt;blockquote&gt;
+&lt;p&gt;一个用phaser.js复刻谷歌Chrome浏览器经典小恐龙游戏的玩具项目。&lt;/p&gt;
+&lt;p&gt;基于phaser+typescript+react+vite&lt;/p&gt;
+&lt;p&gt;界面懒得美化了，都集成到react里面了，接下来只要按正常方法写页面就能美化了。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/google-dinosaur&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目地址&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;litter_insight
+&lt;blockquote&gt;
+&lt;p&gt;litter_insight是一个有大数据端、后端、前端的项目，是一个针对某地的群众来信进行大数据可视化分析的项目，由于一些原因只能公开部分内容，&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/litter_backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;后端地址&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/litter_insight_frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;前端地址&lt;/a&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;StudyStart
+&lt;blockquote&gt;
+&lt;p&gt;StudyStart是基于Python DrissionPage 和 tkinter制作的学习通作业答案提取、上传脚本，由于学习通网页的变动现已无法使用，但仍然开放源代码供大家参考：&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/StudyStart&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;地址&lt;/a&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>归档</title>
+        <link>http://localhost:1313/archives/</link>
+        <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/archives/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>搜索</title>
+        <link>http://localhost:1313/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/search/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>友情链接</title>
+        <link>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>
