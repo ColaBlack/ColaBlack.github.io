@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>ColaBlack个人文档</title>
-        <link>http://localhost:1313/</link>
+        <link>https://ColaBlack.github.io/</link>
         <description>Recent content on ColaBlack个人文档</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://ColaBlack.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>关于</title>
-        <link>http://localhost:1313/%E5%85%B3%E4%BA%8E/</link>
+        <link>https://ColaBlack.github.io/%E5%85%B3%E4%BA%8E/</link>
         <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/%E5%85%B3%E4%BA%8E/</guid>
+        <guid>https://ColaBlack.github.io/%E5%85%B3%E4%BA%8E/</guid>
         <description>&lt;h1 id=&#34;-hi-im-colablack&#34;&gt;👋 Hi, I’m @ColaBlack
 &lt;/h1&gt;&lt;h3 id=&#34;我的个人分享文档&#34;&gt;我的个人分享文档
 &lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -82,18 +82,18 @@
         </item>
         <item>
         <title>归档</title>
-        <link>http://localhost:1313/archives/</link>
+        <link>https://ColaBlack.github.io/archives/</link>
         <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/archives/</guid>
+        <guid>https://ColaBlack.github.io/archives/</guid>
         <description></description>
         </item>
         <item>
         <title>利用1panel部署前后端分离项目 Java代码打包 前端打包</title>
-        <link>http://localhost:1313/p/%E5%88%A9%E7%94%A81panel%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE-java%E4%BB%A3%E7%A0%81%E6%89%93%E5%8C%85-%E5%89%8D%E7%AB%AF%E6%89%93%E5%8C%85/</link>
+        <link>https://ColaBlack.github.io/p/%E5%88%A9%E7%94%A81panel%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE-java%E4%BB%A3%E7%A0%81%E6%89%93%E5%8C%85-%E5%89%8D%E7%AB%AF%E6%89%93%E5%8C%85/</link>
         <pubDate>Fri, 08 Nov 2024 19:39:09 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/%E5%88%A9%E7%94%A81panel%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE-java%E4%BB%A3%E7%A0%81%E6%89%93%E5%8C%85-%E5%89%8D%E7%AB%AF%E6%89%93%E5%8C%85/</guid>
+        <guid>https://ColaBlack.github.io/p/%E5%88%A9%E7%94%A81panel%E9%83%A8%E7%BD%B2%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE-java%E4%BB%A3%E7%A0%81%E6%89%93%E5%8C%85-%E5%89%8D%E7%AB%AF%E6%89%93%E5%8C%85/</guid>
         <description>&lt;p&gt;参考：&lt;/p&gt;
 &lt;p&gt;1.&lt;a class=&#34;link&#34; href=&#34;https://1panel.cn/docs/installation/online_installation/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;1Panel 官方文档&lt;/a&gt;&lt;/p&gt;
@@ -322,10 +322,10 @@
         </item>
         <item>
         <title>智谱AI java SDK调用（前后端操作）</title>
-        <link>http://localhost:1313/p/%E6%99%BA%E8%B0%B1ai-java-sdk%E8%B0%83%E7%94%A8%E5%89%8D%E5%90%8E%E7%AB%AF%E6%93%8D%E4%BD%9C/</link>
+        <link>https://ColaBlack.github.io/p/%E6%99%BA%E8%B0%B1ai-java-sdk%E8%B0%83%E7%94%A8%E5%89%8D%E5%90%8E%E7%AB%AF%E6%93%8D%E4%BD%9C/</link>
         <pubDate>Mon, 04 Nov 2024 19:35:19 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/%E6%99%BA%E8%B0%B1ai-java-sdk%E8%B0%83%E7%94%A8%E5%89%8D%E5%90%8E%E7%AB%AF%E6%93%8D%E4%BD%9C/</guid>
+        <guid>https://ColaBlack.github.io/p/%E6%99%BA%E8%B0%B1ai-java-sdk%E8%B0%83%E7%94%A8%E5%89%8D%E5%90%8E%E7%AB%AF%E6%93%8D%E4%BD%9C/</guid>
         <description>&lt;p&gt;参考:&lt;a class=&#34;link&#34; href=&#34;https://open.bigmodel.cn/dev/howuse/introduction&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;智谱ai官方文档&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;1安装依赖&#34;&gt;1.安装依赖
@@ -644,10 +644,10 @@
         </item>
         <item>
         <title>类NoCRUD项目开发手册 模版引擎FreeMarker 命令行制作器Picocli</title>
-        <link>http://localhost:1313/p/%E7%B1%BBnocrud%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8Efreemarker-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%B6%E4%BD%9C%E5%99%A8picocli/</link>
+        <link>https://ColaBlack.github.io/p/%E7%B1%BBnocrud%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8Efreemarker-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%B6%E4%BD%9C%E5%99%A8picocli/</link>
         <pubDate>Tue, 29 Oct 2024 19:35:19 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/%E7%B1%BBnocrud%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8Efreemarker-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%B6%E4%BD%9C%E5%99%A8picocli/</guid>
+        <guid>https://ColaBlack.github.io/p/%E7%B1%BBnocrud%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8Efreemarker-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%B6%E4%BD%9C%E5%99%A8picocli/</guid>
         <description>&lt;h3 id=&#34;参考资料&#34;&gt;参考资料
 &lt;/h3&gt;&lt;p&gt;[FreeMarker官方文档（英文）](&lt;a class=&#34;link&#34; href=&#34;https://freemarker.apache.org/docs/index.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Apache FreeMarker Manual&lt;/a&gt;)&lt;/p&gt;
@@ -1590,10 +1590,10 @@
         </item>
         <item>
         <title>常用配置类</title>
-        <link>http://localhost:1313/p/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E7%B1%BB/</link>
+        <link>https://ColaBlack.github.io/p/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E7%B1%BB/</link>
         <pubDate>Mon, 28 Oct 2024 19:39:49 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E7%B1%BB/</guid>
+        <guid>https://ColaBlack.github.io/p/%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E7%B1%BB/</guid>
         <description>&lt;p&gt;收集了一些常用的配置类，便于后续查询使用。&lt;/p&gt;
 &lt;h2 id=&#34;后端常用配置&#34;&gt;后端常用配置
 &lt;/h2&gt;&lt;h3 id=&#34;1全局跨域配置&#34;&gt;1.全局跨域配置
@@ -2195,10 +2195,10 @@
         </item>
         <item>
         <title>Minio对象存储 图片 图片上传 头像</title>
-        <link>http://localhost:1313/p/minio%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8-%E5%9B%BE%E7%89%87-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0-%E5%A4%B4%E5%83%8F/</link>
+        <link>https://ColaBlack.github.io/p/minio%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8-%E5%9B%BE%E7%89%87-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0-%E5%A4%B4%E5%83%8F/</link>
         <pubDate>Sun, 27 Oct 2024 19:40:47 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/minio%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8-%E5%9B%BE%E7%89%87-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0-%E5%A4%B4%E5%83%8F/</guid>
+        <guid>https://ColaBlack.github.io/p/minio%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8-%E5%9B%BE%E7%89%87-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0-%E5%A4%B4%E5%83%8F/</guid>
         <description>&lt;h1 id=&#34;minio对象存储--图床--图片上传--头像&#34;&gt;minio对象存储 -图床 -图片上传 -头像
 &lt;/h1&gt;&lt;p&gt;参考：&lt;/p&gt;
 &lt;p&gt;1,&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/weixin_43676950/article/details/118938099&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -3327,10 +3327,10 @@
         </item>
         <item>
         <title>Caffeine本地缓存和缓存雪崩 缓存击穿 缓存穿透</title>
-        <link>http://localhost:1313/p/caffeine%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF-%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/</link>
+        <link>https://ColaBlack.github.io/p/caffeine%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF-%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/</link>
         <pubDate>Wed, 23 Oct 2024 19:43:38 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/caffeine%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF-%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/</guid>
+        <guid>https://ColaBlack.github.io/p/caffeine%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E5%92%8C%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9-%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF-%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/</guid>
         <description>&lt;h1 id=&#34;caffeine本地缓存&#34;&gt;Caffeine本地缓存
 &lt;/h1&gt;&lt;p&gt;参考：&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/weixin_43750212/article/details/143142982&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;缓存雪崩，缓存击穿，缓存穿透&lt;/a&gt;
@@ -3432,10 +3432,10 @@ Caffeine就是一个高效的本地缓存组件。使用方式如下：&lt;/p&gt
         </item>
         <item>
         <title>Java操作邮箱 邮箱发送验证码 Redis分布式缓存 Redisson分布式缓存</title>
-        <link>http://localhost:1313/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
+        <link>https://ColaBlack.github.io/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
         <pubDate>Wed, 23 Oct 2024 19:41:34 +0800</pubDate>
         
-        <guid>http://localhost:1313/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
+        <guid>https://ColaBlack.github.io/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
         <description>&lt;p&gt;java操作邮箱 - 邮箱发送验证码 -redis分布式缓存 -redisson分布式缓存&lt;/p&gt;
 &lt;p&gt;参考:java操作163邮箱&lt;/p&gt;
 &lt;p&gt;本文以163邮箱为例，介绍如何用java发送邮箱。&lt;/p&gt;
@@ -3773,18 +3773,18 @@ Caffeine就是一个高效的本地缓存组件。使用方式如下：&lt;/p&gt
         </item>
         <item>
         <title>搜索</title>
-        <link>http://localhost:1313/search/</link>
+        <link>https://ColaBlack.github.io/search/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/search/</guid>
+        <guid>https://ColaBlack.github.io/search/</guid>
         <description></description>
         </item>
         <item>
         <title>友情链接</title>
-        <link>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</link>
+        <link>https://ColaBlack.github.io/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</guid>
+        <guid>https://ColaBlack.github.io/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</guid>
         <description></description>
         </item>
         

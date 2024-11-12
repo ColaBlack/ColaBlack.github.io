@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Pages on ColaBlack个人文档</title>
-        <link>http://localhost:1313/page/</link>
+        <link>https://ColaBlack.github.io/page/</link>
         <description>Recent content in Pages on ColaBlack个人文档</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://ColaBlack.github.io/page/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>关于</title>
-        <link>http://localhost:1313/%E5%85%B3%E4%BA%8E/</link>
+        <link>https://ColaBlack.github.io/%E5%85%B3%E4%BA%8E/</link>
         <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/%E5%85%B3%E4%BA%8E/</guid>
+        <guid>https://ColaBlack.github.io/%E5%85%B3%E4%BA%8E/</guid>
         <description>&lt;h1 id=&#34;-hi-im-colablack&#34;&gt;👋 Hi, I’m @ColaBlack
 &lt;/h1&gt;&lt;h3 id=&#34;我的个人分享文档&#34;&gt;我的个人分享文档
 &lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -82,26 +82,26 @@
         </item>
         <item>
         <title>归档</title>
-        <link>http://localhost:1313/archives/</link>
+        <link>https://ColaBlack.github.io/archives/</link>
         <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/archives/</guid>
+        <guid>https://ColaBlack.github.io/archives/</guid>
         <description></description>
         </item>
         <item>
         <title>搜索</title>
-        <link>http://localhost:1313/search/</link>
+        <link>https://ColaBlack.github.io/search/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/search/</guid>
+        <guid>https://ColaBlack.github.io/search/</guid>
         <description></description>
         </item>
         <item>
         <title>友情链接</title>
-        <link>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</link>
+        <link>https://ColaBlack.github.io/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         
-        <guid>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</guid>
+        <guid>https://ColaBlack.github.io/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</guid>
         <description></description>
         </item>
         
