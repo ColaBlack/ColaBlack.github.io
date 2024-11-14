@@ -232,7 +232,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;2创建场景&#34;&gt;2.创建场景
+&lt;/div&gt;&lt;h3 id=&#34;3创建场景&#34;&gt;3.创建场景
 &lt;/h3&gt;&lt;p&gt;在介绍如何创建场景前，我们先写gameScene场景的代码框架，也就是&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -251,7 +251,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;由于资源已经在前面预加载完了所以这里不需要预加载资源，我们直接写create方法即可。&lt;/p&gt;
-&lt;h6 id=&#34;21创建游戏对象&#34;&gt;2.1创建游戏对象
+&lt;h6 id=&#34;31创建游戏对象&#34;&gt;3.1创建游戏对象
 &lt;/h6&gt;&lt;p&gt;在创建场景的时候主要的代码是创建游戏需要的对象，以google-dinosaur项目为例，需要创建地面、小恐龙、仙人掌等对象。&lt;/p&gt;
 &lt;p&gt;地面的宽度和游戏画布的宽度一样，高度则位与中间，这意味着我们要先获取画布的高度和宽度。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -312,7 +312,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;physics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;collider&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;dinosaur&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;ground&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h6 id=&#34;22初始化动画&#34;&gt;2.2初始化动画
+&lt;/div&gt;&lt;h6 id=&#34;32初始化动画&#34;&gt;3.2初始化动画
 &lt;/h6&gt;&lt;p&gt;参考google-dinosaur的代码，&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -345,7 +345,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;精灵表单的&lt;code&gt;anims.create&lt;/code&gt;方法可以初始化动画，&lt;code&gt;key&lt;/code&gt;则给了动画一个名字，叫做run。&lt;code&gt;frames&lt;/code&gt;数组则列举了动画需要的关键帧的名字。&lt;code&gt;frameRate&lt;/code&gt;是帧速率，&lt;code&gt;repeat&lt;/code&gt;则说明了动画需要重复几次，-1表示动画要一直重复。&lt;/p&gt;
-&lt;h6 id=&#34;初始化音乐&#34;&gt;初始化音乐
+&lt;h6 id=&#34;33初始化音乐&#34;&gt;3.3初始化音乐
 &lt;/h6&gt;&lt;p&gt;初始化音乐就更简单了。使用&lt;code&gt;this.sound.add(&amp;quot;音乐名称&amp;quot;)&lt;/code&gt;就可以了。&lt;/p&gt;
 &lt;p&gt;以google-dinosaur为例只要这样就能初始化三个音乐了。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -360,7 +360,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;scoreSound&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;sound&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;score&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h6 id=&#34;监听用户输入&#34;&gt;监听用户输入
+&lt;/div&gt;&lt;h6 id=&#34;34监听用户输入&#34;&gt;3.4监听用户输入
 &lt;/h6&gt;&lt;p&gt;这里以监听用户键盘输入为例，使用&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -400,7 +400,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;3编写每一帧的处理&#34;&gt;3.编写每一帧的处理
+&lt;/div&gt;&lt;h3 id=&#34;4编写每一帧的处理&#34;&gt;4.编写每一帧的处理
 &lt;/h3&gt;&lt;p&gt;接下来phaser.js会在游戏的每一帧都调用update函数&lt;/p&gt;
 &lt;p&gt;这个部分只有播放精灵表单的动画是通用的。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -481,7 +481,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;4定义对象交互逻辑&#34;&gt;4.定义对象交互逻辑
+&lt;/div&gt;&lt;h3 id=&#34;5定义对象交互逻辑&#34;&gt;5.定义对象交互逻辑
 &lt;/h3&gt;&lt;p&gt;接下来需要游戏其实就已经开始进行了，但是我们还没有定义对象之间的关系和结束游戏的方法。&lt;/p&gt;
 &lt;p&gt;例如，在google-dinosaur项目中，当小恐龙和仙人掌碰撞的时候应该停止游戏。&lt;/p&gt;
 &lt;p&gt;不过这个你可能得回去修改刚刚写的代码，例如修改增加小恐龙和仙人掌碰撞的代码为&lt;/p&gt;
@@ -613,7 +613,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id=&#34;5配置并启动游戏&#34;&gt;5.配置并启动游戏
+&lt;/div&gt;&lt;h3 id=&#34;6配置并启动游戏&#34;&gt;6.配置并启动游戏
 &lt;/h3&gt;&lt;p&gt;通过前面的步骤你已经完成了绝大部分代码。接下来只需要配置一下然后就可以启动游戏啦。&lt;/p&gt;
 &lt;p&gt;前面的代码就只是定义了两个类，除了一堆定义之外其实没有代码被执行。&lt;/p&gt;
 &lt;p&gt;如果想真正地启动游戏，只需要一句话：&lt;/p&gt;

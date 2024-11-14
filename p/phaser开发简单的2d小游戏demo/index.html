@@ -263,14 +263,14 @@
       <ol>
         <li><a href="#1安装">1.安装</a></li>
         <li><a href="#2预加载资源">2.预加载资源</a></li>
-        <li><a href="#2创建场景">2.创建场景</a>
+        <li><a href="#3创建场景">3.创建场景</a>
           <ol>
             <li></li>
           </ol>
         </li>
-        <li><a href="#3编写每一帧的处理">3.编写每一帧的处理</a></li>
-        <li><a href="#4定义对象交互逻辑">4.定义对象交互逻辑</a></li>
-        <li><a href="#5配置并启动游戏">5.配置并启动游戏</a></li>
+        <li><a href="#4编写每一帧的处理">4.编写每一帧的处理</a></li>
+        <li><a href="#5定义对象交互逻辑">5.定义对象交互逻辑</a></li>
+        <li><a href="#6配置并启动游戏">6.配置并启动游戏</a></li>
       </ol>
     </li>
   </ol>
@@ -549,7 +549,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="2创建场景">2.创建场景
+</div><h3 id="3创建场景">3.创建场景
 </h3><p>在介绍如何创建场景前，我们先写gameScene场景的代码框架，也就是</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -568,7 +568,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于资源已经在前面预加载完了所以这里不需要预加载资源，我们直接写create方法即可。</p>
-<h6 id="21创建游戏对象">2.1创建游戏对象
+<h6 id="31创建游戏对象">3.1创建游戏对象
 </h6><p>在创建场景的时候主要的代码是创建游戏需要的对象，以google-dinosaur项目为例，需要创建地面、小恐龙、仙人掌等对象。</p>
 <p>地面的宽度和游戏画布的宽度一样，高度则位与中间，这意味着我们要先获取画布的高度和宽度。</p>
 <div class="highlight"><div class="chroma">
@@ -629,7 +629,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">this</span><span class="p">.</span><span class="nx">physics</span><span class="p">.</span><span class="nx">add</span><span class="p">.</span><span class="nx">collider</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dinosaur</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ground</span><span class="p">);</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h6 id="22初始化动画">2.2初始化动画
+</div><h6 id="32初始化动画">3.2初始化动画
 </h6><p>参考google-dinosaur的代码，</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -662,7 +662,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>精灵表单的<code>anims.create</code>方法可以初始化动画，<code>key</code>则给了动画一个名字，叫做run。<code>frames</code>数组则列举了动画需要的关键帧的名字。<code>frameRate</code>是帧速率，<code>repeat</code>则说明了动画需要重复几次，-1表示动画要一直重复。</p>
-<h6 id="初始化音乐">初始化音乐
+<h6 id="33初始化音乐">3.3初始化音乐
 </h6><p>初始化音乐就更简单了。使用<code>this.sound.add(&quot;音乐名称&quot;)</code>就可以了。</p>
 <p>以google-dinosaur为例只要这样就能初始化三个音乐了。</p>
 <div class="highlight"><div class="chroma">
@@ -677,7 +677,7 @@
 </span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="p">.</span><span class="nx">scoreSound</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">sound</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&#34;score&#34;</span><span class="p">);</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h6 id="监听用户输入">监听用户输入
+</div><h6 id="34监听用户输入">3.4监听用户输入
 </h6><p>这里以监听用户键盘输入为例，使用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -717,7 +717,7 @@
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="3编写每一帧的处理">3.编写每一帧的处理
+</div><h3 id="4编写每一帧的处理">4.编写每一帧的处理
 </h3><p>接下来phaser.js会在游戏的每一帧都调用update函数</p>
 <p>这个部分只有播放精灵表单的动画是通用的。</p>
 <div class="highlight"><div class="chroma">
@@ -798,7 +798,7 @@
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="4定义对象交互逻辑">4.定义对象交互逻辑
+</div><h3 id="5定义对象交互逻辑">5.定义对象交互逻辑
 </h3><p>接下来需要游戏其实就已经开始进行了，但是我们还没有定义对象之间的关系和结束游戏的方法。</p>
 <p>例如，在google-dinosaur项目中，当小恐龙和仙人掌碰撞的时候应该停止游戏。</p>
 <p>不过这个你可能得回去修改刚刚写的代码，例如修改增加小恐龙和仙人掌碰撞的代码为</p>
@@ -930,7 +930,7 @@
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="5配置并启动游戏">5.配置并启动游戏
+</div><h3 id="6配置并启动游戏">6.配置并启动游戏
 </h3><p>通过前面的步骤你已经完成了绝大部分代码。接下来只需要配置一下然后就可以启动游戏啦。</p>
 <p>前面的代码就只是定义了两个类，除了一堆定义之外其实没有代码被执行。</p>
 <p>如果想真正地启动游戏，只需要一句话：</p>
