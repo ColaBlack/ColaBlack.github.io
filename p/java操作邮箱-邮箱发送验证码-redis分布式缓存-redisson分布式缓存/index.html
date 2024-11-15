@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="java操作邮箱 - 邮箱发送验证码 -redis分布式缓存 -redisson分布式缓存\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="初次发布于我的个人文档\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n1.获取邮箱授权码 进入163邮箱-设置-POP3/SMTP/IMAP-开启POP3/SMTP服务\n">
 <title>Java操作邮箱 邮箱发送验证码 Redis分布式缓存 Redisson分布式缓存</title>
 
 <link rel='canonical' href='https://ColaBlack.github.io/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/'>
 
 <link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Java操作邮箱 邮箱发送验证码 Redis分布式缓存 Redisson分布式缓存">
-<meta property='og:description' content="java操作邮箱 - 邮箱发送验证码 -redis分布式缓存 -redisson分布式缓存\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n">
+<meta property='og:description' content="初次发布于我的个人文档\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n1.获取邮箱授权码 进入163邮箱-设置-POP3/SMTP/IMAP-开启POP3/SMTP服务\n">
 <meta property='og:url' content='https://ColaBlack.github.io/p/java%E6%93%8D%E4%BD%9C%E9%82%AE%E7%AE%B1-%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81-redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98-redisson%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/'>
 <meta property='og:site_name' content='ColaBlack个人文档'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-10-23T19:41:34&#43;08:00'/><meta property='article:modified_time' content='2024-10-23T19:41:34&#43;08:00'/>
 <meta name="twitter:title" content="Java操作邮箱 邮箱发送验证码 Redis分布式缓存 Redisson分布式缓存">
-<meta name="twitter:description" content="java操作邮箱 - 邮箱发送验证码 -redis分布式缓存 -redisson分布式缓存\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n">
+<meta name="twitter:description" content="初次发布于我的个人文档\n参考:java操作163邮箱\n本文以163邮箱为例，介绍如何用java发送邮箱。\n1.获取邮箱授权码 进入163邮箱-设置-POP3/SMTP/IMAP-开启POP3/SMTP服务\n">
     </head>
     <body class="
     article-page
@@ -237,7 +237,48 @@
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1获取邮箱授权码">1.获取邮箱授权码</a></li>
+        <li><a href="#2安装依赖">2.安装依赖</a></li>
+        <li><a href="#3编写通用邮件发送工具类">3.编写通用邮件发送工具类</a></li>
+        <li><a href="#4调用工具类以发验证码为例">4.调用工具类——以发验证码为例</a></li>
+        <li><a href="#5引入缓存机制">5.引入缓存机制</a></li>
+        <li><a href="#6安装redisson">6.安装Redisson</a></li>
+        <li><a href="#7调整验证码工具类">7.调整验证码工具类</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
     <article class="main-article">
@@ -286,14 +327,15 @@
     <section class="article-content">
     
     
-    <p>java操作邮箱 - 邮箱发送验证码 -redis分布式缓存 -redisson分布式缓存</p>
+    <p>初次发布于<a class="link" href="https://colablack.github.io/"  target="_blank" rel="noopener"
+    >我的个人文档</a></p>
 <p>参考:java操作163邮箱</p>
 <p>本文以163邮箱为例，介绍如何用java发送邮箱。</p>
-<p>1.获取邮箱授权码</p>
-<p>进入163邮箱-设置-POP3/SMTP/IMAP-开启POP3/SMTP服务</p>
+<h3 id="1获取邮箱授权码">1.获取邮箱授权码
+</h3><p>进入163邮箱-设置-POP3/SMTP/IMAP-开启POP3/SMTP服务</p>
 <p>记录得到的授权码</p>
-<p>2.安装依赖</p>
-<div class="highlight"><div class="chroma">
+<h3 id="2安装依赖">2.安装依赖
+</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -308,8 +350,8 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，参考文章年代有些久远，有几个库已经合并更新换了新的名字。</p>
-<p>3.编写通用邮件发送工具类</p>
-<div class="highlight"><div class="chroma">
+<h3 id="3编写通用邮件发送工具类">3.编写通用邮件发送工具类
+</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -411,8 +453,8 @@
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>4.调用工具类——以发验证码为例</p>
-<p>编写发送验证码工具类</p>
+</div><h3 id="4调用工具类以发验证码为例">4.调用工具类——以发验证码为例
+</h3><p>编写发送验证码工具类</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -496,11 +538,11 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>5.引入缓存机制</p>
-<p>上面的验证码用户可以通过疯狂发送请求而恶意消耗邮箱发送资源，我们也没有让验证码及时过期。</p>
+</div><h3 id="5引入缓存机制">5.引入缓存机制
+</h3><p>上面的验证码用户可以通过疯狂发送请求而恶意消耗邮箱发送资源，我们也没有让验证码及时过期。</p>
 <p>可以引入缓存机制解决，在上文Caffeine本地缓存和缓存雪崩，缓存击穿，缓存穿透中我们介绍了如何利用caffeine实现本地缓存，本文就选择用 Redis 实现分布式缓存。</p>
-<p>6.安装Redisson</p>
-<p>为了在java中操作redis需要安装依赖</p>
+<h3 id="6安装redisson">6.安装Redisson
+</h3><p>为了在java中操作redis需要安装依赖</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -511,8 +553,8 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">implementation</span><span class="p">(</span><span class="s2">&#34;org.redisson:redisson:3.37.0&#34;</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>7.调整验证码工具类</p>
-<div class="highlight"><div class="chroma">
+</div><h3 id="7调整验证码工具类">7.调整验证码工具类
+</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
