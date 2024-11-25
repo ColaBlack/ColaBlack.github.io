@@ -7,7 +7,204 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Fri, 15 Nov 2024 21:07:57 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 23 Nov 2024 16:28:26 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>浏览器是如何渲染页面的</title>
+        <link>https://ColaBlack.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%98%AF%E5%A6%82%E4%BD%95%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%9A%84/</link>
+        <pubDate>Sat, 23 Nov 2024 16:28:26 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%98%AF%E5%A6%82%E4%BD%95%E6%B8%B2%E6%9F%93%E9%A1%B5%E9%9D%A2%E7%9A%84/</guid>
+        <description>&lt;p&gt;初次发布于&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的个人文档&lt;/a&gt;。（每次都是个人文档优先发布哦）&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在上次我们以浏览器的事件循环为例简要介绍了如何调度异步资源，这一次要来填个坑，介绍一下浏览器是如何渲染页面的。没看过上一期的话就先看一下&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io/p/%E5%BC%82%E6%AD%A5%E4%B8%8E%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6-%E4%BB%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%BA%E4%BE%8B/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;上一期&lt;/a&gt;的开头，了解一下浏览器的多进程图景。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;1解析html&#34;&gt;1.解析HTML
+&lt;/h3&gt;&lt;p&gt;在上一期我们讲到，浏览器的页面由渲染进程完成，在这一期你将看到渲染进程是一个包含了渲染主线程等多个线程的进程。&lt;/p&gt;
+&lt;p&gt;当浏览器通过网络进程向服务器发送请求得到响应的HTML文本后，他要做的第一个工作就是解析收到的HTML文本。&lt;/p&gt;
+&lt;p&gt;对于大部分标签，建立对应的DOM树。对于CSS，建立对应的CSSOM树。&lt;/p&gt;
+&lt;p&gt;但是当解析工作遇到link的时候，按道理就需要去下载对应的css，但是我们知道网络IO是一个耗时比较长的过程，所以这个步骤也会阻塞渲染主线程。&lt;/p&gt;
+&lt;p&gt;因此，浏览器并不是以这个方式解析的。&lt;/p&gt;
+&lt;p&gt;而是先启动一个预解析线程，预先快速&amp;quot;浏览&amp;quot;一下HTML标签，下载HTML文本引用的外部CSS文件和JS文件。&lt;/p&gt;
+&lt;p&gt;当渲染主线程遇到一般的标签那就解析成DOM，但是当渲染主线程遇到link引用CSS的时候，渲染主线程将不会等待，直接解析下面的其他内容。（异步）&lt;/p&gt;
+&lt;p&gt;那么外部的CSS由谁解析呢？&lt;/p&gt;
+&lt;p&gt;由和刚刚说的预解析线程解析。&lt;/p&gt;
+&lt;p&gt;那外部JS呢？&lt;/p&gt;
+&lt;p&gt;JS比较特殊，现在来讲。&lt;/p&gt;
+&lt;p&gt;由于在JS中存在改变DOM树和CSSOM树的可能，所以JS的解析完全由渲染主线程操刀，并且当渲染主线程遇到script标签的时候，它会暂停现有的对HTML的解析（阻塞），等待预解析线程把对应的JS代码下载好，并且需要等到全局代码都被解析执行完成之后才继续解析HTML文本。&lt;/p&gt;
+&lt;p&gt;总之，解析过程就是得到DOM和CSSOM的过程，此时的CSSOM已经是一个包含浏览器默认样式、内部样式、外部样式、行内样式的比较完整的树结构了。&lt;/p&gt;
+&lt;h3 id=&#34;2样式计算&#34;&gt;2.样式计算
+&lt;/h3&gt;&lt;p&gt;之所以说是“比较完成的树”是因为此时CSSOM里还保留着em等相对值和计算属性，这一步就是将这些相对值和计算属性计算出来。&lt;/p&gt;
+&lt;p&gt;计算之后的就是最终样式computed style了。&lt;/p&gt;
+&lt;p&gt;非常简单，不需要多说什么其他话了。&lt;/p&gt;
+&lt;h3 id=&#34;3布局&#34;&gt;3.布局
+&lt;/h3&gt;&lt;p&gt;第三步是根据前面的信息对页面进行布局，生成布局树。&lt;/p&gt;
+&lt;p&gt;在这一步渲染主线程要遍历全部的DOM，计算他们的位置信息和几何信息。&lt;/p&gt;
+&lt;p&gt;但是注意，布局树和DOM树并不完全一致。&lt;/p&gt;
+&lt;p&gt;对于CSS为&lt;code&gt;display:none&lt;/code&gt;的元素，由于他们不显示，所以不会在布局树中。DOM中不存在伪元素节点，但我们知道伪元素节点都有几何信息所以他们存在于布局树中。&lt;/p&gt;
+&lt;p&gt;由于存在规定&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;内容必须在行盒中&lt;/p&gt;
+&lt;p&gt;行盒和块盒不能相邻&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以，在布局这一步还会生成一些匿名的行盒或者块盒来使得页面满足这一规则。&lt;/p&gt;
+&lt;h3 id=&#34;4分层&#34;&gt;4.分层
+&lt;/h3&gt;&lt;p&gt;接下来，渲染主线程会对布局树的元素进行分层。这是一个优化的方法，当将来某一层改变后就只需要对这一层的元素进行对应改变就可以了，这将提高浏览器的性能。&lt;/p&gt;
+&lt;h3 id=&#34;5绘制&#34;&gt;5.绘制
+&lt;/h3&gt;&lt;p&gt;接下来，绘制这一步就是为每一层生成对应的绘制指令，你可以理解为canvas之类的东西。&lt;/p&gt;
+&lt;p&gt;啊，什么把画笔移动到哪里哪里，然后向哪里哪里花一条直线什么的。&lt;/p&gt;
+&lt;p&gt;到生成绘制指令这一步，渲染主线程的任务才算结束。&lt;/p&gt;
+&lt;h3 id=&#34;6分块&#34;&gt;6.分块
+&lt;/h3&gt;&lt;p&gt;接下来压力给到了合成线程。啊，其实也不全是。&lt;/p&gt;
+&lt;p&gt;分块的工作要交给很多个被称为分块器的线程协作完成。&lt;/p&gt;
+&lt;p&gt;所谓分块就是字面意思，将每一层的元素分为若干小块，以便后续步骤的分工。&lt;/p&gt;
+&lt;h3 id=&#34;7光栅化&#34;&gt;7.光栅化
+&lt;/h3&gt;&lt;p&gt;一看到光栅化这个词已经有人在瑟瑟发抖了吧，其实很简单的。&lt;/p&gt;
+&lt;p&gt;就是把前面分的每一块变成位图。&lt;/p&gt;
+&lt;p&gt;或者说，合成线程会将每一个块的信息交给显卡（GPU）进程来绘制我们真正能看到的图像。&lt;/p&gt;
+&lt;p&gt;当然GPU进程会开多个线程来同时绘制图像，并且它将优先计算靠近视口的块，因为用户正在看那里嘛。&lt;/p&gt;
+&lt;h3 id=&#34;8绘制&#34;&gt;8.绘制
+&lt;/h3&gt;&lt;p&gt;这一步是最后一步了。&lt;/p&gt;
+&lt;p&gt;合成线程在拿到GPU渲染的一张张位图后，将生成指引（quad）信息，标注出每个位图应该画在屏幕的哪个位置，要不要进行选择和缩放等。&lt;/p&gt;
+&lt;p&gt;CSS中的&lt;code&gt;transform&lt;/code&gt;正是也只是作用于这一阶段，这也是其运行效率高的本质原因。&lt;/p&gt;
+&lt;p&gt;当生成指引信息后，合成线程会将指引信息传递给GPU进程，然后GPU进程会产生&lt;strong&gt;系统调用&lt;/strong&gt;操作显卡硬件绘制用户真正能看到的页面图像。&lt;/p&gt;
+&lt;h3 id=&#34;9后记&#34;&gt;9.后记
+&lt;/h3&gt;&lt;p&gt;这就是浏览器渲染一个页面的全部步骤了。&lt;/p&gt;
+&lt;p&gt;了解这个或许没有什么用，额可能吧。&lt;/p&gt;
+&lt;p&gt;不过可以让你小心一点。&lt;/p&gt;
+&lt;p&gt;有一些操作会影响布局树，这时浏览器会从第三步重新开始后面的全部过程了，这被称为&lt;strong&gt;回流/重排(reflow)&lt;/strong&gt;，如果可以的话应该尽量避免这样的操作。&lt;/p&gt;
+&lt;p&gt;当然，当你连续多次进行修改布局树的操作，浏览器会进行优化，自动合并这些操作，等对应的JavaScript代码全部完成后才统一进行一次reflow。&lt;/p&gt;
+&lt;p&gt;但是这也意味着，这时JavaScript获取的布局属性可能是不准确的，为了避免这种情况，当JavaScript代码尝试获取布局属性的时候浏览器会立刻进行reflow操作而不是等待代码全部运行完成。所以这种情况也应该规避。&lt;/p&gt;
+&lt;p&gt;而当你改变了DOM的几何信息的时候，浏览器就需要从绘制这一步重新开始，这一过程被称为&lt;strong&gt;重绘(repaint)&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;这个效率会比reflow高一些，因为reflow是从第三步布局开始，也会经历完repaint经历的全部过程。（也有说法称reflow会引起repaint，从结果上看两种说法没有任何区别，你怎么理解都可以）&lt;/p&gt;
+&lt;p&gt;但是还得是transform高效啊，只影响了最后一步绘制，只有合成线程受到影响了而已，这效率高的不是一点半点啊。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Kafka</title>
+        <link>https://ColaBlack.github.io/p/kafka/</link>
+        <pubDate>Mon, 18 Nov 2024 21:35:35 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/kafka/</guid>
+        <description>&lt;h3 id=&#34;1下载kafka安装包&#34;&gt;1.下载kafka安装包
+&lt;/h3&gt;&lt;p&gt;前往&lt;a class=&#34;link&#34; href=&#34;https://kafka.apache.org/downloads&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka官网&lt;/a&gt;下载，&lt;/p&gt;
+&lt;p&gt;本文选择的是 kafka_2.13-3.9.0.tgz，只需要下载3.9.0&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Binary downloads:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Scala 2.12  - &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka_2.12-3.9.0.tgz&lt;/a&gt; (&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;sha512&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Scala 2.13  - &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka_2.13-3.9.0.tgz&lt;/a&gt; (&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;sha512&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;选择下面那个就可以了。&lt;/p&gt;
+&lt;p&gt;这里简单说明一下&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;h2 id=&#34;supported-releases-支持版本&#34;&gt;Supported releases 支持版本
+&lt;/h2&gt;&lt;h3 id=&#34;390&#34;&gt;3.9.0
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Released November 6, 2024
+发布于 2024 年 11 月 6 日&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/RELEASE_NOTES.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Release Notes 发布说明&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Docker image: &lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com/layers/apache/kafka/3.9.0/images/sha256-be37a49a4466f6620e2b67614dc2185e35d0e02e5cdc04ad5735ddd368a76b3e&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;apache/kafka:3.9.0&lt;/a&gt;.
+Docker 镜像：apache/kafka:3.9.0.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Docker Native image: &lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com/layers/apache/kafka-native/3.9.0/images/sha256-ecf23c833391b00803876332b8642e261e675237e133cba8bc6a59ab8292a4a6&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;apache/kafka-native:3.9.0&lt;/a&gt;.
+Docker 原生镜像：apache/kafka-native:3.9.0.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Source download: &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka-3.9.0-src.tgz&lt;/a&gt; (&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;sha512&lt;/a&gt;)
+源代码下载：kafka-3.9.0-src.tgz (asc, sha512)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Binary downloads:&lt;/p&gt;
+&lt;p&gt;二进制下载：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Scala 2.12  - &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka_2.12-3.9.0.tgz&lt;/a&gt; (&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;sha512&lt;/a&gt;)
+Scala 2.12 - kafka_2.12-3.9.0.tgz (asc, sha512)&lt;/li&gt;
+&lt;li&gt;Scala 2.13  - &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;kafka_2.13-3.9.0.tgz&lt;/a&gt; (&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;sha512&lt;/a&gt;)
+Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We build for multiple versions of Scala. This only matters if you are using Scala and you want a version built for the same Scala version you use. Otherwise, any version should work (2.13 is recommended).&lt;/p&gt;
+&lt;p&gt;我们为多个版本的 Scala 进行构建。这只有在您使用 Scala 并且希望使用与您使用的相同 Scala 版本构建的版本时才重要。否则，任何版本都应该可以工作（推荐使用 2.13）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;kafka 3.9.0在官网上是的这样的，&lt;/p&gt;
+&lt;p&gt;额，下面的中文官网是没有的，是已经翻译之后的。&lt;/p&gt;
+&lt;p&gt;kafka提供了三种下载方式，通过docker镜像可以一键安装部署。&lt;/p&gt;
+&lt;p&gt;通过源代码下载，你将获得kafka的源代码，你可以自行编译。&lt;/p&gt;
+&lt;p&gt;下面的二进制下载则是打包后能直接运行的应用程序，我们这次就是选择的这个方式。&lt;/p&gt;
+&lt;p&gt;但是你会看到二进制下载有两种，什么2.12 2.13之类的。&lt;/p&gt;
+&lt;p&gt;这是scala的版本，kafka是基于scala构建的所以这里有不同版本的scala编译的程序。&lt;/p&gt;
+&lt;p&gt;虽然kafka是基于scala构建的，但scala和kotlin类似也是一门jvm语言，所以你运行的话只需要准备java环境就可以了不需要下载scala。&lt;/p&gt;
+&lt;h3 id=&#34;2解压&#34;&gt;2.解压
+&lt;/h3&gt;&lt;p&gt;额，就是字面意思，解压压缩包就可以了。&lt;/p&gt;
+&lt;p&gt;Windows不用教了吧，下个什么7-zip，bandizip之类的解压就可以了。&lt;/p&gt;
+&lt;p&gt;linux命令也不难，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tar -zxvf 压缩包目录 -C 解压目录
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;解压完我个人的习惯是把解压目录改名成kafka，这个随意不是必须做的。&lt;/p&gt;
+&lt;h3 id=&#34;3进行配置&#34;&gt;3.进行配置
+&lt;/h3&gt;&lt;p&gt;我这次选择在Windows上部署kafka，主流方式是部署在linux上啦，其实都一样的。&lt;/p&gt;
+&lt;p&gt;但是部署在linux上一般不需要进行下面的配置：&lt;/p&gt;
+&lt;p&gt;先建一个文件夹用来存放kafka的日志。&lt;/p&gt;
+&lt;p&gt;然后进入kafka\config用vim或记事本打开里面的server.properties。&lt;/p&gt;
+&lt;p&gt;找到62行&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;log.dirs=/tmp/kafka-logs&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这是日志文件的地址，很显然这不是Windows文件系统应该有的地址。&lt;/p&gt;
+&lt;p&gt;现在换成你刚刚建的文件夹的位置。&lt;/p&gt;
+&lt;p&gt;但是注意，要把路径的单斜杠\重复一遍进行转义，即把\换成 \\&lt;/p&gt;
+&lt;p&gt;接下来的步骤，不管部署在Windows还是linux上都要进行处理。&lt;/p&gt;
+&lt;p&gt;找到34行&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;listeners=PLAINTEXT://:9092&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这是是kafka的地址，改成&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;na&#34;&gt;listeners&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;PLAINTEXT://localhost:9092&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样kafka就会监听本地9092端口了。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>异步与资源调度 以浏览器事件循环为例</title>
         <link>https://ColaBlack.github.io/p/%E5%BC%82%E6%AD%A5%E4%B8%8E%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6-%E4%BB%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%BA%E4%BE%8B/</link>
         <pubDate>Fri, 15 Nov 2024 21:07:57 +0800</pubDate>
