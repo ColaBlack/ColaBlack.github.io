@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本期是基于我刚刚完成的SmartCanvas项目简要介绍一下如何在Windows上部署kafka。\n">
+<title>Windows如何部署kafka和zookeeper</title>
+
+<link rel='canonical' href='https://ColaBlack.github.io/p/windows%E5%A6%82%E4%BD%95%E9%83%A8%E7%BD%B2kafka%E5%92%8Czookeeper/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Windows如何部署kafka和zookeeper">
+<meta property='og:description' content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本期是基于我刚刚完成的SmartCanvas项目简要介绍一下如何在Windows上部署kafka。\n">
+<meta property='og:url' content='https://ColaBlack.github.io/p/windows%E5%A6%82%E4%BD%95%E9%83%A8%E7%BD%B2kafka%E5%92%8Czookeeper/'>
+<meta property='og:site_name' content='ColaBlack个人文档'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-25T20:35:35&#43;08:00'/><meta property='article:modified_time' content='2024-11-25T20:35:35&#43;08:00'/>
+<meta name="twitter:title" content="Windows如何部署kafka和zookeeper">
+<meta name="twitter:description" content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本期是基于我刚刚完成的SmartCanvas项目简要介绍一下如何在Windows上部署kafka。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😜</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ColaBlack个人文档</a></h1>
+            <h2 class="site-description">一个文档，记录我用得上的一些信息。也算不上是什么博客了啦。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/colablack'
+                        target="_blank"
+                        title="gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg t="1731323057361" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4248" width="200" height="200"><path d="M512 992C246.895625 992 32 777.104375 32 512S246.895625 32 512 32s480 214.895625 480 480-214.895625 480-480 480z m242.9521875-533.3278125h-272.56875a23.7121875 23.7121875 0 0 0-23.71125 23.7121875l-0.024375 59.255625c0 13.08 10.6078125 23.7121875 23.6878125 23.7121875h165.96c13.104375 0 23.7121875 10.6078125 23.7121875 23.6878125v11.855625a71.1121875 71.1121875 0 0 1-71.1121875 71.1121875h-225.215625a23.7121875 23.7121875 0 0 1-23.6878125-23.7121875V423.1278125a71.1121875 71.1121875 0 0 1 71.0878125-71.1121875h331.824375a23.7121875 23.7121875 0 0 0 23.6878125-23.71125l0.0721875-59.2565625a23.7121875 23.7121875 0 0 0-23.68875-23.7121875H423.08a177.76875 177.76875 0 0 0-177.76875 177.7921875V754.953125c0 13.1034375 10.60875 23.7121875 23.713125 23.7121875h349.63125a159.984375 159.984375 0 0 0 159.984375-159.984375V482.36a23.7121875 23.7121875 0 0 0-23.7121875-23.6878125z" fill="#707070" p-id="4249"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ColaBlack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#1下载kafka安装包">1.下载kafka安装包</a></li>
+      </ol>
+    </li>
+    <li><a href="#supported-releases-支持版本">Supported releases 支持版本</a>
+      <ol>
+        <li><a href="#390">3.9.0</a></li>
+        <li><a href="#2解压">2.解压</a></li>
+        <li><a href="#3进行配置">3.进行配置</a></li>
+        <li><a href="#4安装zookeeper">4.安装zookeeper</a></li>
+      </ol>
+    </li>
+    <li><a href="#download">Download</a>
+      <ol>
+        <li><a href="#apache-zookeeper-393">Apache ZooKeeper 3.9.3</a></li>
+        <li><a href="#5启动zookeeper">5.启动zookeeper</a></li>
+        <li><a href="#6启动kafka">6.启动kafka</a></li>
+        <li><a href="#7跑一个小demo">7.跑一个小demo</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/windows%E5%A6%82%E4%BD%95%E9%83%A8%E7%BD%B2kafka%E5%92%8Czookeeper/">Windows如何部署kafka和zookeeper</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-25</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>初次发布于<a class="link" href="https://colablack.github.io"  target="_blank" rel="noopener"
+    >我的个人文档</a>。（每次都是个人文档优先发布哦）</p>
+<p>本期是基于我刚刚完成的SmartCanvas项目简要介绍一下如何在Windows上部署kafka。</p>
+<p>值得一提的是，kafka是一个大数据场景下常用的分布式基于消息订阅模型的开源流处理平台，在SmartCanvas中当做消息队列使用。</p>
+<p>注意看他的定位，大数据场景、分布式等词，其实意味着kafka需要依托于服务器集群环境，所以他正常的操作还是安装在linux集群上，本文在Windows上安装只是安装一个单机的开发时测试用的kafka。</p>
+<h3 id="1下载kafka安装包">1.下载kafka安装包
+</h3><p>前往<a class="link" href="https://kafka.apache.org/downloads"  target="_blank" rel="noopener"
+    >kafka官网</a>下载，</p>
+<p>本文选择的是 kafka_2.13-3.9.0.tgz，只需要下载3.9.0</p>
+<blockquote>
+<p>Binary downloads:</p>
+<ul>
+<li>Scala 2.12  - <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz"  target="_blank" rel="noopener"
+    >kafka_2.12-3.9.0.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)</li>
+<li>Scala 2.13  - <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz"  target="_blank" rel="noopener"
+    >kafka_2.13-3.9.0.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)</li>
+</ul>
+</blockquote>
+<p>选择下面那个就可以了。</p>
+<p>这里简单说明一下</p>
+<blockquote>
+<h2 id="supported-releases-支持版本">Supported releases 支持版本
+</h2><h3 id="390">3.9.0
+</h3><ul>
+<li>
+<p>Released November 6, 2024
+发布于 2024 年 11 月 6 日</p>
+</li>
+<li>
+<p><a class="link" href="https://downloads.apache.org/kafka/3.9.0/RELEASE_NOTES.html"  target="_blank" rel="noopener"
+    >Release Notes 发布说明</a></p>
+</li>
+<li>
+<p>Docker image: <a class="link" href="https://hub.docker.com/layers/apache/kafka/3.9.0/images/sha256-be37a49a4466f6620e2b67614dc2185e35d0e02e5cdc04ad5735ddd368a76b3e"  target="_blank" rel="noopener"
+    >apache/kafka:3.9.0</a>.
+Docker 镜像：apache/kafka:3.9.0.</p>
+</li>
+<li>
+<p>Docker Native image: <a class="link" href="https://hub.docker.com/layers/apache/kafka-native/3.9.0/images/sha256-ecf23c833391b00803876332b8642e261e675237e133cba8bc6a59ab8292a4a6"  target="_blank" rel="noopener"
+    >apache/kafka-native:3.9.0</a>.
+Docker 原生镜像：apache/kafka-native:3.9.0.</p>
+</li>
+<li>
+<p>Source download: <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz"  target="_blank" rel="noopener"
+    >kafka-3.9.0-src.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka-3.9.0-src.tgz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)
+源代码下载：kafka-3.9.0-src.tgz (asc, sha512)</p>
+</li>
+<li>
+<p>Binary downloads:</p>
+<p>二进制下载：</p>
+<ul>
+<li>Scala 2.12  - <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz"  target="_blank" rel="noopener"
+    >kafka_2.12-3.9.0.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.12-3.9.0.tgz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)
+Scala 2.12 - kafka_2.12-3.9.0.tgz (asc, sha512)</li>
+<li>Scala 2.13  - <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz"  target="_blank" rel="noopener"
+    >kafka_2.13-3.9.0.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)
+Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
+</ul>
+<p>We build for multiple versions of Scala. This only matters if you are using Scala and you want a version built for the same Scala version you use. Otherwise, any version should work (2.13 is recommended).</p>
+<p>我们为多个版本的 Scala 进行构建。这只有在您使用 Scala 并且希望使用与您使用的相同 Scala 版本构建的版本时才重要。否则，任何版本都应该可以工作（推荐使用 2.13）。</p>
+</li>
+</ul>
+</blockquote>
+<p>kafka 3.9.0在官网上是的这样的，</p>
+<p>额，下面的中文官网是没有的，是已经翻译之后的。</p>
+<p>kafka提供了三种下载方式，通过docker镜像可以一键安装部署。</p>
+<p>通过源代码下载，你将获得kafka的源代码，你可以自行编译。</p>
+<p>下面的二进制下载则是打包后能直接运行的应用程序，我们这次就是选择的这个方式。</p>
+<p>但是你会看到二进制下载有两种，什么2.12 2.13之类的。</p>
+<p>这是scala的版本，kafka是基于scala构建的所以这里有不同版本的scala编译的程序。</p>
+<p>虽然kafka是基于scala构建的，但scala和kotlin类似也是一门jvm语言，所以你运行的话只需要准备java环境就可以了不需要下载scala。</p>
+<blockquote>
+<p>总结：下载kafka安装包，准备java运行环境即可。</p>
+</blockquote>
+<h3 id="2解压">2.解压
+</h3><p>额，就是字面意思，解压压缩包就可以了。</p>
+<p>Windows不用教了吧，下个什么7-zip，bandizip之类的解压就可以了。</p>
+<p>linux命令也不难，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tar -zxvf 压缩包目录 -C 解压目录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>解压完我个人的习惯是把解压目录改名成kafka，这个随意不是必须做的。</p>
+<h3 id="3进行配置">3.进行配置
+</h3><p>我这次选择在Windows上部署kafka，主流方式是部署在linux上啦，其实都一样的。</p>
+<p>但是部署在linux上一般不需要进行下面的配置：</p>
+<p>先建一个文件夹用来存放kafka的日志。</p>
+<p>然后进入kafka\config用vim或记事本打开里面的server.properties。</p>
+<p>找到62行</p>
+<blockquote>
+<p>log.dirs=/tmp/kafka-logs</p>
+</blockquote>
+<p>这是日志文件的地址，很显然这不是Windows文件系统应该有的地址。</p>
+<p>现在换成你刚刚建的文件夹的位置。</p>
+<p>但是注意，要把路径的单斜杠\重复一遍进行转义，即把\换成 \\</p>
+<p>接下来的步骤，不管部署在Windows还是linux上都要进行处理。</p>
+<p>找到34行</p>
+<blockquote>
+<p>listeners=PLAINTEXT://:9092</p>
+</blockquote>
+<p>这是是kafka的地址，改成</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="na">listeners</span><span class="o">=</span><span class="s">PLAINTEXT://localhost:9092</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样kafka就会监听本地9092端口了。</p>
+<p>这是我配置完之后的配置文件，可以给你参考。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># this work for additional information regarding copyright ownership.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># (the &#34;License&#34;); you may not use this file except in compliance with</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the License.  You may obtain a copy of the License at</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># See the License for the specific language governing permissions and</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># limitations under the License.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># This configuration file is intended for use in ZK-based mode, where Apache ZooKeeper is required.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># See kafka.server.KafkaConfig for additional details and defaults</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Server Basics #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The id of the broker. This must be set to a unique integer for each broker.</span>
+</span></span><span class="line"><span class="cl"><span class="na">broker.id</span><span class="o">=</span><span class="s">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Socket Server Settings #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The address the socket server listens on. If not configured, the host name will be equal to the value of</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># java.net.InetAddress.getCanonicalHostName(), with PLAINTEXT listener name, and port 9092.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#   FORMAT:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#     listeners = listener_name://host_name:port</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#   EXAMPLE:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#     listeners = PLAINTEXT://your.host.name:9092</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#listeners=PLAINTEXT://:9092</span>
+</span></span><span class="line"><span class="cl"><span class="na">listeners</span><span class="o">=</span><span class="s">PLAINTEXT://localhost:9092</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Listener name, hostname and port the broker will advertise to clients.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># If not set, it uses the value for &#34;listeners&#34;.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#advertised.listeners=PLAINTEXT://your.host.name:9092</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Maps listener names to security protocols, the default is for them to be the same. See the config documentation for more details</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#listener.security.protocol.map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of threads that the server uses for receiving requests from the network and sending responses to the network</span>
+</span></span><span class="line"><span class="cl"><span class="na">num.network.threads</span><span class="o">=</span><span class="s">3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of threads that the server uses for processing requests, which may include disk I/O</span>
+</span></span><span class="line"><span class="cl"><span class="na">num.io.threads</span><span class="o">=</span><span class="s">8</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The send buffer (SO_SNDBUF) used by the socket server</span>
+</span></span><span class="line"><span class="cl"><span class="na">socket.send.buffer.bytes</span><span class="o">=</span><span class="s">102400</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The receive buffer (SO_RCVBUF) used by the socket server</span>
+</span></span><span class="line"><span class="cl"><span class="na">socket.receive.buffer.bytes</span><span class="o">=</span><span class="s">102400</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The maximum size of a request that the socket server will accept (protection against OOM)</span>
+</span></span><span class="line"><span class="cl"><span class="na">socket.request.max.bytes</span><span class="o">=</span><span class="s">104857600</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Log Basics #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># A comma separated list of directories under which to store log files</span>
+</span></span><span class="line"><span class="cl"><span class="na">log.dirs</span><span class="o">=</span><span class="s">D:\\softwareLocate\\kafka\\logs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The default number of log partitions per topic. More partitions allow greater</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># parallelism for consumption, but this will also result in more files across</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the brokers.</span>
+</span></span><span class="line"><span class="cl"><span class="na">num.partitions</span><span class="o">=</span><span class="s">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of threads per data directory to be used for log recovery at startup and flushing at shutdown.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># This value is recommended to be increased for installations with data dirs located in RAID array.</span>
+</span></span><span class="line"><span class="cl"><span class="na">num.recovery.threads.per.data.dir</span><span class="o">=</span><span class="s">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Internal Topic Settings  #############################</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The replication factor for the group metadata internal topics &#34;__consumer_offsets&#34; and &#34;__transaction_state&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># For anything other than development testing, a value greater than 1 is recommended to ensure availability such as 3.</span>
+</span></span><span class="line"><span class="cl"><span class="na">offsets.topic.replication.factor</span><span class="o">=</span><span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">transaction.state.log.replication.factor</span><span class="o">=</span><span class="s">1</span>
+</span></span><span class="line"><span class="cl"><span class="na">transaction.state.log.min.isr</span><span class="o">=</span><span class="s">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Log Flush Policy #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Messages are immediately written to the filesystem but by default we only fsync() to sync</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the OS cache lazily. The following configurations control the flush of data to disk.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># There are a few important trade-offs here:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    1. Durability: Unflushed data may be lost if you are not using replication.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to excessive seeks.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The settings below allow one to configure the flush policy to flush data after a period of time or</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># every N messages (or both). This can be done globally and overridden on a per-topic basis.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of messages to accept before forcing a flush of data to disk</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#log.flush.interval.messages=10000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The maximum amount of time a message can sit in a log before we force a flush</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#log.flush.interval.ms=1000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Log Retention Policy #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The following configurations control the disposal of log segments. The policy can</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># be set to delete segments after a period of time, or after a given size has accumulated.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># A segment will be deleted whenever *either* of these criteria are met. Deletion always happens</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># from the end of the log.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The minimum age of a log file to be eligible for deletion due to age</span>
+</span></span><span class="line"><span class="cl"><span class="na">log.retention.hours</span><span class="o">=</span><span class="s">168</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># A size-based retention policy for logs. Segments are pruned from the log unless the remaining</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># segments drop below log.retention.bytes. Functions independently of log.retention.hours.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#log.retention.bytes=1073741824</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The maximum size of a log segment file. When this size is reached a new log segment will be created.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#log.segment.bytes=1073741824</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The interval at which log segments are checked to see if they can be deleted according</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># to the retention policies</span>
+</span></span><span class="line"><span class="cl"><span class="na">log.retention.check.interval.ms</span><span class="o">=</span><span class="s">300000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Zookeeper #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Zookeeper connection string (see zookeeper docs for details).</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># This is a comma separated host:port pairs, each corresponding to a zk</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># server. e.g. &#34;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002&#34;.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># You can also append an optional chroot string to the urls to specify the</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># root directory for all kafka znodes.</span>
+</span></span><span class="line"><span class="cl"><span class="na">zookeeper.connect</span><span class="o">=</span><span class="s">localhost:2181</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Timeout in ms for connecting to zookeeper</span>
+</span></span><span class="line"><span class="cl"><span class="na">zookeeper.connection.timeout.ms</span><span class="o">=</span><span class="s">18000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">############################# Group Coordinator Settings #############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The following configuration specifies the time, in milliseconds, that the GroupCoordinator will delay the initial consumer rebalance.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The rebalance will be further delayed by the value of group.initial.rebalance.delay.ms as new members join the group, up to a maximum of max.poll.interval.ms.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The default value for this is 3 seconds.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># We override this to 0 here as it makes for a better out-of-the-box experience for development and testing.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># However, in production environments the default value of 3 seconds is more suitable as this will help to avoid unnecessary, and potentially expensive, rebalances during application startup.</span>
+</span></span><span class="line"><span class="cl"><span class="na">group.initial.rebalance.delay.ms</span><span class="o">=</span><span class="s">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="4安装zookeeper">4.安装zookeeper
+</h3><p>接下来，似乎可以直接启动kafka了，但是你想得美嘞。</p>
+<p>再次重复一下kafka的地位，大数据场景下常用的分布式基于消息订阅模型的开源流处理平台，</p>
+<p>这意味着kafka需要zookeeper提供分布式协调服务，协调各个kafka集群中的机器，虽然我们只是在安装单机开发测试服务器，但是zookeeper还是少不了。</p>
+<p>前往<a class="link" href="https://zookeeper.apache.org/releases.html"  target="_blank" rel="noopener"
+    >zookeeper官网</a>，下载安装包，你划到下面就可以看到</p>
+<blockquote>
+<h2 id="download">Download
+</h2><p>Apache ZooKeeper 3.9.3 is our current release, and 3.8.4 our latest stable release.</p>
+<h3 id="apache-zookeeper-393">Apache ZooKeeper 3.9.3
+</h3><p><a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
+    >Apache ZooKeeper 3.9.3</a>(<a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)</p>
+<p><a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz"  target="_blank" rel="noopener"
+    >Apache ZooKeeper 3.9.3 Source Release</a>(<a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)</p>
+</blockquote>
+<p>在这里，我选择下载zookeeper 3.9.3</p>
+<p>点击<a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
+    >Apache ZooKeeper 3.9.3</a>(<a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.asc"  target="_blank" rel="noopener"
+    >asc</a>, <a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.sha512"  target="_blank" rel="noopener"
+    >sha512</a>)这个链接就可以了。</p>
+<blockquote>
+<p>We suggest the following location for your download:</p>
+<p><a class="link" href="https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
+    ><strong>https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz</strong></a></p>
+<p>Alternate download locations are suggested below.</p>
+<p>It is essential that you <a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz#verify"  target="_blank" rel="noopener"
+    >verify the integrity</a> of the downloaded file using the PGP signature ( <code>.asc</code> file) or a hash ( <code>.md5</code> or <code>.sha*</code> file).</p>
+</blockquote>
+<p>然后你会看到这样的页面，点击上面的链接，<a class="link" href="https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
+    ><strong>https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz</strong></a>就可以下载到zookeeper安装包了。</p>
+<p>然后找个地方解压就可以了。</p>
+<p>再对zookeeper进行配置，应该轻车熟路了。</p>
+<p>进入zookeeper\conf找到zoo.cfg用vim或记事本打开，</p>
+<p>直接给你看我的配置文件，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># The number of milliseconds of each tick</span>
+</span></span><span class="line"><span class="cl"><span class="na">tickTime</span><span class="o">=</span><span class="s">2000</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of ticks that the initial </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># synchronization phase can take</span>
+</span></span><span class="line"><span class="cl"><span class="na">initLimit</span><span class="o">=</span><span class="s">10</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of ticks that can pass between </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># sending a request and getting an acknowledgement</span>
+</span></span><span class="line"><span class="cl"><span class="na">syncLimit</span><span class="o">=</span><span class="s">5</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the directory where the snapshot is stored.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># do not use /tmp for storage, /tmp here is just </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># example sakes.</span>
+</span></span><span class="line"><span class="cl"><span class="na">dataDir</span><span class="o">=</span><span class="s">D:\\softwareLocate\\zookeeper\\data</span>
+</span></span><span class="line"><span class="cl"><span class="na">dataLogDir</span><span class="o">=</span><span class="s">D:\\softwareLocate\\zookeeper\\log</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the port at which the clients will connect</span>
+</span></span><span class="line"><span class="cl"><span class="na">clientPort</span><span class="o">=</span><span class="s">2181</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the maximum number of client connections.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># increase this if you need to handle more clients</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#maxClientCnxns=60</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Be sure to read the maintenance section of the </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># administrator guide before turning on autopurge.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The number of snapshots to retain in dataDir</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#autopurge.snapRetainCount=3</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Purge task interval in hours</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Set to &#34;0&#34; to disable auto purge feature</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#autopurge.purgeInterval=1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Metrics Providers</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># https://prometheus.io Metrics Exporter</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#metricsProvider.httpHost=0.0.0.0</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#metricsProvider.httpPort=7000</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#metricsProvider.exportJvmInfo=true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你要配置的是12和13行，配置zookeeper数据文件夹和zookeeper日志文件夹，找个地方新建出这两个文件夹然后把路径换成你自己的即可。</p>
+<p>dataDir=D:\\softwareLocate\\zookeeper\\data
+dataLogDir=D:\\softwareLocate\\zookeeper\\log</p>
+<h3 id="5启动zookeeper">5.启动zookeeper
+</h3><p>接下来，我们终于可以启动zookeeper和kafka了。</p>
+<p>我们要先启动zookeeper。</p>
+<p>进入zookeeper\bin文件夹，找到zkServer.cmd（对linux系统，找到zkServer.sh），然后打开cmd等终端。</p>
+<p>如果你不知道怎么打开终端的话，对linux你还能不知道也是神人了。</p>
+<p>对于Windows系统，你去文件资源管理器的地址栏，输入cmd回车即可。</p>
+<p><img src="https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732538664137_cmd%e5%90%af%e5%8a%a8%e6%95%99%e7%a8%8b.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="cmd启动教程图"
+	
+	
+></p>
+<p>在终端中输入zkServer.cmd的文件名再按回车</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zkServer.cmd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732538747786_%e5%90%af%e5%8a%a8zookeeper.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="启动zookeeper教程"
+	
+	
+></p>
+<p>就可以启动zookeeper了。</p>
+<p><img src="https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732538862735_zookeeper%e5%90%af%e5%8a%a8%e5%ae%8c%e6%88%90.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="zookeeper启动完成"
+	
+	
+></p>
+<h3 id="6启动kafka">6.启动kafka
+</h3><p>然后我们来启动kafka。</p>
+<p>启动kafka就是启动</p>
+<p>kafka\bin\windows\kafka-server-start.bat</p>
+<p>但是我们还得指定刚刚设置的配置文件，所以我的建议是你去kafka\bin目录，打开cmd输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bin<span class="se">\w</span>indows<span class="se">\k</span>afka-server-start.bat config<span class="se">\s</span>erver.properties
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>并按回车。</p>
+<p><img src="https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732539101030_%e5%90%af%e5%8a%a8kafka.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="启动kafka命令"
+	
+	
+></p>
+<p>解析一下这个命令，命令的前一半是指定到了当前目录下的bin目录下的windows里面的kafka-server-start.bat文件。</p>
+<p>后一半类似，指定了我们刚刚书写的配置文件。</p>
+<p>只需要稍等片刻，kafka就会启动完成了。</p>
+<p><img src="https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732539227032_kafka%e5%90%af%e5%8a%a8%e6%88%90%e5%8a%9f.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="kafka启动成功"
+	
+	
+></p>
+<h3 id="7跑一个小demo">7.跑一个小demo
+</h3><p>这里我选择复用smartCanvas项目的代码，</p>
+<p>由于这是一个spring boot项目所以这里选择使用spring-kafka来操作kafka。</p>
+<p>首先安装依赖：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">        <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;groupId&gt;</span>org.springframework.kafka<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;artifactId&gt;</span>spring-kafka<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后前往application.yml进行设置。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kafka</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">bootstrap-servers</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;kafka服务器地址&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">producer</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 消息生产者key和value序列化器，这里是字符串序列化器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">key-serializer</span><span class="p">:</span><span class="w"> </span><span class="l">org.apache.kafka.common.serialization.StringSerializer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">value-serializer</span><span class="p">:</span><span class="w"> </span><span class="l">org.apache.kafka.common.serialization.StringSerializer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 类似地，这里是消费者key和value序列化器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">consumer</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">key-deserializer</span><span class="p">:</span><span class="w"> </span><span class="l">org.apache.kafka.common.serialization.StringDeserializer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">value-deserializer</span><span class="p">:</span><span class="w"> </span><span class="l">org.apache.kafka.common.serialization.StringDeserializer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">group-id</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;使用者组名称&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后在消息生产者处注入kafkaTemplate操作kafka。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">KafkaTemplate</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaTemplate</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后将消息发送出去。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="n">kafkaTemplate</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="s">&#34;smartCanvas_genChartByAI&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toJsonStr</span><span class="p">(</span><span class="n">chart</span><span class="p">));</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里的<code>&quot;smartCanvas_genChartByAI&quot;</code>是kafka中的话题（topic）的名称。</p>
+<p><code>JSONUtil.toJsonStr(chart)</code>是一个字符串，这个就是消息生产者产生的消息。</p>
+<p>消息生产者代码示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ChartService</span><span class="w"> </span><span class="n">chartService</span><span class="p">;</span><span class="w"> </span><span class="c1">//接口依赖的其他服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">UserService</span><span class="w"> </span><span class="n">userService</span><span class="p">;</span><span class="w"> </span><span class="c1">//接口依赖的其他服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">AiService</span><span class="w"> </span><span class="n">aiService</span><span class="p">;</span><span class="w"> </span><span class="c1">//接口依赖的其他服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">RedissonUtils</span><span class="w"> </span><span class="n">redissonUtils</span><span class="p">;</span><span class="w"> </span><span class="c1">//接口依赖的其他服务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">KafkaTemplate</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">kafkaTemplate</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 智能分析（异步）
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param file       上传的文件
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param requestDTO 智能分析请求
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param request    请求
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @return 智能分析结果
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@PostMapping</span><span class="p">(</span><span class="s">&#34;/gen/async&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">BaseResponse</span><span class="o">&lt;</span><span class="n">GenResultVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">genChartAsyncByAi</span><span class="p">(</span><span class="nd">@RequestPart</span><span class="p">(</span><span class="s">&#34;file&#34;</span><span class="p">)</span><span class="w"> </span><span class="n">MultipartFile</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                                       </span><span class="n">GenChartByAiRequest</span><span class="w"> </span><span class="n">requestDTO</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chartService</span><span class="p">.</span><span class="na">validGenChartParams</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">requestDTO</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getLoginUser</span><span class="p">(</span><span class="n">request</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">redissonUtils</span><span class="p">.</span><span class="na">limitRate</span><span class="p">(</span><span class="s">&#34;smartCanvas_genChartByAI_async_&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">user</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span><span class="w"> </span><span class="n">2L</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">BusinessException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BusinessException</span><span class="p">(</span><span class="n">ErrorCode</span><span class="p">.</span><span class="na">TOO_MANY_REQUESTS_ERROR</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;请求过于频繁，请稍后再试&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ExcelUtils</span><span class="p">.</span><span class="na">excelToCsv</span><span class="p">(</span><span class="n">file</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Chart</span><span class="w"> </span><span class="n">chart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Chart</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">chartData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">chartName</span><span class="p">(</span><span class="n">requestDTO</span><span class="p">.</span><span class="na">getChartName</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">chartType</span><span class="p">(</span><span class="n">requestDTO</span><span class="p">.</span><span class="na">getChartType</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">goal</span><span class="p">(</span><span class="n">requestDTO</span><span class="p">.</span><span class="na">getGoal</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">createrId</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="na">getId</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">status</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">PROCESSING</span><span class="p">.</span><span class="na">getValue</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">execmsg</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">PROCESSING</span><span class="p">.</span><span class="na">getDesc</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chartService</span><span class="p">.</span><span class="na">save</span><span class="p">(</span><span class="n">chart</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//提交给kafka消息队列</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">kafkaTemplate</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="s">&#34;smartCanvas_genChartByAI&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toJsonStr</span><span class="p">(</span><span class="n">chart</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ResultUtils</span><span class="p">.</span><span class="na">success</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">GenResultVO</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">PROCESSING</span><span class="p">.</span><span class="na">getValue</span><span class="p">(),</span><span class="w"> </span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">PROCESSING</span><span class="p">.</span><span class="na">getDesc</span><span class="p">()));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后是消息的消费者，</p>
+<p>只需要给消息的消费者方法增加注解<code>@KafkaListener(topics = {&quot;要接受消息的topic名称&quot;})</code>即可。</p>
+<p>在smartCanvas中是这样实现的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.service.impl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.model.enums.ChartStatusEnums</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.model.po.Chart</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.model.vo.GenResultVO</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.service.AiService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.service.ChartService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.cola.smartcanvas.service.KafkaService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">cn.hutool.json.JSONUtil</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">lombok.extern.slf4j.Slf4j</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.kafka.clients.consumer.ConsumerRecord</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.kafka.annotation.KafkaListener</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.springframework.stereotype.Service</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">javax.annotation.Resource</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 卡夫卡服务实现类
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @author ColaBlack
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Slf4j</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">KafkaServiceImpl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">KafkaService</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">AiService</span><span class="w"> </span><span class="n">aiService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Resource</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ChartService</span><span class="w"> </span><span class="n">chartService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 智能分析任务
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param record 消息记录
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@KafkaListener</span><span class="p">(</span><span class="n">topics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&#34;smartCanvas_genChartByAI&#34;</span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">genResultTask</span><span class="p">(</span><span class="n">ConsumerRecord</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">record</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">record</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">record</span><span class="p">.</span><span class="na">value</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;kafka 中消息记录为空&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">GenResultVO</span><span class="w"> </span><span class="n">resultVO</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Chart</span><span class="w"> </span><span class="n">chart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toBean</span><span class="p">(</span><span class="n">record</span><span class="p">.</span><span class="na">value</span><span class="p">(),</span><span class="w"> </span><span class="n">Chart</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">chartData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chart</span><span class="p">.</span><span class="na">getChartData</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">goal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chart</span><span class="p">.</span><span class="na">getGoal</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">chartType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chart</span><span class="p">.</span><span class="na">getChartType</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">chartType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chartType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;任意统计图&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">resultVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">aiService</span><span class="p">.</span><span class="na">genResult</span><span class="p">(</span><span class="n">goal</span><span class="p">,</span><span class="w"> </span><span class="n">chartType</span><span class="p">,</span><span class="w"> </span><span class="n">chartData</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">resultVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">chart</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;智能分析异常&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chart</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">FAILED</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chart</span><span class="p">.</span><span class="na">setExecmsg</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">FAILED</span><span class="p">.</span><span class="na">getDesc</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">chartService</span><span class="p">.</span><span class="na">updateById</span><span class="p">(</span><span class="n">chart</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chart</span><span class="p">.</span><span class="na">setGeneratedChart</span><span class="p">(</span><span class="n">resultVO</span><span class="p">.</span><span class="na">getOption</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chart</span><span class="p">.</span><span class="na">setAnalyzedResult</span><span class="p">(</span><span class="n">resultVO</span><span class="p">.</span><span class="na">getResult</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chart</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">SUCCESS</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chart</span><span class="p">.</span><span class="na">setExecmsg</span><span class="p">(</span><span class="n">ChartStatusEnums</span><span class="p">.</span><span class="na">SUCCESS</span><span class="p">.</span><span class="na">getDesc</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">chartService</span><span class="p">.</span><span class="na">updateById</span><span class="p">(</span><span class="n">chart</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>@Service注解将消息消费者注册为spring bean，然后<code>genResultTask</code>就是真正的处理消息的方法。</p>
+<p><code>ConsumerRecord&lt;String, String&gt; record</code>的record的value就是消息生产者产生的消息了。</p>
+<p>在smartCanvas项目里，是通过将消息反序列化为java对象再进行下一步业务逻辑处理的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="n">Chart</span><span class="w"> </span><span class="n">chart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toBean</span><span class="p">(</span><span class="n">record</span><span class="p">.</span><span class="na">value</span><span class="p">(),</span><span class="w"> </span><span class="n">Chart</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 ColaBlack
+    </section>
+    
+    <section class="powerby">
+        
+            一个小网站，用于文档查阅 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+  
+  const cssPath = "https://ColaBlack.github.io/waifu/waifu.css"
+  const tipsJsonPath = "https://ColaBlack.github.io/waifu/waifu-tips.json"
+  
+  const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+  
+  function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+          let tag;
+          if (type === "css") {
+              tag = document.createElement("link");
+              tag.rel = "stylesheet";
+              tag.href = url;
+          }
+          else if (type === "js") {
+              tag = document.createElement("script");
+              tag.src = url;
+          }
+          if (tag) {
+              tag.onload = () => resolve(url);
+              tag.onerror = () => reject(url);
+              document.head.appendChild(tag);
+          }
+      });
+  }
+
+  
+  if (screen.width >= 768) {
+      Promise.all([
+          loadExternalResource(cssPath, "css"),
+          loadExternalResource(live2d_path + "live2d.min.js", "js"),
+          loadExternalResource(live2d_path + "waifu-tips.js", "js")
+      ]).then(() => {
+          
+          initWidget({
+              waifuPath: tipsJsonPath,
+              cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+              tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+          });
+      });
+  }
+</script>
+
+    </body>
+</html>
