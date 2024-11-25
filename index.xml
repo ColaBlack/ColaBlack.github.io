@@ -38,9 +38,9 @@
 &lt;p&gt;选择下面那个就可以了。&lt;/p&gt;
 &lt;p&gt;这里简单说明一下&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;h2 id=&#34;supported-releases-支持版本&#34;&gt;Supported releases 支持版本
-&lt;/h2&gt;&lt;h3 id=&#34;390&#34;&gt;3.9.0
-&lt;/h3&gt;&lt;ul&gt;
+&lt;p&gt;Supported releases 支持版本&lt;/p&gt;
+&lt;p&gt;3.9.0&lt;/p&gt;
+&lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Released November 6, 2024
 发布于 2024 年 11 月 6 日&lt;/p&gt;
@@ -429,10 +429,10 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)&lt;/li&gt;
 &lt;p&gt;前往&lt;a class=&#34;link&#34; href=&#34;https://zookeeper.apache.org/releases.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;zookeeper官网&lt;/a&gt;，下载安装包，你划到下面就可以看到&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;h2 id=&#34;download&#34;&gt;Download
-&lt;/h2&gt;&lt;p&gt;Apache ZooKeeper 3.9.3 is our current release, and 3.8.4 our latest stable release.&lt;/p&gt;
-&lt;h3 id=&#34;apache-zookeeper-393&#34;&gt;Apache ZooKeeper 3.9.3
-&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;p&gt;Download&lt;/p&gt;
+&lt;p&gt;Apache ZooKeeper 3.9.3 is our current release, and 3.8.4 our latest stable release.&lt;/p&gt;
+&lt;p&gt;Apache ZooKeeper 3.9.3&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Apache ZooKeeper 3.9.3&lt;/a&gt;(&lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.asc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;asc&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.sha512&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;sha512&lt;/a&gt;)&lt;/p&gt;
