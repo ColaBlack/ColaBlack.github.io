@@ -7,13 +7,102 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Sat, 30 Nov 2024 12:09:07 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 30 Nov 2024 14:11:03 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>方程求根的迭代法</title>
+        <link>https://ColaBlack.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</link>
+        <pubDate>Sat, 30 Nov 2024 14:11:03 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</guid>
+        <description>&lt;p&gt;初次发布于&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的个人文档&lt;/a&gt;。（每次都是个人文档优先发布哦）&lt;/p&gt;
+&lt;p&gt;本文想简要介绍一下如何用计算机是如何用迭代法计算方程和方程组的根的。&lt;/p&gt;
+&lt;h3 id=&#34;不动点迭代&#34;&gt;不动点迭代
+&lt;/h3&gt;&lt;p&gt;在高中阶段你可能学习过这样的叫蛛网图的东西：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732947348691_IMG_20241130_141425.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;蛛网图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;蛛网图迭代的极限就是函数的不动点。&lt;/p&gt;
+&lt;p&gt;所谓不动点迭代就是利用了这样的性质。&lt;/p&gt;
+&lt;p&gt;一般地，我们想求解方程f(x)=0，如果我们可以将这个方程转化为x=g(x)，那么g(X)的不动点就是f(x)的零点。&lt;/p&gt;
+&lt;p&gt;而g(x)的不动点又是蛛网图迭代的极限。&lt;/p&gt;
+&lt;p&gt;如果用代数语言表示的话，就是迭代公式&lt;/p&gt;
+$$x_{k+1}=g(x_k)$$&lt;p&gt;这就是不动点迭代求方程的根的方法。&lt;/p&gt;
+&lt;p&gt;当然，如果要更严谨化的说明的话，就是下面的压缩映像原理：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;设g(x)在[a,b]上具有连续的一阶导数，且满足以下条件：&lt;/p&gt;
+&lt;p&gt;1.$\forall x \in [a,b],g(x) \in [a,b]$&lt;/p&gt;
+&lt;p&gt;2.$\exist 0 \le L &amp;lt;1,s.t. \forall x\in [a,b],|g&amp;rsquo;(x)|\le L$&lt;/p&gt;
+&lt;p&gt;则迭代过程&lt;/p&gt;
+&lt;p&gt;$x_{k+1}=g(x_k)$收敛，且有误差估计式：&lt;/p&gt;
+&lt;p&gt;$|x^*-x_k|\le \frac{L^k}{1-L}|x_1-x_0|$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;从误差估计式看，k越大估计值$x_k$会离准确值$x^*$越来越近。&lt;/p&gt;
+&lt;p&gt;这就足以为不动点迭代法背书了。&lt;/p&gt;
+&lt;h3 id=&#34;牛顿迭代法&#34;&gt;牛顿迭代法
+&lt;/h3&gt;&lt;p&gt;将不动点迭代进一步推广就能得到牛顿迭代法。&lt;/p&gt;
+&lt;p&gt;前面我们知道，我们想求解方程f(x)=0，如果我们可以将这个方程转化为x=g(x)，然后用迭代公式$x_{k+1}=g(x_k)$求解。&lt;/p&gt;
+&lt;p&gt;但是我们不知道如何把方程转化为x=g(x)，牛顿迭代法就是解决了这个问题。&lt;/p&gt;
+&lt;p&gt;思路其实也非常简单，我们知道微分有dy=f&amp;rsquo;(x)dx，于是$f(x)-f(x_k) \approx f&amp;rsquo;(x_k)(x-x_k)$。&lt;/p&gt;
+&lt;p&gt;从而$f(x)=f(x_k)+f&amp;rsquo;(x_k)(x-x_k)=0$&lt;/p&gt;
+&lt;p&gt;那么$x=x_k-\frac{f(x_k)}{f&amp;rsquo;(x_k)}$，完成啦！&lt;/p&gt;
+&lt;p&gt;我们把f(x)=0转化为了x=g(x)的形式了，从而再使用不动点迭代得到f(X)根的迭代公式：&lt;/p&gt;
+&lt;p&gt;$x_{k+1}=x_k-\frac{f(x_k)}{f&amp;rsquo;(x_k)}$&lt;/p&gt;
+&lt;p&gt;这就是牛顿迭代法。&lt;/p&gt;
+&lt;h3 id=&#34;弦截法&#34;&gt;弦截法
+&lt;/h3&gt;&lt;p&gt;对于某些函数其导数不便于求解，所以我们可以用差商替代导数，这就是弦截法了。&lt;/p&gt;
+&lt;p&gt;用$f&amp;rsquo;(x) \approx \frac{f(x_k)-f(x_0)}{x_k-x_0}$代入牛顿迭代法，就是弦截法了。&lt;/p&gt;
+&lt;p&gt;如果用$f&amp;rsquo;(x) \approx \frac{f(x_k)-f(x_{k-1})}{x_k-x_{k-1}}$代入牛顿迭代法，就是快速弦截法了。&lt;/p&gt;
+&lt;h3 id=&#34;雅可比迭代法&#34;&gt;雅可比迭代法
+&lt;/h3&gt;&lt;p&gt;对于线性方程组，方法其实是类似的。&lt;/p&gt;
+&lt;p&gt;线性方程组AX=b如果我们可以将其化为X=BX+f，那么用不动点迭代就有迭代公式&lt;/p&gt;
+&lt;p&gt;$X_{k+1}=BX_k+f$&lt;/p&gt;
+&lt;p&gt;这是我们线性方程组迭代法的基石。&lt;/p&gt;
+&lt;p&gt;它的误差：&lt;/p&gt;
+&lt;p&gt;$e_{k+1}=|x^&lt;em&gt;-x_{k+1}|=|BX^&lt;/em&gt;+f-(BX_{k}+f)|=B|X^*-X_k|=Be_k$&lt;/p&gt;
+&lt;p&gt;从而，$e_k=B^ke_0$&lt;/p&gt;
+&lt;p&gt;那么如果$B^k$能收敛于0的话该迭代法就收敛了，可以演算得到这等价于B的谱半径（最大特征值）小于1。&lt;/p&gt;
+&lt;p&gt;但是还是一样的，不动点迭代法说的轻巧，但是你怎么把AX=b转化成X=BX+f呢？&lt;/p&gt;
+&lt;p&gt;其中的一种方法就是雅可比迭代法了。&lt;/p&gt;
+&lt;p&gt;对方程组AX=b，我们将A分解为对角阵D，下三角矩阵L，上三角矩阵U使得&lt;/p&gt;
+&lt;p&gt;A=D-L-U。&lt;/p&gt;
+&lt;p&gt;（值得一提的是，这个分解是相当容易的，D就是A的对角元，L取A的下三角去掉主对角线，U取A的上三角去掉主对角线即可）&lt;/p&gt;
+&lt;p&gt;那么AX=b就是&lt;/p&gt;
+&lt;p&gt;(D-L-U)X=b&lt;/p&gt;
+&lt;p&gt;然后移项得&lt;/p&gt;
+&lt;p&gt;DX=(L+U)X+b&lt;/p&gt;
+&lt;p&gt;从而$X=D^{-1}(L+U)X+D^{-1}b$&lt;/p&gt;
+&lt;p&gt;完事了，已经变成X=BX+f的形式了，所以就有迭代公式&lt;/p&gt;
+&lt;p&gt;$X_{k+1}=D^{-1}(L+U)X_k+D^{-1}b$&lt;/p&gt;
+&lt;p&gt;这就是雅可比迭代法了。&lt;/p&gt;
+&lt;p&gt;但是这个方法可以稍微变一下，我们移项的时候不一定要把L和U全部移走，这就是高斯-赛德尔迭代法了。&lt;/p&gt;
+&lt;h3 id=&#34;高斯-赛德尔迭代法&#34;&gt;高斯-赛德尔迭代法
+&lt;/h3&gt;&lt;p&gt;还是安装雅可比迭代的步骤我们得到，(D-L-U)X=b移项但是只移U得到&lt;/p&gt;
+&lt;p&gt;(D-L)X=UX+b&lt;/p&gt;
+&lt;p&gt;然后得到$X=(D-L)^{-1}UX+(D-L)^{-1}b$&lt;/p&gt;
+&lt;p&gt;于是就有迭代公式$X_{k+1}=(D-L)^{-1}UX_k+(D-L)^{-1}b$&lt;/p&gt;
+&lt;p&gt;但是我们一般不会这么使用，而是再等式两边再乘以D-L得到&lt;/p&gt;
+&lt;p&gt;$(D-L)X_{k+1}=UX_k+b$&lt;/p&gt;
+&lt;p&gt;从而$DX_{k+1}=LX_{k+1}+UX_k+b$&lt;/p&gt;
+&lt;p&gt;所以$X_{k+1}=D^{-1}LX_{k+1}+D^{-1}UX_k+D^{-1}B$&lt;/p&gt;
+&lt;p&gt;这才是我们一般最爱用的高斯-赛德尔迭代公式。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>降维方法 主成分分析和因子分析</title>
         <link>https://ColaBlack.github.io/p/%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E5%92%8C%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90/</link>
         <pubDate>Sat, 30 Nov 2024 12:09:07 +0800</pubDate>
         
         <guid>https://ColaBlack.github.io/p/%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E5%92%8C%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90/</guid>
-        <description>&lt;p&gt;本文简要介绍一下主成分分析和因子分析的原理，但是不涉及具体代码实现。这是因为现在已经有很多现成的软件或库实现了这两个算法，读者只需要一两句简单的命令就可以使用了，所以没有必要在这里讲解。而且你可能会在Python R MATLAB SPSS等多种不同的软件中使用，无论选哪个软件的代码实现都没有特别强的代表性。&lt;/p&gt;
+        <description>&lt;p&gt;初次发布于&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的个人文档&lt;/a&gt;。（每次都是个人文档优先发布哦）&lt;/p&gt;
+&lt;p&gt;本文简要介绍一下主成分分析和因子分析的原理，但是不涉及具体代码实现。这是因为现在已经有很多现成的软件或库实现了这两个算法，读者只需要一两句简单的命令就可以使用了，所以没有必要在这里讲解。而且你可能会在Python R MATLAB SPSS等多种不同的软件中使用，无论选哪个软件的代码实现都没有特别强的代表性。&lt;/p&gt;
 &lt;h3 id=&#34;主成分分析&#34;&gt;主成分分析
 &lt;/h3&gt;&lt;p&gt;如果你手上有一组数据，例如是大家的语文数学英语成绩。但是现在有一个问题，咱们的试卷出得有那么一点点不好，大家的成绩都集中在一起了，也就是试卷的区分度不大。现在，我们有没有办法补救呢？&lt;/p&gt;
 &lt;p&gt;注意：这只是一个例子而已，自然是不考虑我们进行各种变换之后的现实问题，例如这样搞成绩会不公平啊什么的。&lt;/p&gt;
