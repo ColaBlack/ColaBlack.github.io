@@ -7,7 +7,117 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Mon, 25 Nov 2024 20:35:35 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 30 Nov 2024 12:09:07 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>降维方法 主成分分析和因子分析</title>
+        <link>https://ColaBlack.github.io/p/%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E5%92%8C%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90/</link>
+        <pubDate>Sat, 30 Nov 2024 12:09:07 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E9%99%8D%E7%BB%B4%E6%96%B9%E6%B3%95-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E5%92%8C%E5%9B%A0%E5%AD%90%E5%88%86%E6%9E%90/</guid>
+        <description>&lt;p&gt;本文简要介绍一下主成分分析和因子分析的原理，但是不涉及具体代码实现。这是因为现在已经有很多现成的软件或库实现了这两个算法，读者只需要一两句简单的命令就可以使用了，所以没有必要在这里讲解。而且你可能会在Python R MATLAB SPSS等多种不同的软件中使用，无论选哪个软件的代码实现都没有特别强的代表性。&lt;/p&gt;
+&lt;h3 id=&#34;主成分分析&#34;&gt;主成分分析
+&lt;/h3&gt;&lt;p&gt;如果你手上有一组数据，例如是大家的语文数学英语成绩。但是现在有一个问题，咱们的试卷出得有那么一点点不好，大家的成绩都集中在一起了，也就是试卷的区分度不大。现在，我们有没有办法补救呢？&lt;/p&gt;
+&lt;p&gt;注意：这只是一个例子而已，自然是不考虑我们进行各种变换之后的现实问题，例如这样搞成绩会不公平啊什么的。&lt;/p&gt;
+&lt;p&gt;总之，我们的核心问题是，有没有办法对现有数据进行变换，使得数据的每一个个体尽可能被分开。&lt;/p&gt;
+&lt;p&gt;这就是主成分分析的一个可以选择的切入点。&lt;/p&gt;
+&lt;p&gt;那我们要选择什么样的变换呢？以及有没有办法将&lt;strong&gt;一个群体之间的不同个体距离&lt;/strong&gt;拉远。&lt;/p&gt;
+&lt;h5 id=&#34;以p维正态分布为例进行可行性探索&#34;&gt;以p维正态分布为例进行可行性探索
+&lt;/h5&gt;&lt;p&gt;嗯，对我们先拿p维正态分布探索一下我们想法的可行性。&lt;/p&gt;
+&lt;p&gt;我们假设p维随机向量X服从协方差阵为$\Sigma$，均值向量为$\mu$的p维正态分布。&lt;/p&gt;
+&lt;p&gt;那么X的概率密度函数就是$P(x)=\frac{1}{(2\pi)^{\frac{p}{2}}|\Sigma|^{\frac{1}{2}}}e^{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)}$，我们来观察其概率密度等高线，显然，这里只有e的指数是变量，所以概率密度等高线满足：&lt;/p&gt;
+$$-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)=C_1$$&lt;p&gt;也就是$(x-\mu)^T\Sigma^{-1}(x-\mu)=C_2$&lt;/p&gt;
+&lt;p&gt;我们可以对$\Sigma $进行谱分解。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;谱分解说明：&lt;/p&gt;
+&lt;p&gt;根据线性代数的知识我们可以知道，任意实对称阵A可以正交相似对角化，即&lt;/p&gt;
+&lt;p&gt;$\forall 实对称矩阵A,\exist正交阵Q和对角阵\Lambda，使得A=Q\Lambda Q^T$&lt;/p&gt;
+&lt;p&gt;如果我们已知A的特征值$\lambda_1,\lambda_2,&amp;hellip;,\lambda_n$和对应的特征向量$e_1,e_2,&amp;hellip;,e_n$，则&lt;/p&gt;
+&lt;p&gt;Q=($e_1,e_2,&amp;hellip;,e_n$)，$\Lambda =diag(\lambda_1,\lambda_2,&amp;hellip;,\lambda_n)$&lt;/p&gt;
+&lt;p&gt;这意味着:&lt;/p&gt;
+$$A=Q\Lambda Q^T$$$$=(e_1,e_2,...,e_n)diag(\lambda_1,\lambda_2,...,\lambda_n)(e_1,e_2,...,e_n)^T$$$$=(\lambda_1 e_1,\lambda_2 e_2,...,\lambda_n e_n)(e_1,e_2,...,e_n)^T$$$$=\lambda_1 e_1 e_1^T + \lambda_2 e_2 e_2^T +...+ \lambda_n e_n e_n^T$$$$=\sum_{i=1}^n\lambda_i e_i e_i^T$$&lt;p&gt;这就是谱分解了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;我们假设$\Sigma$的特征值为$\lambda_1,\lambda_2,&amp;hellip;,\lambda_p$，对应的特征向量为$e_1,e_2,&amp;hellip;,e_p$，那么$\Sigma$就可以谱分解为&lt;/p&gt;
+&lt;p&gt;$\Sigma=\sum_{i=1}^p\lambda_i e_i e_i^T$，将他代入概率密度等高线方程就有，&lt;/p&gt;
+&lt;p&gt;$(x-\mu)^T{(\sum_{i=1}^p\lambda_i e_i e_i^T)}^{-1}(x-\mu)=C_2$&lt;/p&gt;
+&lt;p&gt;也就是，&lt;/p&gt;
+$$\sum_{i=1}^p\frac{[e_i(x-\mu)]^T[e_i(x-\mu)]}{C_2}=1$$&lt;p&gt;这是p维的类似椭圆的方程，当p=2时这就是椭圆方程。&lt;/p&gt;
+&lt;p&gt;这意味着，概率密度等高线是同样有着长轴和短轴。&lt;/p&gt;
+&lt;p&gt;因而，这意味着如果我们将原始变量X进行正交变换将坐标轴旋转到长轴上就可以达成我们的目标将&lt;strong&gt;一个群体之间的不同个体距离拉远&lt;/strong&gt;。&lt;/p&gt;
+&lt;h5 id=&#34;演算&#34;&gt;演算
+&lt;/h5&gt;&lt;p&gt;接下来，我们有了方向就可以进行推演了。&lt;/p&gt;
+&lt;p&gt;我们要将原始变量X进行正交变换得到新的一组变量，这从几何看就是进行坐标轴旋转。&lt;/p&gt;
+&lt;p&gt;总之，从代数角度看就是，设p维随机向量X=$(x_1,x_2,&amp;hellip;,x_p)$的协方差阵为$\Sigma$。&lt;/p&gt;
+&lt;p&gt;那么我们就是要找一组新的变量Z=$(z_1,z_2,&amp;hellip;,z_p)$使得（新变量被称为主成分）&lt;/p&gt;
+$$z_1=a_{11}x_1+a_{12}x_2+...+a_{1p}x_p=a_1^TX$$$$z_2=a_{21}x_1+a_{22}x_2+...+a_{2p}x_p=a_2^TX$$&lt;p&gt;&amp;hellip;&lt;/p&gt;
+$$z_p=a_{p1}x_1+a_{p2}x_2+...+a_{pp}x_p=a_p^TX$$&lt;p&gt;而此时，$var(z_j)=a_j^T\Sigma a_j,cov(z_j,z_k)=a_j^T\Sigma a_k$&lt;/p&gt;
+&lt;p&gt;我们前面说了，我们希望将&lt;strong&gt;一个群体之间的不同个体距离拉远&lt;/strong&gt;，也就是要最大化新变量Z的方差，与此同时我们自然希望各个新变量之间无关也就是：&lt;/p&gt;
+&lt;p&gt;最大化$var(z_j)$，希望$cov(z_j,z_k)=0$&lt;/p&gt;
+&lt;p&gt;对于$z_1$来说就是希望最大化$a_1^T\Sigma a_1$，但是显然我们可以通过无限扩大$a_1$的长度来实现最大化$z_1$的方差，这是我们不期望看到的。&lt;/p&gt;
+&lt;p&gt;所以我们再额外要求$z_1$的长度是1即$a_1^Ta_1=1$。&lt;/p&gt;
+&lt;p&gt;这样的话其实我们就是在最大化$a_1^T\Sigma a_1=\frac{a_1^T\Sigma a_1}{a_1^Ta_1}$（注意哦，现在分母为1所以除了等于没除）。&lt;/p&gt;
+&lt;p&gt;类似地，我们对$z_2$会要求$a_2^Ta_2=1$，并且$cov(z_2,z_1)=a_2^T\Sigma a_1=0$&lt;/p&gt;
+&lt;p&gt;最大化$a_2^T\Sigma a_2$。&lt;/p&gt;
+&lt;p&gt;以此类推，但是到最后一个变量$z_p$我们只能要求最小化$a_p^T\Sigma a_p$了，因为这个对应的是前面说的高维椭圆的短轴，是最小的。&lt;/p&gt;
+&lt;p&gt;那么，怎么进行最小化呢？&lt;/p&gt;
+&lt;p&gt;一般的教材这里就是上拉格朗日乘数法了，计算比较复杂我就不说了。给个结论吧。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$\forall a \in R^p,\Sigma \in M_p且\Sigma为对称矩阵。$&lt;/p&gt;
+&lt;p&gt;设$(\lambda_j,e_j)$为$\Sigma$的特征值、单位特征向量。&lt;/p&gt;
+$$a\neq 0, a⊥e_1,e_2,...,e_{j-1},$$$$max \frac{a^T\Sigma a}{a^T a}=\lambda_j在a=e_j时取到最大。$$&lt;/blockquote&gt;
+&lt;p&gt;利用上述结论就可以知道，X的第j个主成分$z_j=e_j^TX$&lt;/p&gt;
+&lt;p&gt;且$var(z_j)=e_j^T\Sigma e_j$&lt;/p&gt;
+&lt;p&gt;注意$(\lambda_j,e_j)$为$\Sigma$的特征值、单位特征向量。&lt;/p&gt;
+&lt;p&gt;所以$\Sigma e_j =\lambda_j e_j,e_j^Te_j=1$&lt;/p&gt;
+&lt;p&gt;因而$var(z_j)=e_j^T\Sigma e_j=e_j^T \lambda_j e_j=\lambda_j e^T_je_j=\lambda_j$。&lt;/p&gt;
+&lt;p&gt;所以，X的第j个主成分$z_j$是其协方差矩阵$\Sigma$的第j个单位特征向量乘以原始变量X，并且第j个主成分的方差就是$\Sigma$第j个特征值$\lambda_j$。&lt;/p&gt;
+&lt;p&gt;这就是主成分分析的结论。&lt;/p&gt;
+&lt;p&gt;更进一步的，如果我们对原始变量进行标准化然后再进行主成分分析，可以证明这相当于对原始变量的相关系数矩阵R进行对应的主成分分析。&lt;/p&gt;
+&lt;h5 id=&#34;降维&#34;&gt;降维
+&lt;/h5&gt;&lt;p&gt;从上面的推导我们可以看到对p维向量进行主成分分析只能得到p个主成分，似乎不能降维啊。那么我们一般说的降维是怎么回事？&lt;/p&gt;
+&lt;p&gt;前面我们知道，第j个主成分的方差就是$\Sigma$第j个特征值$\lambda_j$。&lt;/p&gt;
+&lt;p&gt;如果我们将全部的主成分的方差求和，那就是对$\Sigma$全部的特征值的求和，也就是$\Sigma$的迹，也就是X各个分量的方差的和。&lt;/p&gt;
+&lt;p&gt;所以到现在为止我们还没有损失任何一点点方差。&lt;/p&gt;
+&lt;p&gt;如果降维的话就会损失方差了，这是因为所谓的降维就是将各个特征值从大到小排列，然后去掉比较小的特征值和对应的主成分。&lt;/p&gt;
+&lt;p&gt;这样的话就会损失方差了，也就损失了部分信息。这就是所谓的利用主成分分析进行降维。&lt;/p&gt;
+&lt;h3 id=&#34;因子分析&#34;&gt;因子分析
+&lt;/h3&gt;&lt;p&gt;那么因子分析是什么？&lt;/p&gt;
+&lt;p&gt;还是看学生成绩数据吧，从学生的成绩上我们可以看到，优秀的学生似乎各科成绩都很好。也许你还会发现，各科成绩高度相关，这意味着他们可能由某一个潜在变量决定（智商）。&lt;/p&gt;
+&lt;p&gt;因子分析就是由原始数据寻找这样的潜变量。&lt;/p&gt;
+&lt;p&gt;由于潜变量的数量往往少于原始变量的数量，所以因子分析也是一种降维方法。&lt;/p&gt;
+&lt;p&gt;因子分析建立了一个&lt;strong&gt;因子模型&lt;/strong&gt;，它认为原始变量Y是各个潜变量的线性组合，即&lt;/p&gt;
+$$Y_i=l_{i1}F_1+l_{i2}F_2+...+l_{im}F_m+\epsilon_i$$&lt;p&gt;其中，$F_j$是潜变量也叫&lt;strong&gt;公共因子&lt;/strong&gt;，我们假设有m个，当然一般要求m不大于原始变量的个数p。&lt;/p&gt;
+&lt;p&gt;系数$l_ij$被称为&lt;strong&gt;因子载荷&lt;/strong&gt;，$Y_i$则是原始变量而$\epsilon_i$是类似误差的&lt;strong&gt;特殊因子&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;我们还对公共因子提了一些基础的要求，首先$F_i,F_j$不相关（正交），$F_i,\epsilon_j、\epsilon_i,\epsilon_j$不相关，来保持各个变量之间的独立性。&lt;/p&gt;
+&lt;p&gt;当然，因子模型用矩阵表示更简洁，就是&lt;/p&gt;
+&lt;p&gt;$Y=AF+\epsilon$&lt;/p&gt;
+&lt;p&gt;那前面说的那些要求用矩阵表示就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$m \le p$&lt;/li&gt;
+&lt;li&gt;cov(F,$\epsilon$)=0&lt;/li&gt;
+&lt;li&gt;$D_F=var(F)=单位阵I_m$&lt;/li&gt;
+&lt;li&gt;$D_\epsilon=var(\epsilon)=diag(\sigma_1^2,\sigma_2^2,&amp;hellip;,\sigma_p^2) $&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而因子模型最重要的新增是协方差阵的矩阵分解：&lt;/p&gt;
+&lt;p&gt;$var(X)=\Sigma=cov(AF+\epsilon,AF+\epsilon)=Acov(F,F)A^{-1}+cov(\epsilon,\epsilon)=AA^{-1}+D_\epsilon$&lt;/p&gt;
+&lt;h5 id=&#34;演算-1&#34;&gt;演算
+&lt;/h5&gt;&lt;p&gt;那么如何求解因子模型中未知的A和$\epsilon$呢？&lt;/p&gt;
+&lt;p&gt;答案是利用协方差矩阵的矩阵分解：&lt;/p&gt;
+&lt;p&gt;$\Sigma=AA^{-1}+D_\epsilon$&lt;/p&gt;
+&lt;p&gt;而前面我们说过$\Sigma$可以分解为$Q\Lambda Q^T$，其中$Q=($e_1,e_2,&amp;hellip;,e_n$)，$$\Lambda =diag(\lambda_1,\lambda_2,&amp;hellip;,\lambda_n)$&lt;/p&gt;
+&lt;p&gt;我们再进行小小的变换，定义$\Lambda_2=(e_1\sqrt{\lambda_1},e_2\sqrt{\lambda_2},&amp;hellip;,e_p\sqrt{\lambda_p})$，&lt;/p&gt;
+&lt;p&gt;则$\Sigma=\Lambda_2 \Lambda_2$。&lt;/p&gt;
+&lt;p&gt;当$\Sigma$的后p-m个特征值很小的时候，我们就可以忽略掉后面的项，用$\Lambda_2$的前m项估计A，从而$D_\epsilon=\Sigma-AA^{-1}$也就可以计算了。&lt;/p&gt;
+&lt;p&gt;这就是因子分析的主成分法求解。&lt;/p&gt;
+&lt;h5 id=&#34;主轴因子法&#34;&gt;主轴因子法
+&lt;/h5&gt;&lt;p&gt;除此之外因子分析还有一个常用的算法是主轴因子法，推导比较复杂我就只说思路了。&lt;/p&gt;
+&lt;p&gt;我们知道&lt;/p&gt;
+&lt;p&gt;$\Sigma=AA^{-1}+D_\epsilon$&lt;/p&gt;
+&lt;p&gt;那么如果我们先估计$D_\epsilon$在分解也可以得到A。&lt;/p&gt;
+&lt;p&gt;总思路是这样的，不过如果你去翻阅各种资料的话，可能还会遇到约相关阵的说法，&lt;/p&gt;
+&lt;p&gt;也就是先把原始变量进行标准化从而$\Sigma=原始变量的相关系数R$再定义$R^*=R-D_\epsilon=AA^{-1}$，&lt;/p&gt;
+&lt;p&gt;然后估计$R^*$再计算A和$D_\epsilon$也是可以的。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Windows如何部署kafka和zookeeper</title>
         <link>https://ColaBlack.github.io/p/windows%E5%A6%82%E4%BD%95%E9%83%A8%E7%BD%B2kafka%E5%92%8Czookeeper/</link>
         <pubDate>Mon, 25 Nov 2024 20:35:35 +0800</pubDate>
