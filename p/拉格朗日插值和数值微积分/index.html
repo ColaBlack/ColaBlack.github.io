@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本文想简要介绍和推导一下拉格朗日插值和数值积分方法。\n什么是插值？ 所谓的插值就是已知几个离散点的信息视图求一个满足这些信息的函数的过程。\n">
+<title>拉格朗日插值和数值微积分</title>
+
+<link rel='canonical' href='https://ColaBlack.github.io/p/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E6%8F%92%E5%80%BC%E5%92%8C%E6%95%B0%E5%80%BC%E5%BE%AE%E7%A7%AF%E5%88%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="拉格朗日插值和数值微积分">
+<meta property='og:description' content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本文想简要介绍和推导一下拉格朗日插值和数值积分方法。\n什么是插值？ 所谓的插值就是已知几个离散点的信息视图求一个满足这些信息的函数的过程。\n">
+<meta property='og:url' content='https://ColaBlack.github.io/p/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E6%8F%92%E5%80%BC%E5%92%8C%E6%95%B0%E5%80%BC%E5%BE%AE%E7%A7%AF%E5%88%86/'>
+<meta property='og:site_name' content='ColaBlack个人文档'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-11-30T15:26:27&#43;08:00'/><meta property='article:modified_time' content='2024-11-30T15:26:27&#43;08:00'/>
+<meta name="twitter:title" content="拉格朗日插值和数值微积分">
+<meta name="twitter:description" content="初次发布于我的个人文档。（每次都是个人文档优先发布哦）\n本文想简要介绍和推导一下拉格朗日插值和数值积分方法。\n什么是插值？ 所谓的插值就是已知几个离散点的信息视图求一个满足这些信息的函数的过程。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😜</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ColaBlack个人文档</a></h1>
+            <h2 class="site-description">一个文档，记录我用得上的一些信息。也算不上是什么博客了啦。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/colablack'
+                        target="_blank"
+                        title="gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg t="1731323057361" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4248" width="200" height="200"><path d="M512 992C246.895625 992 32 777.104375 32 512S246.895625 32 512 32s480 214.895625 480 480-214.895625 480-480 480z m242.9521875-533.3278125h-272.56875a23.7121875 23.7121875 0 0 0-23.71125 23.7121875l-0.024375 59.255625c0 13.08 10.6078125 23.7121875 23.6878125 23.7121875h165.96c13.104375 0 23.7121875 10.6078125 23.7121875 23.6878125v11.855625a71.1121875 71.1121875 0 0 1-71.1121875 71.1121875h-225.215625a23.7121875 23.7121875 0 0 1-23.6878125-23.7121875V423.1278125a71.1121875 71.1121875 0 0 1 71.0878125-71.1121875h331.824375a23.7121875 23.7121875 0 0 0 23.6878125-23.71125l0.0721875-59.2565625a23.7121875 23.7121875 0 0 0-23.68875-23.7121875H423.08a177.76875 177.76875 0 0 0-177.76875 177.7921875V754.953125c0 13.1034375 10.60875 23.7121875 23.713125 23.7121875h349.63125a159.984375 159.984375 0 0 0 159.984375-159.984375V482.36a23.7121875 23.7121875 0 0 0-23.7121875-23.6878125z" fill="#707070" p-id="4249"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ColaBlack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#什么是插值">什么是插值？</a></li>
+        <li><a href="#插值的唯一性">插值的唯一性</a></li>
+        <li><a href="#拉格朗日插值">拉格朗日插值</a></li>
+        <li><a href="#拉格朗日插值余项">拉格朗日插值余项</a></li>
+        <li><a href="#数值积分方法">数值积分方法</a></li>
+        <li><a href="#牛顿-科特斯公式">牛顿-科特斯公式</a></li>
+        <li><a href="#数值微分方法">数值微分方法</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E6%8F%92%E5%80%BC%E5%92%8C%E6%95%B0%E5%80%BC%E5%BE%AE%E7%A7%AF%E5%88%86/">拉格朗日插值和数值微积分</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-30</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>初次发布于<a class="link" href="https://colablack.github.io"  target="_blank" rel="noopener"
+    >我的个人文档</a>。（每次都是个人文档优先发布哦）</p>
+<p>本文想简要介绍和推导一下拉格朗日插值和数值积分方法。</p>
+<h3 id="什么是插值">什么是插值？
+</h3><p>所谓的插值就是已知几个离散点的信息视图求一个满足这些信息的函数的过程。</p>
+<p>如拉格朗日插值和牛顿插值就是已知f(x)在若干点的函数值希望找一个多项式函数穿过这些点。</p>
+<p>而艾尔米特插值则更进一步要求函数在各个点的各阶导数值都等于指定的值。</p>
+<p>本文只介绍最基础的拉格朗日插值和牛顿插值。</p>
+<h3 id="插值的唯一性">插值的唯一性
+</h3><p>这两种插值方法都是已知一系列点$(x_i,y_i)$，找一个多项式p(x)它穿过了这些点。</p>
+<p>其实这个问题你应该很容易就能找到第一个方法，待定系数法嘛。</p>
+<p>我们假设$p(x)=a_0+a_1x+a_2x+&hellip;+a_nx^n$</p>
+<p>这里有n+1个系数，所以我们需要给定n+1个不同的点，或者说n+1个点需要用n次插值多项式插值。</p>
+<p>如果我们将这n+1个点代入就能得到</p>
+<p>$a_0+a_1x_i+a_2x_i+&hellip;+a_nx_i^n=y_i$</p>
+<p>显然，这是一个线性方程组，并且还有更令人兴奋的，</p>
+<p>它的系数矩阵的行列式就是范德蒙德行列式。</p>
+<p>从而，其系数矩阵的行列式是$x_i-x_j$的乘积，又由于这n+1个点是不同的，所以它的系数矩阵的行列式不为0。</p>
+<p>那么根据克莱姆法则，这个线性方程组就有唯一解。</p>
+<p>所以插值多项式是唯一的。</p>
+<h3 id="拉格朗日插值">拉格朗日插值
+</h3><p>那么怎么求插值多项式呢？</p>
+<p>你是可以硬解刚刚的方程组啦，但是这有点痛苦。</p>
+<p>拉格朗日的方法是，这样的：</p>
+<p>你不是要求$p(x_i)=y_i$吗？</p>
+<p>如果我能找到一系列多项式$l_k(x)$在$x_k$处取1，其他地方（指$x_1,x_2,x_3,&hellip;,x_n$但不包含$x_k$)取0,</p>
+<p>那么p(x)不就是$y_i l_k(x)$吗？</p>
+<p>这就是拉格朗日插值法的思想。</p>
+<p>其中$l_k(x)$被称为插值基函数。</p>
+<p>那么我们怎么找到插值基函数呢？</p>
+<p>其实很简单，$l_k(x)$在其他点取0从而其他点都是插值基函数的零点，所以插值基函数$l_k(x)$有因子</p>
+$$\prod_{i \neq k}(x-x_i)$$<p>那么我们怎么保证$l_k(x)$在$x_k$处取1呢？</p>
+<p>很简单啊，把$x_k$代入刚刚的可能的因子，把代入的结果除掉不就行了？</p>
+<p>也就是说$l_k(x)=\frac{\prod_{i \neq k}(x-x_i)}{\prod_{i \neq k}(x_k-x_i)}$</p>
+<p>这就是拉格朗日插值基函数了。</p>
+<p>则拉格朗日插值多项式就是</p>
+$$p(x)=\sum_{k=1}^n y_k l_k(x)$$<p>这就是<strong>拉格朗日插值公式</strong>了。</p>
+<p>把拉格朗日插值进一步优化，你就能得到埃特金插值和牛顿插值。</p>
+<p>这个就不多介绍了，比较复杂而且插值公式是唯一的，你用任何方法得到的插值公式都是一样的。而且市面上大把的直接计算插值的软件和库，他们直接内置了其他的插值方法。</p>
+<h3 id="拉格朗日插值余项">拉格朗日插值余项
+</h3><p>下面简单给个拉格朗日插值余弦的结论，其定理的证明网上导出都是，我也没必要再赘述了。</p>
+<p>关于拉格朗日插值的误差，有如下的<strong>拉格朗日插值余项定理</strong>，</p>
+<blockquote>
+<p>设[a,b]上有插值节点$x_0,x_1,&hellip;,x_n$，f(x)在[a,b]上有连续的直到n+1阶导数，且希望$f(x_i)=y_i$，</p>
+<p>那么就有当$x \in [a,b]$时，有</p>
+<p>余项$R_n(x)=f(x)-p_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{k=0}^n(x-x_k)$</p>
+<p>其中$\xi \in [a,b]$</p>
+</blockquote>
+<p>这就是拉格朗日插值的余项了。由于插值多项式是唯一的，所以其他的插值方法的余项也是这个。</p>
+<h3 id="数值积分方法">数值积分方法
+</h3><p>下面我们来介绍一下怎么用插值法来得到数值方法计算函数积分。</p>
+<p>对于大部分函数，我们其实都是很难求其积分的，甚至很多函数例如$e^{x^2}$这样的函数压根就没有初等原函数。所以我们需要寻找数值方法来计算他们的积分。</p>
+<p>一种可能的思路就是用刚刚的插值多项式来近似替代这个函数。而且我们是已知了差值余项的，余项的积分就是我们数值积分方法的误差。</p>
+<p>而这些都是多项式啊，都很好计算的。</p>
+<p>这种求积分的数值方法得到的积分公式我们都叫做<strong>差值型的求积公式</strong>。</p>
+<p>前面我说这只是数值求积的一种思路，其最本真的思路其实是取函数的部分函数值，用他们的线性组合来近似积分。</p>
+<p>也就是最一般化的求积公式是$\int_a^b f(x)dx=\sum_{k=0}^n A_k y_k$。</p>
+<p>只需要知道$A_k$就知道怎么求积了。</p>
+<p>而对于插值型求积公式，我们很容易就能得到$A_k$。</p>
+<p>插值型求积公式就是用f(x)的插值多项式近似f(x)，从而有</p>
+<p>$\int_a^bf(x)dx \approx \int_a^bp_n(x)$</p>
+<p>再把拉格朗日插值公式代入得</p>
+<p>$\int_a^bf(x)dx \approx \int_a^b \sum_{k=1}^n y_k l_k(x)dx$</p>
+<p>$=\sum_{k=1}^n y_k\int_a^bl_k(x)dx$</p>
+<p>而我们最一般的求积公式是$\int_a^b f(x)dx=\sum_{k=0}^n A_k y_k$，从而</p>
+<p>$A_k=\int_a^b l_k(x)dx$</p>
+<h3 id="牛顿-科特斯公式">牛顿-科特斯公式
+</h3><p>如果我们进一步要求，插值点的间距相等（步长为h），我们可以得到一个特殊的结论。</p>
+<p>我们竟然将区间长度提出来了，</p>
+<p>$\int_a^b f(x)dx=(b-a)\sum_{k=0}^n C_k y_k$</p>
+<p>并且，$C_k$竟然还是常数。</p>
+<p>我们称$C_k$为科特斯系数，可以直接查科特斯系数表得到，与具体的函数f(x)无关，只和你插值多项式的次数n有关!</p>
+<p>这就是牛顿-科特斯公式。</p>
+<p><img src="https://pic4.zhimg.com/v2-16ffe2d3526f06ffdd0eb18c7b76150f_r.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="科特斯系数表"
+	
+	
+></p>
+<p>其中n=1得到的求积公式被称为<strong>梯形公式</strong>，n=2的是<strong>辛普森公式</strong>。</p>
+<p>对牛顿-科特斯公式的玩法有很多，例如复化得到复化梯形公式和复化辛普森公式，还有递推化得到龙贝格公式等等。</p>
+<p>还有变步长使得精度尽可能高的高斯公式等等玩法。</p>
+<h3 id="数值微分方法">数值微分方法
+</h3><p>有了积分当基石我们就可以用数值方法求解微分方程。</p>
+<p>我们以标准的微分方程初值问题为例介绍几个简单的方法。</p>
+<p>对微分方程</p>
+$$\frac{dy}{dx}=f(x,y)$$<p>我们两边同时积分得到</p>
+$$\int_{x_n}^{x_{n+1}}\frac{dy}{dx}=\int_{x_n}^{x_{n+1}}f(x,y)dx$$<p>也就是</p>
+$$y_{n+1}-y_n=\int_{x_n}^{x_{n+1}}f(x,y)dx$$<p>从而</p>
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)dx$$<p>而如果我们可以用数值方法求出这个积分，不就解出了这个微分方程？</p>
+<p>例如，我们直接用积分区间左端点得到的矩形的面积来近似积分（这个叫做左矩形求积公式）</p>
+<p>得到</p>
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)=y_n+(x_{n+1}-x_n)f(x_n,y_n)$$<p>这就是<strong>欧拉格式</strong>。(注意，数值微分里我们称为格式而不是公式，这里没有打错字)</p>
+<p>你可能会发现我这里给的欧拉格式和网上一般的不一样，其实你只要设$h=x_{n+1}-x_n$（当我设了h就默认等步长了）就能得到一般的欧拉格式了。</p>
+$$y_{n+1}=y_n+hf(x_n,y_n)$$<p>同样地，我们可以用积分区间右端点得到的矩形面积（右矩形公式）近似积分得到</p>
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)=y_n+(x_{n+1}-x_n)f(x_{n+1},y_{n+1})$$<p>类似地，我们设$h=x_{n+1}-x_n$就有，</p>
+$$y_{n+1}=y_n+hf(x_{n+1},y_{n+1})$$<p>这就是<strong>隐式欧拉格式</strong>了。</p>
+<p>那如果我用区间中点的矩形，还能得到两步欧拉格式：</p>
+<p>对微分方程</p>
+$$\frac{dy}{dx}=f(x,y)$$<p>我们两边同时积分得到</p>
+$$\int_{x_n-1}^{x_{n+1}}\frac{dy}{dx}=\int_{x_n-1}^{x_{n+1}}f(x,y)dx$$<p>注意，这次是从$x_{n-1}$积到$x_n$，并且我们要求步长为h，则$x_n$是积分区间中点。</p>
+<p>有$y_{n+1}-y_{n-1}=2hf(x_n,y_n)$</p>
+<p>从而，$y_{n+1}=y_{n-1}+2hf(x_n,y_n)$</p>
+<p>这就是<strong>两步欧拉格式</strong>。</p>
+<p>还可以用刚刚说的梯形公式来求积分得到<strong>梯形格式</strong>，或者引入预报-矫正系统得到<strong>改进的欧拉格式</strong>。</p>
+<p>以及另外一个思路可以得到一整套的龙格-库塔方法和亚当姆斯方法。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 ColaBlack
+    </section>
+    
+    <section class="powerby">
+        
+            一个小网站，用于文档查阅 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+  
+  const cssPath = "https://ColaBlack.github.io/waifu/waifu.css"
+  const tipsJsonPath = "https://ColaBlack.github.io/waifu/waifu-tips.json"
+  
+  const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+  
+  function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+          let tag;
+          if (type === "css") {
+              tag = document.createElement("link");
+              tag.rel = "stylesheet";
+              tag.href = url;
+          }
+          else if (type === "js") {
+              tag = document.createElement("script");
+              tag.src = url;
+          }
+          if (tag) {
+              tag.onload = () => resolve(url);
+              tag.onerror = () => reject(url);
+              document.head.appendChild(tag);
+          }
+      });
+  }
+
+  
+  if (screen.width >= 768) {
+      Promise.all([
+          loadExternalResource(cssPath, "css"),
+          loadExternalResource(live2d_path + "live2d.min.js", "js"),
+          loadExternalResource(live2d_path + "waifu-tips.js", "js")
+      ]).then(() => {
+          
+          initWidget({
+              waifuPath: tipsJsonPath,
+              cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+              tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+          });
+      });
+  }
+</script>
+
+    </body>
+</html>

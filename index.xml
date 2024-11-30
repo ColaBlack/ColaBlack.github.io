@@ -7,7 +7,125 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Fri, 29 Nov 2024 14:11:03 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 30 Nov 2024 15:26:27 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>拉格朗日插值和数值微积分</title>
+        <link>https://ColaBlack.github.io/p/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E6%8F%92%E5%80%BC%E5%92%8C%E6%95%B0%E5%80%BC%E5%BE%AE%E7%A7%AF%E5%88%86/</link>
+        <pubDate>Sat, 30 Nov 2024 15:26:27 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E6%8F%92%E5%80%BC%E5%92%8C%E6%95%B0%E5%80%BC%E5%BE%AE%E7%A7%AF%E5%88%86/</guid>
+        <description>&lt;p&gt;初次发布于&lt;a class=&#34;link&#34; href=&#34;https://colablack.github.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的个人文档&lt;/a&gt;。（每次都是个人文档优先发布哦）&lt;/p&gt;
+&lt;p&gt;本文想简要介绍和推导一下拉格朗日插值和数值积分方法。&lt;/p&gt;
+&lt;h3 id=&#34;什么是插值&#34;&gt;什么是插值？
+&lt;/h3&gt;&lt;p&gt;所谓的插值就是已知几个离散点的信息视图求一个满足这些信息的函数的过程。&lt;/p&gt;
+&lt;p&gt;如拉格朗日插值和牛顿插值就是已知f(x)在若干点的函数值希望找一个多项式函数穿过这些点。&lt;/p&gt;
+&lt;p&gt;而艾尔米特插值则更进一步要求函数在各个点的各阶导数值都等于指定的值。&lt;/p&gt;
+&lt;p&gt;本文只介绍最基础的拉格朗日插值和牛顿插值。&lt;/p&gt;
+&lt;h3 id=&#34;插值的唯一性&#34;&gt;插值的唯一性
+&lt;/h3&gt;&lt;p&gt;这两种插值方法都是已知一系列点$(x_i,y_i)$，找一个多项式p(x)它穿过了这些点。&lt;/p&gt;
+&lt;p&gt;其实这个问题你应该很容易就能找到第一个方法，待定系数法嘛。&lt;/p&gt;
+&lt;p&gt;我们假设$p(x)=a_0+a_1x+a_2x+&amp;hellip;+a_nx^n$&lt;/p&gt;
+&lt;p&gt;这里有n+1个系数，所以我们需要给定n+1个不同的点，或者说n+1个点需要用n次插值多项式插值。&lt;/p&gt;
+&lt;p&gt;如果我们将这n+1个点代入就能得到&lt;/p&gt;
+&lt;p&gt;$a_0+a_1x_i+a_2x_i+&amp;hellip;+a_nx_i^n=y_i$&lt;/p&gt;
+&lt;p&gt;显然，这是一个线性方程组，并且还有更令人兴奋的，&lt;/p&gt;
+&lt;p&gt;它的系数矩阵的行列式就是范德蒙德行列式。&lt;/p&gt;
+&lt;p&gt;从而，其系数矩阵的行列式是$x_i-x_j$的乘积，又由于这n+1个点是不同的，所以它的系数矩阵的行列式不为0。&lt;/p&gt;
+&lt;p&gt;那么根据克莱姆法则，这个线性方程组就有唯一解。&lt;/p&gt;
+&lt;p&gt;所以插值多项式是唯一的。&lt;/p&gt;
+&lt;h3 id=&#34;拉格朗日插值&#34;&gt;拉格朗日插值
+&lt;/h3&gt;&lt;p&gt;那么怎么求插值多项式呢？&lt;/p&gt;
+&lt;p&gt;你是可以硬解刚刚的方程组啦，但是这有点痛苦。&lt;/p&gt;
+&lt;p&gt;拉格朗日的方法是，这样的：&lt;/p&gt;
+&lt;p&gt;你不是要求$p(x_i)=y_i$吗？&lt;/p&gt;
+&lt;p&gt;如果我能找到一系列多项式$l_k(x)$在$x_k$处取1，其他地方（指$x_1,x_2,x_3,&amp;hellip;,x_n$但不包含$x_k$)取0,&lt;/p&gt;
+&lt;p&gt;那么p(x)不就是$y_i l_k(x)$吗？&lt;/p&gt;
+&lt;p&gt;这就是拉格朗日插值法的思想。&lt;/p&gt;
+&lt;p&gt;其中$l_k(x)$被称为插值基函数。&lt;/p&gt;
+&lt;p&gt;那么我们怎么找到插值基函数呢？&lt;/p&gt;
+&lt;p&gt;其实很简单，$l_k(x)$在其他点取0从而其他点都是插值基函数的零点，所以插值基函数$l_k(x)$有因子&lt;/p&gt;
+$$\prod_{i \neq k}(x-x_i)$$&lt;p&gt;那么我们怎么保证$l_k(x)$在$x_k$处取1呢？&lt;/p&gt;
+&lt;p&gt;很简单啊，把$x_k$代入刚刚的可能的因子，把代入的结果除掉不就行了？&lt;/p&gt;
+&lt;p&gt;也就是说$l_k(x)=\frac{\prod_{i \neq k}(x-x_i)}{\prod_{i \neq k}(x_k-x_i)}$&lt;/p&gt;
+&lt;p&gt;这就是拉格朗日插值基函数了。&lt;/p&gt;
+&lt;p&gt;则拉格朗日插值多项式就是&lt;/p&gt;
+$$p(x)=\sum_{k=1}^n y_k l_k(x)$$&lt;p&gt;这就是&lt;strong&gt;拉格朗日插值公式&lt;/strong&gt;了。&lt;/p&gt;
+&lt;p&gt;把拉格朗日插值进一步优化，你就能得到埃特金插值和牛顿插值。&lt;/p&gt;
+&lt;p&gt;这个就不多介绍了，比较复杂而且插值公式是唯一的，你用任何方法得到的插值公式都是一样的。而且市面上大把的直接计算插值的软件和库，他们直接内置了其他的插值方法。&lt;/p&gt;
+&lt;h3 id=&#34;拉格朗日插值余项&#34;&gt;拉格朗日插值余项
+&lt;/h3&gt;&lt;p&gt;下面简单给个拉格朗日插值余弦的结论，其定理的证明网上导出都是，我也没必要再赘述了。&lt;/p&gt;
+&lt;p&gt;关于拉格朗日插值的误差，有如下的&lt;strong&gt;拉格朗日插值余项定理&lt;/strong&gt;，&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;设[a,b]上有插值节点$x_0,x_1,&amp;hellip;,x_n$，f(x)在[a,b]上有连续的直到n+1阶导数，且希望$f(x_i)=y_i$，&lt;/p&gt;
+&lt;p&gt;那么就有当$x \in [a,b]$时，有&lt;/p&gt;
+&lt;p&gt;余项$R_n(x)=f(x)-p_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{k=0}^n(x-x_k)$&lt;/p&gt;
+&lt;p&gt;其中$\xi \in [a,b]$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这就是拉格朗日插值的余项了。由于插值多项式是唯一的，所以其他的插值方法的余项也是这个。&lt;/p&gt;
+&lt;h3 id=&#34;数值积分方法&#34;&gt;数值积分方法
+&lt;/h3&gt;&lt;p&gt;下面我们来介绍一下怎么用插值法来得到数值方法计算函数积分。&lt;/p&gt;
+&lt;p&gt;对于大部分函数，我们其实都是很难求其积分的，甚至很多函数例如$e^{x^2}$这样的函数压根就没有初等原函数。所以我们需要寻找数值方法来计算他们的积分。&lt;/p&gt;
+&lt;p&gt;一种可能的思路就是用刚刚的插值多项式来近似替代这个函数。而且我们是已知了差值余项的，余项的积分就是我们数值积分方法的误差。&lt;/p&gt;
+&lt;p&gt;而这些都是多项式啊，都很好计算的。&lt;/p&gt;
+&lt;p&gt;这种求积分的数值方法得到的积分公式我们都叫做&lt;strong&gt;差值型的求积公式&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;前面我说这只是数值求积的一种思路，其最本真的思路其实是取函数的部分函数值，用他们的线性组合来近似积分。&lt;/p&gt;
+&lt;p&gt;也就是最一般化的求积公式是$\int_a^b f(x)dx=\sum_{k=0}^n A_k y_k$。&lt;/p&gt;
+&lt;p&gt;只需要知道$A_k$就知道怎么求积了。&lt;/p&gt;
+&lt;p&gt;而对于插值型求积公式，我们很容易就能得到$A_k$。&lt;/p&gt;
+&lt;p&gt;插值型求积公式就是用f(x)的插值多项式近似f(x)，从而有&lt;/p&gt;
+&lt;p&gt;$\int_a^bf(x)dx \approx \int_a^bp_n(x)$&lt;/p&gt;
+&lt;p&gt;再把拉格朗日插值公式代入得&lt;/p&gt;
+&lt;p&gt;$\int_a^bf(x)dx \approx \int_a^b \sum_{k=1}^n y_k l_k(x)dx$&lt;/p&gt;
+&lt;p&gt;$=\sum_{k=1}^n y_k\int_a^bl_k(x)dx$&lt;/p&gt;
+&lt;p&gt;而我们最一般的求积公式是$\int_a^b f(x)dx=\sum_{k=0}^n A_k y_k$，从而&lt;/p&gt;
+&lt;p&gt;$A_k=\int_a^b l_k(x)dx$&lt;/p&gt;
+&lt;h3 id=&#34;牛顿-科特斯公式&#34;&gt;牛顿-科特斯公式
+&lt;/h3&gt;&lt;p&gt;如果我们进一步要求，插值点的间距相等（步长为h），我们可以得到一个特殊的结论。&lt;/p&gt;
+&lt;p&gt;我们竟然将区间长度提出来了，&lt;/p&gt;
+&lt;p&gt;$\int_a^b f(x)dx=(b-a)\sum_{k=0}^n C_k y_k$&lt;/p&gt;
+&lt;p&gt;并且，$C_k$竟然还是常数。&lt;/p&gt;
+&lt;p&gt;我们称$C_k$为科特斯系数，可以直接查科特斯系数表得到，与具体的函数f(x)无关，只和你插值多项式的次数n有关!&lt;/p&gt;
+&lt;p&gt;这就是牛顿-科特斯公式。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://pic4.zhimg.com/v2-16ffe2d3526f06ffdd0eb18c7b76150f_r.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;科特斯系数表&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中n=1得到的求积公式被称为&lt;strong&gt;梯形公式&lt;/strong&gt;，n=2的是&lt;strong&gt;辛普森公式&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;对牛顿-科特斯公式的玩法有很多，例如复化得到复化梯形公式和复化辛普森公式，还有递推化得到龙贝格公式等等。&lt;/p&gt;
+&lt;p&gt;还有变步长使得精度尽可能高的高斯公式等等玩法。&lt;/p&gt;
+&lt;h3 id=&#34;数值微分方法&#34;&gt;数值微分方法
+&lt;/h3&gt;&lt;p&gt;有了积分当基石我们就可以用数值方法求解微分方程。&lt;/p&gt;
+&lt;p&gt;我们以标准的微分方程初值问题为例介绍几个简单的方法。&lt;/p&gt;
+&lt;p&gt;对微分方程&lt;/p&gt;
+$$\frac{dy}{dx}=f(x,y)$$&lt;p&gt;我们两边同时积分得到&lt;/p&gt;
+$$\int_{x_n}^{x_{n+1}}\frac{dy}{dx}=\int_{x_n}^{x_{n+1}}f(x,y)dx$$&lt;p&gt;也就是&lt;/p&gt;
+$$y_{n+1}-y_n=\int_{x_n}^{x_{n+1}}f(x,y)dx$$&lt;p&gt;从而&lt;/p&gt;
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)dx$$&lt;p&gt;而如果我们可以用数值方法求出这个积分，不就解出了这个微分方程？&lt;/p&gt;
+&lt;p&gt;例如，我们直接用积分区间左端点得到的矩形的面积来近似积分（这个叫做左矩形求积公式）&lt;/p&gt;
+&lt;p&gt;得到&lt;/p&gt;
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)=y_n+(x_{n+1}-x_n)f(x_n,y_n)$$&lt;p&gt;这就是&lt;strong&gt;欧拉格式&lt;/strong&gt;。(注意，数值微分里我们称为格式而不是公式，这里没有打错字)&lt;/p&gt;
+&lt;p&gt;你可能会发现我这里给的欧拉格式和网上一般的不一样，其实你只要设$h=x_{n+1}-x_n$（当我设了h就默认等步长了）就能得到一般的欧拉格式了。&lt;/p&gt;
+$$y_{n+1}=y_n+hf(x_n,y_n)$$&lt;p&gt;同样地，我们可以用积分区间右端点得到的矩形面积（右矩形公式）近似积分得到&lt;/p&gt;
+$$y_{n+1}=y_n+\int_{x_n}^{x_{n+1}}f(x,y)=y_n+(x_{n+1}-x_n)f(x_{n+1},y_{n+1})$$&lt;p&gt;类似地，我们设$h=x_{n+1}-x_n$就有，&lt;/p&gt;
+$$y_{n+1}=y_n+hf(x_{n+1},y_{n+1})$$&lt;p&gt;这就是&lt;strong&gt;隐式欧拉格式&lt;/strong&gt;了。&lt;/p&gt;
+&lt;p&gt;那如果我用区间中点的矩形，还能得到两步欧拉格式：&lt;/p&gt;
+&lt;p&gt;对微分方程&lt;/p&gt;
+$$\frac{dy}{dx}=f(x,y)$$&lt;p&gt;我们两边同时积分得到&lt;/p&gt;
+$$\int_{x_n-1}^{x_{n+1}}\frac{dy}{dx}=\int_{x_n-1}^{x_{n+1}}f(x,y)dx$$&lt;p&gt;注意，这次是从$x_{n-1}$积到$x_n$，并且我们要求步长为h，则$x_n$是积分区间中点。&lt;/p&gt;
+&lt;p&gt;有$y_{n+1}-y_{n-1}=2hf(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;从而，$y_{n+1}=y_{n-1}+2hf(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;这就是&lt;strong&gt;两步欧拉格式&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;还可以用刚刚说的梯形公式来求积分得到&lt;strong&gt;梯形格式&lt;/strong&gt;，或者引入预报-矫正系统得到&lt;strong&gt;改进的欧拉格式&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;以及另外一个思路可以得到一整套的龙格-库塔方法和亚当姆斯方法。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>方程求根的迭代法</title>
         <link>https://ColaBlack.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</link>
         <pubDate>Fri, 29 Nov 2024 14:11:03 +0800</pubDate>
