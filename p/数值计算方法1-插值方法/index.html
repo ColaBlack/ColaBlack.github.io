@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="之前有一期简单介绍了一下拉格朗日插值和数值积分微分方法，我感觉有点太简单了。所以这次打算开个系列，好好唠一唠。\n什么是插值 在小学阶段，有一种题目叫找规律。\n">
+<title>数值计算方法(1) 插值方法</title>
+
+<link rel='canonical' href='https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%951-%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="数值计算方法(1) 插值方法">
+<meta property='og:description' content="之前有一期简单介绍了一下拉格朗日插值和数值积分微分方法，我感觉有点太简单了。所以这次打算开个系列，好好唠一唠。\n什么是插值 在小学阶段，有一种题目叫找规律。\n">
+<meta property='og:url' content='https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%951-%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95/'>
+<meta property='og:site_name' content='ColaBlack个人文档'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-12-21T10:12:41&#43;08:00'/><meta property='article:modified_time' content='2024-12-21T10:12:41&#43;08:00'/>
+<meta name="twitter:title" content="数值计算方法(1) 插值方法">
+<meta name="twitter:description" content="之前有一期简单介绍了一下拉格朗日插值和数值积分微分方法，我感觉有点太简单了。所以这次打算开个系列，好好唠一唠。\n什么是插值 在小学阶段，有一种题目叫找规律。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😜</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ColaBlack个人文档</a></h1>
+            <h2 class="site-description">一个文档，记录我用得上的一些信息。也算不上是什么博客了啦。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/colablack'
+                        target="_blank"
+                        title="gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg t="1731323057361" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4248" width="200" height="200"><path d="M512 992C246.895625 992 32 777.104375 32 512S246.895625 32 512 32s480 214.895625 480 480-214.895625 480-480 480z m242.9521875-533.3278125h-272.56875a23.7121875 23.7121875 0 0 0-23.71125 23.7121875l-0.024375 59.255625c0 13.08 10.6078125 23.7121875 23.6878125 23.7121875h165.96c13.104375 0 23.7121875 10.6078125 23.7121875 23.6878125v11.855625a71.1121875 71.1121875 0 0 1-71.1121875 71.1121875h-225.215625a23.7121875 23.7121875 0 0 1-23.6878125-23.7121875V423.1278125a71.1121875 71.1121875 0 0 1 71.0878125-71.1121875h331.824375a23.7121875 23.7121875 0 0 0 23.6878125-23.71125l0.0721875-59.2565625a23.7121875 23.7121875 0 0 0-23.68875-23.7121875H423.08a177.76875 177.76875 0 0 0-177.76875 177.7921875V754.953125c0 13.1034375 10.60875 23.7121875 23.713125 23.7121875h349.63125a159.984375 159.984375 0 0 0 159.984375-159.984375V482.36a23.7121875 23.7121875 0 0 0-23.7121875-23.6878125z" fill="#707070" p-id="4249"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ColaBlack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#什么是插值">什么是插值</a></li>
+        <li><a href="#泰勒插值">泰勒插值</a></li>
+        <li><a href="#已知函数值的插值问题的唯一性">已知函数值的插值问题的唯一性</a></li>
+        <li><a href="#拉格朗日插值">拉格朗日插值</a></li>
+        <li><a href="#埃特金插值">埃特金插值</a></li>
+        <li><a href="#牛顿插值">牛顿插值</a></li>
+        <li><a href="#拉格朗日插值余项">拉格朗日插值余项</a></li>
+        <li><a href="#艾尔米特插值">艾尔米特插值</a></li>
+        <li><a href="#误差的事后估计回看埃特金插值">误差的事后估计：回看埃特金插值</a></li>
+        <li><a href="#龙格现象和过拟合">龙格现象和过拟合</a></li>
+        <li><a href="#分段低次插值">分段低次插值</a></li>
+        <li><a href="#样条插值">样条插值</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%951-%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95/">数值计算方法(1) 插值方法</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-21</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>之前有一期简单介绍了一下拉格朗日插值和数值积分微分方法，我感觉有点太简单了。所以这次打算开个系列，好好唠一唠。</p>
+<h3 id="什么是插值">什么是插值
+</h3><p>在小学阶段，有一种题目叫找规律。</p>
+<p>什么1,2,6,7,10要你填下一个数。但是经常去论坛逛的人会发现，网友啊总是会给一个惊为天人的答案，什么114514啊之类的。</p>
+<p>然后抛出一个多项式，说你看这个114514啊是这个多项式在n=6的取值，前面的几个数也满足。所以这个找规律题下一个是114514。</p>
+<p>事实上，这就是完成了一次数学上的插值任务。</p>
+<p>他呢，相当于是已知若干点（在我前面的例子是已知(1,1),(2,2),(3,6),(4,7),(5,10),(6,114514))要找一个多项式恰好过这些点。</p>
+<p>这就是一个插值问题。</p>
+<p>当然，到了高中上了大学，你应该听说过导数这个玩意儿，所以有的时候我们还会要求多项式在某点的某阶导数是多少。</p>
+<p>这也是插值问题。</p>
+<p>我们也可以综合起来，既要求函数值又要求导数值，这样综合的插值问题我们也有办法解决。</p>
+<p>我们先看最简单的，也是你们一定了解过的。</p>
+<h3 id="泰勒插值">泰勒插值
+</h3><p>看到名字不知道你想起泰勒公式了没有，没错泰勒插值就是泰勒多项式。</p>
+<p>你可以回去翻翻泰勒公式的引入。</p>
+<p>我给你看看百度百科是怎么介绍的。</p>
+<blockquote>
+<p>在数学中，<strong>泰勒公式</strong>（英语：Taylor&rsquo;sFormula）是一个用函数在某点的信息描述其附近取值的公式。这个公式来自于微积分的<strong>泰勒定理</strong>（Taylor&rsquo;s theorem），泰勒定理描述了一个可微函数，如果函数足够光滑的话，在已知函数在某一点的各阶导数值的情况之下，泰勒公式可以用这些导数值做系数构建一个多项式来近似函数在这一点的邻域中的值，这个多项式称为<strong>泰勒多项式</strong>（Taylor polynomial）。泰勒公式还给出了余项即这个多项式和实际的函数值之间的偏差。</p>
+</blockquote>
+<p>你看哈，<strong>在已知函数在某一点的各阶导数值的情况之下，泰勒公式可以用这些导数值做系数构建一个多项式来近似函数在这一点的邻域中的值</strong>，这不就是插值问题吗？</p>
+<p>也就是说，泰勒公式事实上是已知某一点的各阶导数，然后找了一个多项式，它的各阶导数值恰好是所给的导数值。</p>
+<p>很显然，这就是我们前面说的给导数型的插值问题。其解就是泰勒多项式。</p>
+<p>并且我们知道，泰勒多项式是唯一的。这个证明非常简单，并且我们可以进一步如果你要求到了函数的无穷阶导数恰好是f(x)的各阶导，那么我们知道，你得到的是泰勒级数，也就是函数f(x)的泰勒展开式。这里我们一并证明了。</p>
+$$p(x)=\sum_{n=0}^{+\infty}a_n(x-x_n)^n$$<p>它也满足要求，</p>
+$$x_0$$<p>附近内闭一致收敛于f(x)。</p>
+<p>在这种情况下，不管是n有限的泰勒插值，还是n趋于无穷大的泰勒插值，最终的p(x)都可以逐项求导。</p>
+<p>我们求n阶导看看，</p>
+$$p^{(n)}(x)=n!a_n+(n+1)n*...*3*2a_{n+1}(x-x_0)+...$$$$x=x_0$$$$a_n=$$<p>泰勒多项式对应项的系数，从而插值问题的泰勒多项式是唯一的，函数的泰勒展开式也是唯一的。</p>
+<p>当然，泰勒展开不是本文关心的，我们只关心插值问题的泰勒多项式是唯一的。</p>
+<p>既然如此，我们不禁要问，那已知n个点的函数值的插值问题其解是不是唯一的呢？</p>
+<h3 id="已知函数值的插值问题的唯一性">已知函数值的插值问题的唯一性
+</h3><p>看标题就知道了，当然是唯一的。</p>
+$$p(x)=a_0+a_1x+a_2x+...+a_nx^n$$<p>这里有n+1个系数，所以我们需要给定n+1个不同的点，或者说<strong>n+1个点需要用n次插值多项式插值</strong>。</p>
+<p>如果我们将这n+1个点代入就能得到</p>
+<p>$a_0+a_1x_i+a_2x_i+&hellip;+a_nx_i^n=y_i$</p>
+<p>显然，这是一个线性方程组，并且还有更令人兴奋的，</p>
+<p>它的系数矩阵的行列式就是范德蒙德行列式。</p>
+<p>从而，其系数矩阵的行列式是$x_i-x_j$的乘积，又由于这n+1个点是不同的，所以它的系数矩阵的行列式不为0。</p>
+<p>那么根据克莱姆法则，这个线性方程组就有唯一解。</p>
+<p>所以插值多项式是唯一的。</p>
+<p>下一个问题自然就是怎么求解了。</p>
+<h3 id="拉格朗日插值">拉格朗日插值
+</h3><p>你是可以硬解刚刚的方程组啦，但是这有点痛苦。</p>
+<p>拉格朗日插值的方法是，这样的：</p>
+$$p(x_i)=y_i$$<p>吗？</p>
+$$l_k(x)$$$$x_k$$$$x_1,x_2,x_3,...,x_n$$$$x_k$$<p>)取0,</p>
+$$y_i l_k(x)$$<p>$吗？</p>
+<p>这就是拉格朗日插值法的思想。</p>
+$$l_k(x)$$<p>被称为插值基函数。</p>
+<p>那么我们怎么找到插值基函数呢？</p>
+$$l_k(x)$$$$l_k(x)$$<p>有因子</p>
+$$\prod_{i \neq k}(x-x_i)$$$$l_k(x)$$$$x_k$$<p>处取1呢？</p>
+$$x_k$$<p>代入刚刚的可能的因子，把代入的结果除掉不就行了？</p>
+$$l_k(x)=\frac{\prod_{i \neq k}(x-x_i)}{\prod_{i \neq k}(x_k-x_i)}$$<p>这就是拉格朗日插值基函数了。</p>
+<p>则拉格朗日插值多项式就是</p>
+$$p(x)=\sum_{k=1}^n y_k l_k(x)$$<p>这就是<strong>拉格朗日插值公式</strong>了。</p>
+<p>关于插值公式，这个插值公式呢他是一个多项式。</p>
+<p>前面我们说过，n+1个节点要用n次多项式来插值，有时我们也说这样的插值是n次的。或者说，进行了n次插值。</p>
+<p>特殊的，如果是一次插值和二次插值，有时我们会说成是线性插值和抛物插值。</p>
+<p>接下来，如果我们把拉格朗日插值进一步优化，你就能得到埃特金插值。</p>
+<h3 id="埃特金插值">埃特金插值
+</h3><p>当然，这个埃特金插值说的优化但其实不是优化公式本身，而是给计算过程进行了优化。</p>
+$$x_{n+1}$$<p>，我们能在前面得到的插值多项式的基础上直接优化改进，直接以很小的计算量算出新的插值多项式。</p>
+<p>埃特金插值源于这样的观察，首先我们要画一张这样的差值表<img src="https://i-blog.csdnimg.cn/blog_migrate/80b987baf074b6eb4e19d6bd92d03782.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="插值表"
+	
+	
+></p>
+<p>第一列是已知的点的横坐标，第二列是纵坐标。</p>
+<p>我们在表的最上面一项和其他项之间进行线性插值，你会发现得到了第三列，也就是两个节点的线性插值。</p>
+<p>如果在第三列的基础上再进行这样的线性插值得到的刚好是三个点的二次插值。</p>
+<p>进一步地，如果在n次插值的基础上再进行线性插值就会得到n+1次插值多项式。</p>
+$$x_0,x_1,x_2,x_3$$<p>的三次插值多项式，可以按表的方式计算到第五列。</p>
+$$x_4$$<p>这个点，只需要计算表最下面一列就可以得到新的四次插值多项式了。</p>
+<p>这就是埃特金插值，也称为埃特金逐次插值法。</p>
+<h3 id="牛顿插值">牛顿插值
+</h3><p>不过我更建议大家用牛顿插值。</p>
+<p>因为牛顿插值在前面两种方法的基础上进一步优化，他也保证了<strong>承袭性</strong>，并且我们可以直接掏出一个公式。</p>
+<p>牛顿插值源于对拉格朗日插值基函数的观察。</p>
+<p>你看哈</p>
+$$l_0(x)=y_0$$$$l_1(x)=y_0\frac{x-x_1}{x_0-x_1}+y_1\frac{x-x_0}{x_1-x_0}$$<p>有没有什么联系？</p>
+<p>似乎很难看出来，但如果是这样的式子呢？</p>
+$$l_1(x)=y_0\frac{x-x_1}{x_0-x_1}+y_1\frac{x-x_0}{x_1-x_0}=y_0+\frac{y_1-y_0}{x_1-x_0}(x-x_0)$$<p>这下一眼就看出来了吧。</p>
+$$l_1(x)=l_0(x)+\frac{y_1-y_0}{x_1-x_0}(x-x_0)$$<p>更进一步地，可以发现</p>
+$$l_2(x)=l_1(x)+\frac{\frac{y_1-y_0}{x_1-x_0}-\frac{y_2-y_1}{x_2-x_1}}{x_2-x_0}(x-x_0)(x-x_1)$$<p>大佬这注意力真是恐怖如斯啊！！！</p>
+<p>反正这个式子交给我我是不可能注意到的。</p>
+<p>但是现在结论已经公之于众了，而且结论非常漂亮。</p>
+$$l_{n+1}(x)=l_n(x)+$$<p>一个式子。</p>
+$$(x-x_0)(x-x_1)...(x-x_{n-1})$$<p>而前面那个分式，分母是$x_{n-1}-x_0$，分子是两个式子作差，而减式和被减式的结构还是这个式子原本的结构（递归了）。</p>
+<p>前面那个分式就被我们称为<strong>差商</strong>。</p>
+<p>我们现在递归定义差商，</p>
+<p>参照百度百科的定义就是<img src="https://527a87a9.cloudflare-imgbed-bo7.pages.dev/file/1734754175334_%e5%b7%ae%e5%95%86%e5%ae%9a%e4%b9%89.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="差商定义.png"
+	
+	
+></p>
+<p>不过我肯定是不能直接抛给你这玩意儿的，虽然很严谨没错，但是你很难看懂。</p>
+<p>我们真正计算差商的方式是列差商计算表。</p>
+<p><img src="https://527a87a9.cloudflare-imgbed-bo7.pages.dev/file/1734754315408_%e5%b7%ae%e5%95%86%e8%ae%a1%e7%ae%97%e8%a1%a8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="差商计算表.png"
+	
+	
+></p>
+<p>这个还是百度百科的图。</p>
+<p>但是单看这个表你可能还是不容易理解，所以我又找了一张图。</p>
+<p><img src="https://527a87a9.cloudflare-imgbed-bo7.pages.dev/file/1734754388586_%e5%b7%ae%e5%95%86%e8%a7%a3%e9%87%8a%e5%9b%be.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="差商解释图.png"
+	
+	
+></p>
+<p>这张图来自B站UP主@<a class="link" href="https://space.bilibili.com/11008987"  target="_blank" rel="noopener"
+    >泰勒猫爱丽丝</a>的<a class="link" href="https://www.bilibili.com/video/BV1du411a7qB"  target="_blank" rel="noopener"
+    >视频</a>，BV号BV1du411a7qB。</p>
+<p>这其实就是差商计算表但是他上了个色，现在就简洁好看多了。</p>
+<p>第一列还是插值点的横坐标，第二列是纵坐标。</p>
+$$x_i$$$$f[x_i]$$<p>。（归纳奠基）</p>
+<p>接着相邻两项作差当1阶差商的分子。</p>
+$$f[x_1,x_2]$$$$f[x_2]-f[x_1]$$<p>那么分母呢？</p>
+$$f[x_2]$$$$x_2$$$$f[x_1]$$$$x_1$$$$x_2-x_1$$<p>就是分母了。</p>
+$$f[x_1,x_2]=\frac{f[x_2]-f[x_1]}{x_2-x_1}$$$$f[x_i,x_{i+1},...,x_j]=\frac{f[x_{i+1},x_{i+2},...,x_j]-f[x_i,x_{i+1},...,x_{j-1}]}{x_j-x_i}$$<p>。</p>
+$$x_i$$$$x_j$$<p>，这是直接从式子里看出差商规律的办法。</p>
+<p>当然，自己手动计算的话我还是建议用刚刚说的那种上色+差商计算表的方法。</p>
+<h3 id="拉格朗日插值余项">拉格朗日插值余项
+</h3>$$R_n=f(x)-p_n(x)$$<p>。</p>
+<p>下面简单给个拉格朗日插值余项的结论，其定理的证明网上到处都是，我也没必要再赘述了。</p>
+<p>关于拉格朗日插值的误差，有如下的<strong>拉格朗日插值余项定理</strong>，</p>
+<blockquote>
+<p>设[a,b]上有插值节点$x_0,x_1,&hellip;,x_n$，f(x)在[a,b]上有连续的直到n+1阶导数，且希望$f(x_i)=y_i$，</p>
+<p>那么就有当$x \in [a,b]$时，有</p>
+<p>余项$R_n(x)=f(x)-p_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{k=0}^n(x-x_k)$</p>
+<p>其中$\xi \in [a,b]$</p>
+</blockquote>
+<p>这就是拉格朗日插值的余项了。由于插值多项式是唯一的，所以其他的插值方法的余项也是这个。</p>
+<p>聪明的你肯定越看越熟悉啊，这余项怎么感觉和泰勒公式的拉格朗日余项差不多？</p>
+<p>其实还真有关系。我们现在探究的插值任务要么只有导数信息，要么只有函数值信息，如果二者混合呢？</p>
+<h3 id="艾尔米特插值">艾尔米特插值
+</h3><p>还有，你看那个差商的定义，你不觉得和导数是差不多的么？</p>
+<p>现在如果我令插值点具有等间距h，并且令间距h趋于0，所谓的各阶差商就刚好是泰勒公式的系数了。</p>
+<p>再次借用泰勒猫爱丽丝的视频<img src="https://527a87a9.cloudflare-imgbed-bo7.pages.dev/file/1734756141728_%e6%b3%b0%e5%8b%92%e7%b3%bb%e6%95%b0%e7%9a%84%e5%af%bc%e5%87%ba.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="泰勒系数的导出.png"
+	
+	
+></p>
+<p>他的视频实在是太优秀了，希望大家都可以去观摩一下。</p>
+<p>总之，我们按这样的情况推广牛顿插值就能得到兼容函数值信息和导数信息二者是艾尔米特插值方法了。</p>
+$$x_0$$$$x_1$$<p>的函数值。</p>
+<p>那么就有</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>横坐标</th>
+          <th>零阶差商(函数值)</th>
+          <th>一阶差商</th>
+          <th>二阶差商</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$$x_0$$</td>
+          <td>$$f(x_0)$$</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>$$x_0$$</td>
+          <td>$$f(x_0)$$</td>
+          <td>$$f'(x_0)$$</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>$$x_1$$</td>
+          <td>$$f(x_1)$$</td>
+          <td>$$\frac{f(x_0)-f(x_1)}{x_0-x_1}$$</td>
+          <td>$$\frac{f'(x_0)-\frac{f(x_0)-f(x_1)}{x_0-x_1}}{x_0-x_1}$$</td>
+      </tr>
+  </tbody>
+</table></div>
+$$p(x)=f(x_0)+f'(x_0)(x-x_0)+\frac{f'(x_0)-\frac{f(x_0)-f(x_1)}{x_0-x_1}}{x_0-x_1}(x-x_0)(x-x_0)$$<p>你可以把式子化简一下，不过我这里化简了反而不利于观察出式子的来历，所以就不动了。</p>
+$$x_0$$$$x_1$$<p>的函数值的艾尔米特插值结果了。</p>
+<h3 id="误差的事后估计回看埃特金插值">误差的事后估计：回看埃特金插值
+</h3><p>现在插值体系已经比较完备了，这里我想做的是其他的事，就是让你也看出埃特金插值。</p>
+<p>额，牛顿插值你想直接看出来的话我也没有什么太好的办法，没法分享了。</p>
+<p>我提供一个通过误差的事后估计看出埃特金插值的办法。</p>
+$$x_0,x_1,x_2$$$$x_0,x_1$$$$x_1,x_2$$<p>之间进行一次线性插值，可以得到两个插值多项式。</p>
+$$f(x)=\sqrt{x}$$$$x_0=100,x_1=121,x_2=144$$$$\sqrt{115}$$<p>的近似值。</p>
+$$x_0,x_1$$$$\sqrt{115}\approx10.71428$$$$x_1,x_2$$$$x'=115$$$$\sqrt{115}\approx10.68182$$<p>。</p>
+<p>接下来我们有办法用这两个近似值得到精度更高的近似值。</p>
+$$y'_1,y'_2$$<p>。</p>
+<p>那么依据拉格朗日余项定理，有</p>
+$$f(x')-y'_1=\frac{f"(\alpha)}{2}(x'-x_0)(x'-x_1)$$$$f(x')-y'_2=\frac{f"(\beta)}{2}(x'-x_1)(x'-x_2)$$$$f''(\alpha)\approx f''(\beta)$$<p>，然后两式相除就有，</p>
+$$\frac{f(x')-y'_1}{f(x')-y'_2}=\frac{x'-x_1}{x'-x_2}$$<p>把分子分母颠倒一下就是</p>
+$$\frac{f(x')-y'_2}{f(x')-y'_1}=\frac{x'-x_2}{x'-x_1}$$<p>再分离常数就有</p>
+$$1+\frac{y_1'-y_2'}{f(x')-y_1'}=1+\frac{x_1-x_2}{x'-x_1}$$<p>从而两边同时减去1，</p>
+$$\frac{y_1'-y_2'}{f(x')-y_1'}=\frac{x_1-x_2}{x'-x_1}$$<p>因此，</p>
+$$f(x')-y_1'=\frac{x'-x_1}{x_2-x_1}(y_2'-y_1')$$$$f(x')-y_1'\approx\frac{x'-x_1}{x_2-x_1}(y_2'-y_1')$$<p>这样的话，我已经知道估计出准确值和近似值的误差了，我再把误差补回去不就是一个更精确的近似值了？</p>
+$$y_1'+\frac{x'-x_1}{x_2-x_1}(y_2'-y_1')$$<p>，对本例就是10.7228。</p>
+<p>你会发现，这个近似值就是抛物插值的结果，这就是误差的事后估计法。</p>
+<p>也就是说，我们通过误差的事后估计法可以使得插值的次数+1，这不就也是埃特金插值？</p>
+<h3 id="龙格现象和过拟合">龙格现象和过拟合
+</h3><p>现在你可能有一个大概的印象，就是说插值点越多，插值次数越高精度越高。</p>
+<p>但其实并不是这样的。在机器学习领域有一个叫过拟合的词，说的是你啊用这种方式拼命堆数据大力出奇迹，结果反而会变差。</p>
+<p>例如，你搞了一个分辨叶子的模型，然后给他喂了一万张叶子图片，结果里面的叶子都是带锯齿的，所以模型学习到了带锯齿的东西是叶子，从而你给他一个没锯齿的叶子他会判否，给他个有锯齿的其他东西他却说是叶子。</p>
+<p>我们插值也有类似的过拟合现象。</p>
+$$x^100$$<p>次方，你x稍微变一下，y就会差很多，从而会导致你的插值多项式在端点处震荡地非常离谱，导致精度反而下降了。这就是龙格现象，我个人觉得也是一种过拟合。</p>
+<p>参考百度百科的图，</p>
+<p><img src="https://bkimg.cdn.bcebos.com/pic/7a899e510fb30f24cbdb82a3cb95d143ac4b03c8?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536"
+	
+	
+	
+	loading="lazy"
+	
+		alt="龙格现象"
+	
+	
+></p>
+<p>你会看到，高次插值多项式在两个端点处疯狂震荡，这样反而会导致精度下降。</p>
+<h3 id="分段低次插值">分段低次插值
+</h3><p>那么怎么解决这个问题呢？答案是用多次低次插值来拟合函数。</p>
+<p>你给了我1,2,3,4,5,6,7,8,9,10这10个点的信息，我怎么做呢？</p>
+<p>我拼一个分段函数给你，x在[i,i+1]的时候，表达式就是i和i+1的线性插值。</p>
+<p>当然，也可以是x在[i-1,i+1]的时候，表达式是i-1,i,i+1的二次插值等等。</p>
+<p>总之就是给你这样的分段函数，并且他们的插值次数都不高。</p>
+<p>这就是分段低次插值。</p>
+<p>但是这样的插值还是有问题，他在分界点往往不可导，这是我们不希望看到的。</p>
+<h3 id="样条插值">样条插值
+</h3><p>所以样条插值应运而生。</p>
+<p>其实理论说起来也比较简单。</p>
+<p>例如还是已知1,2,3,4,5,6,7,8,9,10的信息。</p>
+<p>我把他分成[1,2],[2,3],&hellip;,[9,10]这样的9段。</p>
+<p>每一段我都用一个三次函数拟合（这个函数被称为样条函数，这样的样条插值被称为三次样条插值，当然你也可以通过改变段的分法来改变样条函数的次数）。</p>
+<p>在这里每一段只有两个点，按道理线性插值就足以了啊，为什么要用三次函数呢？</p>
+<p>这是因为我要强行加条件了，我要求这个样条函数在分界点连续，即2,3,4,5,6,7,8,9处函数值相等。</p>
+<p>这是附加了8个条件。</p>
+<p>而原本有9个三次函数，每个三次函数有4个系数，也就是需要36个条件。</p>
+<p>现在只用了8个，还绰绰有余呢。</p>
+<p>现在我再加强条件，要求样条函数在分界点一阶可导，即要求分界点左右导数相等，这又是8个条件。</p>
+<p>进一步，我还要求二阶可导，又是8个条件。</p>
+<p>这才用了24个条件。还剩下12个条件。</p>
+<p>当然，我自然是需要要求函数在1到10每个点上函数值等于所给的需要插值的函数值的，所以还有2个条件。</p>
+<p>这两个条件给1和10这两个最后的边界点，可以是规定边界点的一阶导或者二阶导都可以，反正把这两个条件用了就可以了。</p>
+<p>然后用计算机来求解就ok了。</p>
+<p>额，你不会觉得36元一次方程组我要手算吧，不会吧不会吧。</p>
+<p>真的有那个毅力手算的朋友，告诉你一下，最后的线性方程组是一个三对角方程组，后面我会介绍追赶法求解三对角方程组的方法的，这种方程最好用那个方法解。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 ColaBlack
+    </section>
+    
+    <section class="powerby">
+        
+            一个小网站，用于文档查阅 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+  
+  const cssPath = "https://ColaBlack.github.io/waifu/waifu.css"
+  const tipsJsonPath = "https://ColaBlack.github.io/waifu/waifu-tips.json"
+  
+  const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+  
+  function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+          let tag;
+          if (type === "css") {
+              tag = document.createElement("link");
+              tag.rel = "stylesheet";
+              tag.href = url;
+          }
+          else if (type === "js") {
+              tag = document.createElement("script");
+              tag.src = url;
+          }
+          if (tag) {
+              tag.onload = () => resolve(url);
+              tag.onerror = () => reject(url);
+              document.head.appendChild(tag);
+          }
+      });
+  }
+
+  
+  if (screen.width >= 768) {
+      Promise.all([
+          loadExternalResource(cssPath, "css"),
+          loadExternalResource(live2d_path + "live2d.min.js", "js"),
+          loadExternalResource(live2d_path + "waifu-tips.js", "js")
+      ]).then(() => {
+          
+          initWidget({
+              waifuPath: tipsJsonPath,
+              cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+              tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+          });
+      });
+  }
+</script>
+
+    </body>
+</html>
