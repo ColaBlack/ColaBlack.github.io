@@ -7,7 +7,158 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Sat, 21 Dec 2024 15:45:47 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 21 Dec 2024 20:10:44 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数值计算方法(4) 迭代法求解方程</title>
+        <link>https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%954-%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E6%96%B9%E7%A8%8B/</link>
+        <pubDate>Sat, 21 Dec 2024 20:10:44 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%954-%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E6%96%B9%E7%A8%8B/</guid>
+        <description>&lt;p&gt;还是继续数值计算方法的讨论。本文想简要介绍一下如何用迭代法计算方程和方程组的根。这一次的难度低了很多，我写着也是轻松了不少。&lt;/p&gt;
+&lt;p&gt;迭代法求解方程最核心的是利用不动点进行不动点迭代。&lt;/p&gt;
+&lt;h3 id=&#34;不动点迭代&#34;&gt;不动点迭代
+&lt;/h3&gt;&lt;p&gt;在高中阶段你可能学习过这样的叫蛛网图的东西：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://2f7171c5.cloudflare-imgbed-bo7.pages.dev/file/1732947348691_IMG_20241130_141425.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;蛛网图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;蛛网图迭代的极限就是函数的不动点。&lt;/p&gt;
+&lt;p&gt;所谓不动点迭代就是利用了这样的性质。&lt;/p&gt;
+&lt;p&gt;一般地，我们想求解方程f(x)=0，如果我们可以将这个方程转化为x=g(x)，那么g(X)的不动点就是f(x)的零点。&lt;/p&gt;
+&lt;p&gt;而g(x)的不动点又是蛛网图迭代的极限。&lt;/p&gt;
+&lt;p&gt;如果用代数语言表示的话，就是迭代公式&lt;/p&gt;
+$$x_{k+1}=g(x_k)$$&lt;p&gt;这就是不动点迭代求方程的根的方法。&lt;/p&gt;
+&lt;p&gt;当然，如果要更严谨化的说明的话，就是下面的压缩映像原理：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;设g(x)在[a,b]上具有连续的一阶导数，且满足以下条件：&lt;/p&gt;
+&lt;p&gt;1.$\forall x \in [a,b],g(x) \in [a,b]$&lt;/p&gt;
+&lt;p&gt;2.$\exist 0 \le L &amp;lt;1,s.t. \forall x\in [a,b],|g&amp;rsquo;(x)|\le L$&lt;/p&gt;
+&lt;p&gt;则迭代过程&lt;/p&gt;
+&lt;p&gt;$x_{k+1}=g(x_k)$收敛，且有误差估计式：&lt;/p&gt;
+&lt;p&gt;$|x^*-x_k|\le \frac{L^k}{1-L}|x_1-x_0|$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这个是简化版的压缩映像原理了，如果你学过《泛函分析和实变函数》那么你见到的压缩映像原理应该是这样的：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;设(X,d)是完备的距离空间，T是其中自身到自身的映射即X→X，如果$\forall x,y\in X,\exist L\in(0,1), d(Tx,Ty) \le Ld(x,y)$（满足这样条件的映射称为压缩映射），则存在唯一的$x^&lt;em&gt;$使得$Tx^&lt;/em&gt;=x^*$&lt;/p&gt;
+&lt;p&gt;用一句话来说就是，完备的距离空间上到自身的压缩映射必有唯一不动点。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;别扯那么多了，还是看简化版的吧。简化版还有误差估计式嘞。&lt;/p&gt;
+&lt;p&gt;从简化版的误差估计式看，k越大估计值$x_k$会离准确值$x^*$越来越近。&lt;/p&gt;
+&lt;p&gt;这就足以为不动点迭代法背书了。&lt;/p&gt;
+&lt;h3 id=&#34;不动点迭代的收敛速度&#34;&gt;不动点迭代的收敛速度
+&lt;/h3&gt;&lt;p&gt;收敛性是已经知道了的，毕竟误差估计式都给出来了。但是各个不动点迭代的收敛速度还是有差别的。&lt;/p&gt;
+&lt;p&gt;我们来考虑第k次迭代后的迭代误差$e_k=x^*-x_k$，如果下一次迭代的迭代误差在k趋于无穷大时和$e_k$的p次方是同阶无穷小我们就说这个迭代是p阶收敛的。&lt;/p&gt;
+&lt;p&gt;特别的，p=1称为线性收敛，p=2是平方收敛。&lt;/p&gt;
+&lt;p&gt;那我怎么知道一个迭代方法是几阶收敛的呢？其实很简单，我们要求解的是x=g(x)嘛，你在$x=x_k$处把$x^*$泰勒展开一下。&lt;/p&gt;
+&lt;p&gt;$g(x_k)=g(x^&lt;em&gt;)+g&amp;rsquo;(\alpha)(x^&lt;/em&gt;-x_k)+\frac{g&amp;rsquo;&amp;rsquo;(\alpha)}{2}(x_k-x^*)^2+&amp;hellip;$&lt;/p&gt;
+&lt;p&gt;因为我们求解的是x=g(x)，所以$e_k=x^&lt;em&gt;-x_k=g(x^&lt;/em&gt;)-g(x_k)=g&amp;rsquo;(\alpha)(x^&lt;em&gt;-x_k)+\frac{g&amp;rsquo;&amp;rsquo;(\alpha)}{2}(x_k-x^&lt;/em&gt;)^2+&amp;hellip;$&lt;/p&gt;
+&lt;p&gt;所以如果g(x)在不动点$x^*$附近的1阶导，2阶导，3阶导，&amp;hellip;，p-1阶导都是0，而p阶导不为0，不就说明它是p阶收敛的了？&lt;/p&gt;
+&lt;p&gt;这不就结了。&lt;/p&gt;
+&lt;p&gt;接下来的迭代方法都是基于不动点迭代得出的，所以他们的收敛速度也是用这个方法求解的，就不多嘴了。&lt;/p&gt;
+&lt;h3 id=&#34;迭代法的加速&#34;&gt;迭代法的加速
+&lt;/h3&gt;&lt;p&gt;现在我们分析出了不动点迭代的收敛速度，那么问题就来了，有些时候这个收敛速度非常慢，有没有办法加快？&lt;/p&gt;
+&lt;p&gt;可以的，我们还是用误差事后估计的方法加速，这个方法好像每一节都有的样子你应该也熟悉了吧。&lt;/p&gt;
+&lt;p&gt;针对迭代公式$x_{k+1}=g(x_k)$，它与准确值的误差$x^&lt;em&gt;-x_{k+1}=g(x^&lt;/em&gt;)-g(x_k)=g&amp;rsquo;(\alpha)(x^*-x_k)$&lt;/p&gt;
+&lt;p&gt;又是拉格朗日中值定理，how old are U？（怎么老是你？）&lt;/p&gt;
+&lt;p&gt;我们还是认为g(x)的导数值变化不大，是一个常数L，则我们估计出了$x_{k+1}$的误差，从而可以得到更好的近似值也就是把$x^*$解出来，得到&lt;/p&gt;
+&lt;p&gt;$x^*\approx \frac{1}{1-L}x_{k+1}-\frac{L}{1-L}x_k$&lt;/p&gt;
+&lt;p&gt;这是一个更好的近似值，接下来再用这个更好地近似值进行迭代这就实现了加速。&lt;/p&gt;
+&lt;h3 id=&#34;埃特金算法&#34;&gt;埃特金算法
+&lt;/h3&gt;&lt;p&gt;但是上面的加速方法还可以优化一下，其最大的问题就是这个L取啥。&lt;/p&gt;
+&lt;p&gt;其实这个问题也很简单，我们直接不想了啊哈哈。&lt;/p&gt;
+&lt;p&gt;直接解决掉问题本身，解决掉提出问题的人。&lt;/p&gt;
+&lt;p&gt;额我的意思是，我们把L消了。&lt;/p&gt;
+&lt;p&gt;你再迭代一次得到$x_{k+1}&amp;rsquo;=g(x_{k+1})$，然后再用拉格朗日中值定理得到&lt;/p&gt;
+&lt;p&gt;$x^&lt;em&gt;-x_{k+1}&amp;rsquo;\approx L(x^&lt;/em&gt;-x_{k+1})$&lt;/p&gt;
+&lt;p&gt;和前面第一次迭代得到的$x^&lt;em&gt;-x_{k+1}=L(x^&lt;/em&gt;-x_k)$相除就消掉L了，这样就不用考虑了。&lt;/p&gt;
+&lt;p&gt;然后我们把$x^&lt;em&gt;$解出来，得到$x^&lt;/em&gt;=x_{k+1}&amp;rsquo;-\frac{(x_{k+1}&amp;rsquo;-x_{k+1})^2}{x_{k+1}&amp;rsquo;-2x_{k+1}+x_{k}}$&lt;/p&gt;
+&lt;p&gt;这又是更好的近似值，然后把这个近似值代入原来的迭代公式进行迭代，这也实现了加速。这就是埃特金算法。&lt;/p&gt;
+&lt;h3 id=&#34;牛顿迭代法&#34;&gt;牛顿迭代法
+&lt;/h3&gt;&lt;p&gt;我们说了这么多其实都是基于已经将这个方程转化为x=g(x)，然后用迭代公式$x_{k+1}=g(x_k)$求解。&lt;/p&gt;
+&lt;p&gt;但是我们不知道如何把方程转化为x=g(x)，牛顿迭代法就是解决了这个问题。&lt;/p&gt;
+&lt;p&gt;思路其实也非常简单，我们知道微分有dy=f&amp;rsquo;(x)dx，于是$f(x)-f(x_k) \approx f&amp;rsquo;(x_k)(x-x_k)$。&lt;/p&gt;
+&lt;p&gt;从而$f(x)=f(x_k)+f&amp;rsquo;(x_k)(x-x_k)=0$&lt;/p&gt;
+&lt;p&gt;那么$x=x_k-\frac{f(x_k)}{f&amp;rsquo;(x_k)}$，完成啦！&lt;/p&gt;
+&lt;p&gt;我们把f(x)=0转化为了x=g(x)的形式了，从而再使用不动点迭代得到f(X)根的迭代公式：&lt;/p&gt;
+&lt;p&gt;$x_{k+1}=x_k-\frac{f(x_k)}{f&amp;rsquo;(x_k)}$&lt;/p&gt;
+&lt;p&gt;这就是牛顿迭代法。&lt;/p&gt;
+&lt;p&gt;用前面的收敛速度的计算方法可以得到在f(x)=0只有单根的情况下，在单根附近牛顿迭代法是平方收敛的。&lt;/p&gt;
+&lt;h3 id=&#34;牛顿下山法&#34;&gt;牛顿下山法
+&lt;/h3&gt;&lt;p&gt;注意，我说的是在f(x)=0只有单根的情况下，在单根附近牛顿迭代法是平方收敛的。&lt;/p&gt;
+&lt;p&gt;很多时候函数有多根结论就未必是这样的。&lt;/p&gt;
+&lt;p&gt;更有甚者，你的初值点离根太远，牛顿迭代法可能会发散。&lt;/p&gt;
+&lt;p&gt;所以就有了牛顿下山法，为我们选择一个合适的初值点。&lt;/p&gt;
+&lt;p&gt;牛顿下山法是下山法+牛顿法。所谓下山法，就是在不动点迭代的基础上要求每次迭代函数值的绝对值都要下降，也就是要求$|f(x_{n+1})|\le|f(x_k)|$，显然这样的话每次迭代函数值都更接近0，也就有很大的概率是更接近方程的根的。&lt;/p&gt;
+&lt;p&gt;但是事情往往不是那么美妙，因为咱们暂时还没有科学的方法找到下一个迭代的点。&lt;/p&gt;
+&lt;p&gt;这时可以把牛顿法引入进来，我们先用牛顿法进行一次迭代得到&lt;/p&gt;
+&lt;p&gt;$x_{k+1}=x_k-\frac{f(x_k)}{f&amp;rsquo;(x_k)}$&lt;/p&gt;
+&lt;p&gt;然后把这个$x_{k+1}$和$x_k$加权平均作为新的$x_{k+1}&#39;$&lt;/p&gt;
+&lt;p&gt;也就是$x_{k+1}&amp;rsquo;=\lambda x_{k+1} + (1-\lambda)x_k=x_k-\lambda\frac{f(x_k)}{f&amp;rsquo;(x_k)}$&lt;/p&gt;
+&lt;p&gt;这里$0&amp;lt;\lambda \le1$被称为下山因子，我们就是每次迭代找这么一个合适的下山因子。&lt;/p&gt;
+&lt;p&gt;而下山因子怎么找呢？二分呗。&lt;/p&gt;
+&lt;p&gt;诶等等二分法？&lt;/p&gt;
+&lt;p&gt;二分法不也可以求方程的根？&lt;/p&gt;
+&lt;p&gt;所以很多时候我们也会用二分法先得到一个精确解的范围，然后把初值定在里面，然后再用牛顿法或者牛顿下山法。&lt;/p&gt;
+&lt;h3 id=&#34;弦截法&#34;&gt;弦截法
+&lt;/h3&gt;&lt;p&gt;到这里看起来已经非常完美了，至少我是这么认为的。&lt;/p&gt;
+&lt;p&gt;但是实际上，有极少部分函数的导数是很难求解的，所以我们要用差商估计导数，这就是弦截法了。&lt;/p&gt;
+&lt;p&gt;用$f&amp;rsquo;(x) \approx \frac{f(x_k)-f(x_0)}{x_k-x_0}$代入牛顿迭代法，就是弦截法了。&lt;/p&gt;
+&lt;p&gt;如果用$f&amp;rsquo;(x) \approx \frac{f(x_k)-f(x_{k-1})}{x_k-x_{k-1}}$代入牛顿迭代法，就是快速弦截法了。&lt;/p&gt;
+&lt;h3 id=&#34;线性方程组迭代的收敛性&#34;&gt;线性方程组迭代的收敛性
+&lt;/h3&gt;&lt;p&gt;前面说的都是非线性方程，那线性方程呢？一元的情况确实不用费心了，我口算都给你解了。&lt;/p&gt;
+&lt;p&gt;但是现实里的线性方程组往往阶数非常高，所以也需要一个高效的求解方法。我们还是先介绍迭代法。方法其实和前面是类似的所以一并讲解。&lt;/p&gt;
+&lt;p&gt;线性方程组AX=b如果我们可以将其化为X=BX+f，那么用前面所说的不动点迭代法就有迭代公式&lt;/p&gt;
+&lt;p&gt;$X_{k+1}=BX_k+f$&lt;/p&gt;
+&lt;p&gt;这是我们线性方程组迭代法的基石。&lt;/p&gt;
+&lt;p&gt;它的误差：&lt;/p&gt;
+&lt;p&gt;$e_{k+1}=|x^&lt;em&gt;-x_{k+1}|=|BX^&lt;/em&gt;+f-(BX_{k}+f)|=B|X^*-X_k|=Be_k$&lt;/p&gt;
+&lt;p&gt;从而，$e_k=B^ke_0$&lt;/p&gt;
+&lt;p&gt;那么如果$B^k$能收敛于0的话该迭代法就收敛了，用线性代数或者高等代数的知识就能明白这等价于B的谱半径（最大特征值）小于1。&lt;/p&gt;
+&lt;p&gt;现在我们有了对于所有矩阵的收敛性判别法，而对于一些特殊的矩阵不用这么麻烦。&lt;/p&gt;
+&lt;p&gt;比如，&lt;strong&gt;对角占优方程组&lt;/strong&gt;他的雅可比迭代和高斯-赛德尔迭代都是收敛的。&lt;/p&gt;
+&lt;p&gt;这两种迭代方法我们等下讲，但因为这个话题在这了嘛所以我就先说了。&lt;/p&gt;
+&lt;p&gt;证明的话因为没说迭代方法，所以也讲不了，其实你也可以等下自己试试看能不能证出来。&lt;/p&gt;
+&lt;p&gt;我只在这里说一下什么是对角占优方程组。&lt;/p&gt;
+&lt;p&gt;它指的是系数矩阵是对角占优矩阵的方程组。&lt;/p&gt;
+&lt;p&gt;OK，说了和没说一样。&lt;/p&gt;
+&lt;p&gt;所谓对角占优矩阵说的是，主对角线上的元素的绝对值＞同行其他元素的绝对值之&lt;strong&gt;和&lt;/strong&gt;的矩阵。&lt;/p&gt;
+&lt;p&gt;这就明白了吧。&lt;/p&gt;
+&lt;p&gt;而且这个名字现在看着是不是很直观？主对角线上的元素绝对值比你一整行其他元素绝对值的和都大，那是在这一行绝对的制霸啊。&lt;/p&gt;
+&lt;p&gt;这样的矩阵其实一定是可逆阵，这个你也可以证明看看。&lt;/p&gt;
+&lt;h3 id=&#34;雅可比迭代&#34;&gt;雅可比迭代
+&lt;/h3&gt;&lt;p&gt;现在的问题还是和前面一样的，不动点迭代法说的轻巧，但是你怎么把AX=b转化成X=BX+f呢？&lt;/p&gt;
+&lt;p&gt;其中的一种方法就是雅可比迭代法了。&lt;/p&gt;
+&lt;p&gt;对方程组AX=b，我们将A分解为对角阵D，下三角矩阵L，上三角矩阵U使得&lt;/p&gt;
+&lt;p&gt;A=D-L-U。&lt;/p&gt;
+&lt;p&gt;（值得一提的是，这个分解是相当容易的，D就是A的对角元，L取A的下三角去掉主对角线，U取A的上三角去掉主对角线即可）&lt;/p&gt;
+&lt;p&gt;那么AX=b就是&lt;/p&gt;
+&lt;p&gt;(D-L-U)X=b&lt;/p&gt;
+&lt;p&gt;然后移项得&lt;/p&gt;
+&lt;p&gt;DX=(L+U)X+b&lt;/p&gt;
+&lt;p&gt;从而$X=D^{-1}(L+U)X+D^{-1}b$&lt;/p&gt;
+&lt;p&gt;完事了，已经变成X=BX+f的形式了，所以就有迭代公式&lt;/p&gt;
+&lt;p&gt;$X_{k+1}=D^{-1}(L+U)X_k+D^{-1}b$&lt;/p&gt;
+&lt;p&gt;这就是雅可比迭代法了。&lt;/p&gt;
+&lt;p&gt;但是这个方法可以稍微变一下，我们移项的时候不一定要把L和U全部移走，这就是高斯-赛德尔迭代法了。&lt;/p&gt;
+&lt;h3 id=&#34;高斯-赛德尔迭代法&#34;&gt;高斯-赛德尔迭代法
+&lt;/h3&gt;&lt;p&gt;还是安装雅可比迭代的步骤我们得到，(D-L-U)X=b移项但是只移U得到&lt;/p&gt;
+&lt;p&gt;(D-L)X=UX+b&lt;/p&gt;
+&lt;p&gt;然后得到$X=(D-L)^{-1}UX+(D-L)^{-1}b$&lt;/p&gt;
+&lt;p&gt;于是就有迭代公式$X_{k+1}=(D-L)^{-1}UX_k+(D-L)^{-1}b$&lt;/p&gt;
+&lt;p&gt;但是我们一般不会这么使用，而是再等式两边再乘以D-L得到&lt;/p&gt;
+&lt;p&gt;$(D-L)X_{k+1}=UX_k+b$&lt;/p&gt;
+&lt;p&gt;从而$DX_{k+1}=LX_{k+1}+UX_k+b$&lt;/p&gt;
+&lt;p&gt;所以$X_{k+1}=D^{-1}LX_{k+1}+D^{-1}UX_k+D^{-1}B$&lt;/p&gt;
+&lt;p&gt;这才是我们一般最爱用的高斯-赛德尔迭代公式。&lt;/p&gt;
+&lt;p&gt;其实到这里，你应该也能自己造出第三个迭代公式了吧。高斯-赛德尔迭代只移了U，那我只移动L行不行？当然也行啊，反正思路就是这么个思路，怎么折腾随便你。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>数值计算方法(3) 数值微分方法</title>
         <link>https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%953-%E6%95%B0%E5%80%BC%E5%BE%AE%E5%88%86%E6%96%B9%E6%B3%95/</link>
         <pubDate>Sat, 21 Dec 2024 15:45:47 +0800</pubDate>
@@ -99,7 +250,63 @@
 &lt;p&gt;你其实是可以任意组合的。&lt;/p&gt;
 &lt;p&gt;但是这样的方法仍然没有脱离求积公式的桎梏，而下面的方法就是重新开了一个方向了。&lt;/p&gt;
 &lt;h3 id=&#34;龙格-库塔方法&#34;&gt;龙格-库塔方法
-&lt;/h3&gt;</description>
+&lt;/h3&gt;&lt;p&gt;这个龙格-库塔方法从另一个角度看问题，他是这么说的。&lt;/p&gt;
+&lt;p&gt;函数f的一阶差商$\frac{f(x_{n+1})-f(x_{n})}{x_{n+1}-x_n}$，因为我们微分方程数值解指的是你给我一个步长h，我求出微分方程的解g(x)在x+h，x+2h,&amp;hellip;等处的函数值，所以分母就是步长h，分子则可以运用拉格朗日中值定理，从而$\frac{f(x_{n+1})-f(x_{n})}{h}=f&amp;rsquo;(\alpha)$&lt;/p&gt;
+&lt;p&gt;于是，$f(x_{n+1})=f(x_n)+hf&amp;rsquo;(\alpha)$&lt;/p&gt;
+&lt;p&gt;你们呐，折腾这么多其实就是在估计$f&amp;rsquo;(\alpha)$！&lt;/p&gt;
+&lt;p&gt;这个$f&amp;rsquo;(\alpha)$被称为函数f在区间内的平均斜率。&lt;/p&gt;
+&lt;p&gt;你可以试试看，显式欧拉就是用函数在左端点的斜率值估计平均斜率，改进欧拉是用两个端点处的斜率的平均值估计斜率。&lt;/p&gt;
+&lt;p&gt;这些估计方式对平均斜率的估计显然精度没有那么高，所以这些方法在计算数值解时的精度自然也不高。&lt;/p&gt;
+&lt;p&gt;那我如果多用一些点来估计函数的平均斜率，精度不就提高了？&lt;/p&gt;
+&lt;p&gt;龙格-库塔方法就是这样的方法。&lt;/p&gt;
+&lt;p&gt;我们在$x_n,x_{n+1}$之间取p个不同点的斜率，计算他们的加权平均，把这个当做平均斜率的估计。&lt;/p&gt;
+&lt;p&gt;那取哪些点呢？这个就是龙格-库塔方法精度高的精髓了。&lt;/p&gt;
+&lt;p&gt;我们以二阶龙格-库塔方法为例进行推导。&lt;/p&gt;
+&lt;p&gt;在这里，龙格-库塔方法的阶数指的就是用的点的数量。&lt;/p&gt;
+&lt;p&gt;在这里我们设要取的点的斜率为$k_1,k_2$，要计算他们的加权平均，所以还需要假设权。&lt;/p&gt;
+&lt;p&gt;所以我们再设平均斜率$k^*=(1-\lambda)k_1+\lambda k_2$&lt;/p&gt;
+&lt;p&gt;我们先取其中一个端点为左端点$x_n$试试水，那么就有$k_1=f(x_n,y_n)$了。&lt;/p&gt;
+&lt;p&gt;接下来我们要找第二个点$x_{n+p},p \in(0,1]$然后计算他的斜率为$k_2$。&lt;/p&gt;
+&lt;p&gt;那怎么找呢？似乎没有头绪了，其实我也没有。不过好在数学家想到了，可以继续用预报-矫正系统啊。&lt;/p&gt;
+&lt;p&gt;我们先用显式欧拉预报一个$y_{n+p}=y_n+phk_1$，那么$k_2=f(x_{n+p},y_{n+p})=f(x_{n+p},y_n+phk_1)$了。&lt;/p&gt;
+&lt;p&gt;呕吼，搞了一圈合着还是俩未知量，一个没消啊。&lt;/p&gt;
+&lt;p&gt;这个方法里真正消元的方法是泰勒展开+比较系数，你可以得到$2\lambda p=1$，并且二阶龙格-库塔方法的阶段误差是$h^3$这个数量级的。&lt;/p&gt;
+&lt;p&gt;也就是说，只要满足$2\lambda p=1$的迭代格式都是二阶龙格-库塔格式，误差都是$h^3$这个数量级的。&lt;/p&gt;
+&lt;p&gt;我们取$p=1,\lambda = \frac{1}{2}$得到的迭代格式就是改进欧拉格式，取$p=\frac{1}{2},\lambda=1$得到的迭代格式我们称为变形的欧拉格式，或者也称为中点格式。&lt;/p&gt;
+&lt;p&gt;$y_{n+1}=y_n+hk_2$&lt;/p&gt;
+&lt;p&gt;$k_1=f(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;$k2=f(x_{n+\frac{1}{2}},y_n+\frac{h}{2}k_1)$&lt;/p&gt;
+&lt;p&gt;如果进一步增加点可以得到三阶、四阶乃至更高阶的龙格-库塔迭代格式不过这个迭代式子啊比较难看了而且也没有什么规律，想了解的话可以自己上网搜寻。他的推导思路倒是和二阶的没什么区别。&lt;/p&gt;
+&lt;p&gt;这里的龙格-库塔方法步长h仍然是任取的，和前面一样，步长太大截断误差太大，步长太小又会加大舍入误差，所以步长也得选一个合适的。&lt;/p&gt;
+&lt;p&gt;那就有了变步长的龙格-库塔方法。其变步长的思路主要是二分法，步长太大就折半，步长太小就加倍，这里也涉及了事后估计啊之类的比较麻烦的推导，就不多说了。&lt;/p&gt;
+&lt;p&gt;龙格-库塔方法还有一个问题，就是他没有充分地利用已经计算好的信息，也就是没有承袭性。&lt;/p&gt;
+&lt;h3 id=&#34;亚当姆斯方法&#34;&gt;亚当姆斯方法
+&lt;/h3&gt;&lt;p&gt;前面说了这么多都是关于迭代格式，也就是算法的讨论，那这部分有没有理论呢？&lt;/p&gt;
+&lt;h3 id=&#34;迭代格式的收敛性和数值稳定性&#34;&gt;迭代格式的收敛性和数值稳定性
+&lt;/h3&gt;&lt;p&gt;其实有的。&lt;/p&gt;
+&lt;p&gt;一个最严重的问题是收敛性问题，也就是我们叭了叭叭bb了老半天，你迭代的$y_n$是否真的趋于准确值。&lt;/p&gt;
+&lt;p&gt;这些方法我都拿出来讲了你应该明白，肯定是收敛的。&lt;/p&gt;
+&lt;p&gt;这玩意儿的证明又涉及到了利普希茨条件，又要搞泰勒展开的，比较麻烦，我就给个文章吧。&lt;/p&gt;
+&lt;p&gt;知乎的@123456写的&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/515389776&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;关于一阶显式和隐式方法收敛性的理论分析&lt;/a&gt;，地址https://zhuanlan.zhihu.com/p/515389776，当然你去网上找其他资料也可以。&lt;/p&gt;
+&lt;p&gt;我这里只给个结论。&lt;/p&gt;
+&lt;p&gt;显式欧拉格式的全局截断误差$|y(x_n)-y_n|\le e^{L(b-a)}|y(x_0)-y_0|+\frac{Mh}{2L}(e^{L(b-a)-1})$，其中$M=\sup|y&amp;rsquo;&amp;rsquo;(x)|$&lt;/p&gt;
+&lt;p&gt;这个全局截断误差有两项，我们说后一项是局部截断误差的累计，而在前一项里，$|y(x_0)-y_0|$是初值条件的误差称为条件误差，e^{L(b-a)}$是条件误差放大倍数，他只于初值问题本身的利普希茨系数L有关。当这个L很大的时候，注意，哪怕是微小的条件误差也会导致显式欧拉格式有很大的全局截断误差，这种情况我们称原问题数值稳定性差。&lt;/p&gt;
+&lt;p&gt;当然，这只是定性的说法，如果要定量的话是这样说的。&lt;/p&gt;
+&lt;p&gt;我们给一个扰动$\delta$，如果迭代格式产生的各个节点的误差均在$\delta$以内，我们就说这个迭代方法是稳定的。&lt;/p&gt;
+&lt;p&gt;但是这个稳定性问题是非常复杂的，这个问题在其他学科还有一个名字叫混沌。&lt;/p&gt;
+&lt;p&gt;2021年的诺贝尔物理学奖就颁给了混沌相关的研究，咱们就不蹚这深水了。&lt;/p&gt;
+&lt;p&gt;我可以告诉你的是，显式欧拉格式是条件稳定的，只有当步长h比较小的时候才稳定。&lt;/p&gt;
+&lt;h3 id=&#34;关于方程组和边值问题&#34;&gt;关于方程组和边值问题
+&lt;/h3&gt;&lt;p&gt;我们扯了那么多，都是在说微分方程的初值问题。那方程组呢？&lt;/p&gt;
+&lt;p&gt;方程组的话其实迭代格式不用改变的，方程组的初值问题不就是$\frac{d\vec{y} }{dx}=f(x,\vec{y})$嘛，你看写成向量不就熟悉了？&lt;/p&gt;
+&lt;p&gt;迭代格式不用发生任何变化。&lt;/p&gt;
+&lt;p&gt;总之，这样就能求解常微分方程组了。&lt;/p&gt;
+&lt;p&gt;而如果是高阶常微分方程，我们知道可以通过换元的方法转化成方程组的求解所以也解决了。&lt;/p&gt;
+&lt;p&gt;而微分方程的边值问题的数值解，上面的方法都用不了，而且求解起来比较复杂。&lt;/p&gt;
+&lt;p&gt;甚至哪怕是上了《常微分方程》课程的人也未必知道微分方程的边值问题是啥吧。&lt;/p&gt;
+&lt;p&gt;所以我就只给个名词了，可以用差商法、有限元法、打靶法等方法求解。&lt;/p&gt;
+</description>
         </item>
         <item>
         <title>数值计算方法(2) 数值积分方法</title>
