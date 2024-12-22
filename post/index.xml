@@ -7,7 +7,29 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Sun, 22 Dec 2024 15:06:59 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 22 Dec 2024 16:31:40 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>多元统计分析(1) 参数估计</title>
+        <link>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%901-%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1/</link>
+        <pubDate>Sun, 22 Dec 2024 16:31:40 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%901-%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1/</guid>
+        <description>&lt;p&gt;上一次玩数值计算方法，唠到矩阵分解说唠不动了，换换口味。那这不就来了。&lt;/p&gt;
+&lt;p&gt;在小学初中高中乃至大学，概率统计都是有部分分量的。但是哪怕是大学考研的课程《概率论与数理统计》都鲜少涉及多元特别是二元以上的统计方法。&lt;/p&gt;
+&lt;p&gt;本系列就专门针对这种多元以上的情况进行分析。&lt;/p&gt;
+&lt;p&gt;第一个部分就是对《概率论与数理统计》的拓展，在这门课里最常见的统计方法就是参数估计以及各种假设检验，还有什么方差分析啊云云。&lt;/p&gt;
+&lt;p&gt;第一期就从参数估计开始。&lt;/p&gt;
+&lt;p&gt;那要唠参数估计的话首先就得有参数吧。&lt;/p&gt;
+&lt;p&gt;这个的话直接把一元的扩展出来就可以了。&lt;/p&gt;
+&lt;h3 id=&#34;多元统计的参量&#34;&gt;多元统计的参量
+&lt;/h3&gt;&lt;p&gt;在多元情况呢，随机变量的维数就不是简单的一维了，所以我们不能用数字来表示随机变量而是要把随机变量化为随机向量。&lt;/p&gt;
+&lt;p&gt;一般地，n维随机变量就要用一个n维向量表示即$X=\begin{pmatrix}
+x_1 \
+x_2 \
+&amp;hellip;\x_n
+\end{pmatrix}$。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>数值计算方法(5) 矩阵分解与线性方程组求解的直接法</title>
         <link>https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%955-%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E4%B8%8E%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3%E7%9A%84%E7%9B%B4%E6%8E%A5%E6%B3%95/</link>
         <pubDate>Sun, 22 Dec 2024 15:06:59 +0800</pubDate>
@@ -501,20 +523,100 @@ $$x_{k+1}=g(x_k)$$&lt;p&gt;这就是不动点迭代求方程的根的方法。&l
 &lt;p&gt;在这里我们设要取的点的斜率为$k_1,k_2$，要计算他们的加权平均，所以还需要假设权。&lt;/p&gt;
 &lt;p&gt;所以我们再设平均斜率$k^*=(1-\lambda)k_1+\lambda k_2$&lt;/p&gt;
 &lt;p&gt;我们先取其中一个端点为左端点$x_n$试试水，那么就有$k_1=f(x_n,y_n)$了。&lt;/p&gt;
-&lt;p&gt;接下来我们要找第二个点$x_{n+p},p \in(0,1]$然后计算他的斜率为$k_2$。&lt;/p&gt;
+&lt;p&gt;接下来我们要找第二个点$x_{n+p}=x_n+ph,p \in(0,1]$然后计算他的斜率为$k_2$。&lt;/p&gt;
 &lt;p&gt;那怎么找呢？似乎没有头绪了，其实我也没有。不过好在数学家想到了，可以继续用预报-矫正系统啊。&lt;/p&gt;
 &lt;p&gt;我们先用显式欧拉预报一个$y_{n+p}=y_n+phk_1$，那么$k_2=f(x_{n+p},y_{n+p})=f(x_{n+p},y_n+phk_1)$了。&lt;/p&gt;
 &lt;p&gt;呕吼，搞了一圈合着还是俩未知量，一个没消啊。&lt;/p&gt;
-&lt;p&gt;这个方法里真正消元的方法是泰勒展开+比较系数，你可以得到$2\lambda p=1$，并且二阶龙格-库塔方法的阶段误差是$h^3$这个数量级的。&lt;/p&gt;
+&lt;p&gt;这个方法里真正消元的方法是泰勒展开+比较系数。&lt;/p&gt;
+&lt;p&gt;我们先对$k_2=f(x_{n+p},y_n+phk_1)$进行泰勒展开，由于$x_{n+p}=x_n+ph$，所以$k_2$实际上是一个二元函数$f(x,y)$的泰勒展开。&lt;/p&gt;
+&lt;p&gt;这个二元函数的泰勒展开，好像只有数学分析介绍了，如果你只学过高等数学的话你应该不知道，所以我这边给一下结论。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果函数f在点$P(x_0,y_0)$的邻域U(P)内有n阶连续的偏导数，则对U(P)内的任意一点$(x_0+h,y_0+k)$，存在$\theta \in (0,1)$，使得&lt;/p&gt;
+&lt;p&gt;$f(x_0+h,y_0+k)=\sum_{p=0}^n\frac{1}{p!}(h\frac{\partial}{\partial x}+k\frac{\partial}{\partial y})^pf(x_0,y_0)+o(\rho),\rho^n=\sqrt{h^2+k^2}$&lt;/p&gt;
+&lt;p&gt;这是二元函数的n阶泰勒公式。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;现在我们来展开一下但是这里只需要展开两项，&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=f(x_n,y_n)+(ph\frac{\partial}{\partial x}+phk_1\frac{\partial}{\partial y})f(x_n,y_n)+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;现在只是单纯的代入了公式，我们来进行计算。&lt;/p&gt;
+&lt;p&gt;先关注偏导数部分。&lt;/p&gt;
+&lt;p&gt;$(ph\frac{\partial}{\partial x}+phk_1\frac{\partial}{\partial y})f(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;这里前面一个括号写的是&lt;strong&gt;偏微分算子&lt;/strong&gt;，其实我们直接把函数$f(x,y)$乘进去就可以了。&lt;/p&gt;
+&lt;p&gt;也就得到$ph\frac{\partial}{\partial x}f(x_n,y_n)+phk_1\frac{\partial}{\partial y}f(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;由于没有给出f(x,y)具体的表达式，所以这里就不能计算f(x,y)的偏导了。&lt;/p&gt;
+&lt;p&gt;把这个结果代入就是最后的展开式了。&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=f(x_n,y_n)+[ph\frac{\partial f(x_n,y_n)}{\partial x}+phk_1\frac{\partial f(x_n,y_n)}{\partial y}]+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;等等，$k_1$是啥？&lt;/p&gt;
+&lt;p&gt;回到前面看看，$k_1=f(x_n,y_n)$&lt;/p&gt;
+&lt;p&gt;而我们解的微分方程是啥来着？$\frac{dy}{dx}=f(x,y)$&lt;/p&gt;
+&lt;p&gt;$x_n,y_n$既然是微分方程解上的点自然也就满足这个微分方程了喽，所以$k_1=f(x_n,y_n)=\frac{dy}{dx}|_{x=x_n}$&lt;/p&gt;
+&lt;p&gt;这么写有点难看，我们把式子弄得漂亮一点。微分方程最后的解是一个关于x的函数，我们设为$y(x)$，那么他的导数就是$y&amp;rsquo;(x)$，他在$x_n$处的导数自然就是$y&amp;rsquo;(x_n)$了。&lt;/p&gt;
+&lt;p&gt;所以$k_1=y&amp;rsquo;(x_n)$&lt;/p&gt;
+&lt;p&gt;也因此&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=f(x_n,y_n)+[ph\frac{\partial f(x_n,y_n)}{\partial x}+phy&amp;rsquo;(x_n)\frac{\partial f(x_n,y_n)}{\partial y}]+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;再等等，刚刚是不是还说了$k_1=f(x_n,y_n)=y&amp;rsquo;(x_n)$来着？&lt;/p&gt;
+&lt;p&gt;这下不是又能代入了？&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=y&amp;rsquo;(x_n)+[ph\frac{\partial f(x_n,y_n)}{\partial x}+phy&amp;rsquo;(x_n)\frac{\partial f(x_n,y_n)}{\partial y}]+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;这时候有些注意力比较集中的人就发现了。&lt;/p&gt;
+&lt;p&gt;k2的式子里面啊，中括号的内容是$ph\frac{\partial f(x_n,y_n)}{\partial x}+phy&amp;rsquo;(x_n)\frac{\partial f(x_n,y_n)}{\partial y}$&lt;/p&gt;
+&lt;p&gt;我们把ph提出来，就是$ph[\frac{\partial f(x_n,y_n)}{\partial x}+y&amp;rsquo;(x_n)\frac{\partial f(x_n,y_n)}{\partial y}]$&lt;/p&gt;
+&lt;p&gt;你看中括号里面的东西。&lt;/p&gt;
+&lt;p&gt;额，也许你看不出来。我给个提示。&lt;/p&gt;
+&lt;p&gt;观察二元函数f(x,y)，这里我们已经假设了y是关于x的函数y(x)，所以这时候我们可以求f(x,y)关于x的全导数，利用复合函数求导法则就可以了。&lt;/p&gt;
+&lt;p&gt;或者画个路径图。&lt;/p&gt;
+&lt;p&gt;f(x,y)首先是关于x,y的二元函数，y又是关于x的一元函数，&lt;/p&gt;
+&lt;p&gt;所以f(x,y)关于x的全导数$\frac{df(x,y)}{dx}=\frac{\partial f}{\partial x}+\frac{\partial f}{\partial y}\frac{dy}{dx}$&lt;/p&gt;
+&lt;p&gt;我把式子写全&lt;/p&gt;
+&lt;p&gt;$\frac{df(x,y)}{dx}=\frac{\partial f(x,y)}{\partial x}+\frac{\partial f(x,y)}{\partial y}\frac{dy(x)}{dx}$&lt;/p&gt;
+&lt;p&gt;我取f(x,y)在点$(x_n,y_n)$的全导数，&lt;/p&gt;
+&lt;p&gt;这特么，不就是括号里的$\frac{\partial f(x_n,y_n)}{\partial x}+y&amp;rsquo;(x_n)\frac{\partial f(x_n,y_n)}{\partial y}$吗？&lt;/p&gt;
+&lt;p&gt;所以又能化简了。&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=y&amp;rsquo;(x_n)+ph\frac{df(x_n,y_n)}{dx}+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;我再问一遍，我们要求解的微分方程是什么？&lt;/p&gt;
+&lt;p&gt;$\frac{dy}{dx}=f(x,y)$&lt;/p&gt;
+&lt;p&gt;所以，$f(x_n,y_n)=\frac{dy(x_n)}{dx}$&lt;/p&gt;
+&lt;p&gt;那$f(x_n,y_n)$再对x求一阶导是啥？&lt;/p&gt;
+&lt;p&gt;不就是$y(x)$在$x_n$处的二阶导$y&amp;rsquo;&amp;rsquo;(x_n)$吗？&lt;/p&gt;
+&lt;p&gt;所以又能化简了。&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=y&amp;rsquo;(x_n)+phy&amp;rsquo;&amp;rsquo;(x_n)+o(\rho ^2)$&lt;/p&gt;
+&lt;p&gt;最后还有个小尾巴，$o(\rho^2)$是啥？&lt;/p&gt;
+&lt;p&gt;回去看看泰勒公式，$\rho^2=(ph)^2+(phk_1)^2$，它和$h^2$是同阶无穷小，所以$o(\rho^2)=o(h^2)$&lt;/p&gt;
+&lt;p&gt;所以到了最后，&lt;/p&gt;
+&lt;p&gt;$k_2=f(x_n+ph,y_n+phk_1)=y&amp;rsquo;(x_n)+phy&amp;rsquo;&amp;rsquo;(x_n)+o(h^2)$&lt;/p&gt;
+&lt;p&gt;$k_1$我们说了是$f(x_n,y_n)=f&amp;rsquo;(x_n)$&lt;/p&gt;
+&lt;p&gt;代入我们的迭代格式$y_{n+1}=y_n+h[(1-\lambda)k_1+\lambda k_2]$&lt;/p&gt;
+&lt;p&gt;得到&lt;/p&gt;
+&lt;p&gt;$y_{n+1}=y_n+hy&amp;rsquo;(x_n)+\lambda ph^2y&amp;rsquo;&amp;rsquo;(x_n)+o(h^3)$&lt;/p&gt;
+&lt;p&gt;而$y_{n+1}$实际上是y(x)在$x_{n+1}$的取值$y(x_{n+1})=y(x_n+h)$&lt;/p&gt;
+&lt;p&gt;这时候我们还可以把一元函数$y(x)$泰勒展开，展开三项得到&lt;/p&gt;
+&lt;p&gt;$y_{n+1}=y(x_n+h)=y(x_n)+hy&amp;rsquo;(x_n)+\frac{h^2}{2}y&amp;rsquo;&amp;rsquo;(x_n)+o(h^3)$&lt;/p&gt;
+&lt;p&gt;由于泰勒展开是唯一的，所以我们前后得到的两个泰勒展开应该是一样的才对，也就是$\lambda p=\frac{1}{2}$&lt;/p&gt;
+&lt;p&gt;总之，最终结论是$2\lambda p=1$，并且二阶龙格-库塔方法的阶段误差是$h^3$这个数量级的。&lt;/p&gt;
 &lt;p&gt;也就是说，只要满足$2\lambda p=1$的迭代格式都是二阶龙格-库塔格式，误差都是$h^3$这个数量级的。&lt;/p&gt;
 &lt;p&gt;我们取$p=1,\lambda = \frac{1}{2}$得到的迭代格式就是改进欧拉格式，取$p=\frac{1}{2},\lambda=1$得到的迭代格式我们称为变形的欧拉格式，或者也称为中点格式。&lt;/p&gt;
 &lt;p&gt;$y_{n+1}=y_n+hk_2$&lt;/p&gt;
 &lt;p&gt;$k_1=f(x_n,y_n)$&lt;/p&gt;
 &lt;p&gt;$k2=f(x_{n+\frac{1}{2}},y_n+\frac{h}{2}k_1)$&lt;/p&gt;
-&lt;p&gt;如果进一步增加点可以得到三阶、四阶乃至更高阶的龙格-库塔迭代格式不过这个迭代式子啊比较难看了而且也没有什么规律，想了解的话可以自己上网搜寻。他的推导思路倒是和二阶的没什么区别。&lt;/p&gt;
-&lt;p&gt;这里的龙格-库塔方法步长h仍然是任取的，和前面一样，步长太大截断误差太大，步长太小又会加大舍入误差，所以步长也得选一个合适的。&lt;/p&gt;
-&lt;p&gt;那就有了变步长的龙格-库塔方法。其变步长的思路主要是二分法，步长太大就折半，步长太小就加倍，这里也涉及了事后估计啊之类的比较麻烦的推导，就不多说了。&lt;/p&gt;
-&lt;p&gt;龙格-库塔方法还有一个问题，就是他没有充分地利用已经计算好的信息，也就是没有承袭性。是有进一步的改进方法的，他的名字叫亚当姆斯方法，不过这个方法也比较复杂了，并且他还有进一步扩展的预报-矫正系统，这个就不说了。&lt;/p&gt;
+&lt;p&gt;如果我们令$p=\frac{2}{3},\lambda=\frac{3}{4}$，得到的就是休恩公式。&lt;/p&gt;
+&lt;p&gt;如果进一步增加点就可以得到三阶、四阶乃至更高阶的龙格-库塔迭代格式不过这个迭代式子啊比较难看了而且也没有什么规律，想了解的话可以自己上网搜寻。他的推导思路倒是和二阶的没什么区别。&lt;/p&gt;
+&lt;p&gt;龙格-库塔方法的问题呢已经很小了。不过我们还是可以吹毛求疵出来，在计算$y_{n+1}$的时候我们已经算出了$y_1,y_2,&amp;hellip;,y_n$而龙格-库塔方法没有充分地利用这些已经算出来的数据。&lt;/p&gt;
+&lt;h3 id=&#34;亚当姆斯方法&#34;&gt;亚当姆斯方法
+&lt;/h3&gt;&lt;p&gt;如果要利用这些信息你就得到了亚当姆斯方法。&lt;/p&gt;
+&lt;p&gt;亚当姆斯方法可以当做龙格-库塔方法的推广继续用泰勒展开得到，但是你懂的，这非常麻烦。&lt;/p&gt;
+&lt;p&gt;我们换一个简单的方法——利用插值多项式得到。&lt;/p&gt;
+&lt;p&gt;针对微分方程$\frac{dy}{dx}=f(x,y)$，我们两边积分（熟悉的开局）&lt;/p&gt;
+&lt;p&gt;但是这次积分区间不一样，看你想用几个历史信息点了，比如说我想用r+1个历史信息，那就从$x_{n-r+1}$积到$x_{n+1}$，那么左边是函数值的差，右边是一个积分。&lt;/p&gt;
+&lt;p&gt;这个积分呢，我用一个r次插值多项式来近似。&lt;/p&gt;
+&lt;p&gt;那插值节点选哪r个呢？答案是任意。如果我选择包含$x_{n+1}$的前r+1个插值节点得到的就是r+1阶隐式亚当姆斯格式，我选择$x_n$开始的r+1个插值节点得到的就是r+1阶显式亚当姆斯格式。&lt;/p&gt;
+&lt;p&gt;例如，我想得到2阶隐式亚当姆斯方法，我就从$x_n$积到$x_{n+1}$&lt;/p&gt;
+&lt;p&gt;得到$y_{n+1}-y_n=\int_{x_n}^{x_{n+1}}f(x,y)dx$&lt;/p&gt;
+&lt;p&gt;再用过$x_{n+1},x_n$的线性插值多项式$\frac{x-x_{n+1}}{x_n-x_{n+1}}f(x_n,y_n)+\frac{x-x_n}{x_{n+1}-x_{n}}f(x_{n+1},y_{n+1})$近似替代f(x,y)然后算出积分就可以了。&lt;/p&gt;
+&lt;p&gt;结果是$y_{n+1}=y_n+\frac{h}{2}(f_n+f_{n+1})$&lt;/p&gt;
+&lt;p&gt;那如果我取插值节点是$x_n,x_{n-1}$就能得到二阶显式亚当姆斯格式，结果是$y_{n+1}=y_n+\frac{h}{2}(3f_n-f_{n-1})$&lt;/p&gt;
+&lt;h3 id=&#34;亚当姆斯预报-矫正系统&#34;&gt;亚当姆斯预报-矫正系统
+&lt;/h3&gt;&lt;p&gt;很经典的场景出现了。&lt;/p&gt;
+&lt;p&gt;我们同时有显式和隐式迭代格式，而隐式格式里需要提前知道$y_{n+1}$，那$y_{n+1}$哪里来呢？&lt;/p&gt;
+&lt;p&gt;可以由同阶显式迭代格式预报得来。&lt;/p&gt;
+&lt;p&gt;这就是亚当姆斯预报-矫正系统，没啥花头。&lt;/p&gt;
 &lt;p&gt;前面说了这么多都是关于迭代格式，也就是算法的讨论，那这部分有没有理论呢？&lt;/p&gt;
 &lt;h3 id=&#34;迭代格式的收敛性和数值稳定性&#34;&gt;迭代格式的收敛性和数值稳定性
 &lt;/h3&gt;&lt;p&gt;其实有的。&lt;/p&gt;
