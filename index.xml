@@ -250,8 +250,198 @@ d_{11} &amp;amp; 0 &amp;amp; 0 \
 &lt;p&gt;所以形象的说就是有个追赶的过程。&lt;/p&gt;
 &lt;p&gt;因此这个方法的名字叫追赶法。&lt;/p&gt;
 &lt;p&gt;至于你说，我不想用矩阵乘法这么麻烦来算，其实这玩意儿有公式，但是我个人觉得反而更麻烦了，而且公式很难记忆，想知道的话还是自己上网查吧。&lt;/p&gt;
-&lt;p&gt;到这里呢，常见的数值计算方法就罗列得差不多了，剩下来还有一个函数逼近的，什么最小二乘啊之类的，这个有空再更新吧，该换换胃口了。&lt;/p&gt;
-&lt;p&gt;天天搞这个我会疯掉的。&lt;/p&gt;
+&lt;p&gt;最后呢，矩阵分解的气氛都烘托到这里了，再多聊了五毛钱的。&lt;/p&gt;
+&lt;h3 id=&#34;奇异值分解&#34;&gt;奇异值分解
+&lt;/h3&gt;&lt;p&gt;矩阵分解里有两个非常重要的分解，其中一个是谱分解，这个在所有线性代数/高等代数课堂上都会介绍，但是奇异值分解却鲜有说明的。&lt;/p&gt;
+&lt;p&gt;我们知道，矩阵的几何意义是线性变换，而线性变换其实只有两种。&lt;/p&gt;
+&lt;p&gt;一种是伸缩变换，他只改变向量的长度，也就是只伸缩。&lt;/p&gt;
+&lt;p&gt;另一种是正交变换，也就是旋转，它不改变向量的长度以及几何图形的形状。&lt;/p&gt;
+&lt;p&gt;而奇异值分解做的事情是，把一个一般的线性变换A分解成伸缩变换+旋转变换。&lt;/p&gt;
+&lt;p&gt;我们知道，旋转变换的矩阵是正交阵Q（对复数域的矩阵，旋转变换的矩阵是正规阵），而伸缩变换的矩阵是对角阵D。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于线性代数课程不介绍复数域矩阵，在此对正规矩阵进行说明。&lt;/p&gt;
+&lt;p&gt;对于实数域的矩阵有一个操作叫转置，所谓A的转置$A^T$，就是把A的第i行变到第i列。&lt;/p&gt;
+&lt;p&gt;而在复数域的矩阵，和转置对等的叫共轭转置$A^H$，他首先把A中的所有元素取共轭复数，然后再进行转置。&lt;/p&gt;
+&lt;p&gt;由于实数的共轭复数是实数本身，所以对实矩阵的转置其实也可以看做是共轭转置。&lt;/p&gt;
+&lt;p&gt;而在实数域上，我们说如果一个矩阵满足$A=A^T$，就说A是对称矩阵。&lt;/p&gt;
+&lt;p&gt;在复数域上就变成了，如果$A=A^H$则称A是艾尔米特（Hermitian）矩阵。&lt;/p&gt;
+&lt;p&gt;在实数域上，正交阵指的是$A^T=A^{-1}$，&lt;/p&gt;
+&lt;p&gt;而在复数域上我们说正规矩阵指的是$A^H=A^{-1}$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;也就是说我们希望把一个矩阵A分解成QD。&lt;/p&gt;
+&lt;p&gt;但是这是做不到的。&lt;/p&gt;
+&lt;p&gt;实际上我们能做的是这样的。&lt;/p&gt;
+&lt;p&gt;把A对应的线性变换分解为：&lt;/p&gt;
+&lt;p&gt;我先进行一次旋转，然后再进行伸缩，最后再旋转回去。&lt;/p&gt;
+&lt;p&gt;也就是说，我们要找两个正交矩阵P、Q，一个对角矩阵D，使得&lt;/p&gt;
+&lt;p&gt;$A=PDQ^T$&lt;/p&gt;
+&lt;p&gt;这就是奇异值分解了。&lt;/p&gt;
+&lt;p&gt;当然，这件事在复数域上就变成了找两个正规矩阵P、Q，一个对角阵D，使得$A=PDQ^T$。&lt;/p&gt;
+&lt;p&gt;他有很多用途，例如进行低秩估计等，不过与本文无关了。&lt;/p&gt;
+&lt;p&gt;注意，奇异值分解并不要求A是一个方阵，他也不用可逆啊什么的，我们对A没有任何要求。&lt;/p&gt;
+&lt;p&gt;那么问题来了，如何对A进行奇异值分解？&lt;/p&gt;
+&lt;p&gt;非常简单。&lt;/p&gt;
+&lt;p&gt;观察式子$A=PDQ^T$&lt;/p&gt;
+&lt;p&gt;对A进行转置$A^T=QDP^T$&lt;/p&gt;
+&lt;p&gt;然后算一下$AA^T$和$A^TA$看看&lt;/p&gt;
+&lt;p&gt;$AA^T=PD(Q^TQ)DP^T=PDDP^T=PD^2P^T$&lt;/p&gt;
+&lt;p&gt;$A^TA=QD(P^TP)DQ^T=QDDQ^T=QD^2Q^T$&lt;/p&gt;
+&lt;p&gt;由于D是对角阵所以D²也是对角阵，因此上面两个等式不就是对$AA^T,A^TA$进行正交相似对角化吗？&lt;/p&gt;
+&lt;p&gt;也因此$D^2$就是$AA^T,A^TA$的特征值拼成的对角阵。&lt;/p&gt;
+&lt;p&gt;一般地，我们对对角矩阵D的元素是有名字的，而且还有顺序要求。（虽然数学上没有这个限制，但是我们实际计算的时候为了保证D的唯一性所以要求D的元素要从小到大排）&lt;/p&gt;
+&lt;p&gt;我们称D的最大的元素为A的第一奇异值$\sigma_1$，D第二大的元素为第二奇异值$\sigma_2$，以此类推。&lt;/p&gt;
+&lt;p&gt;这样的话，A的第i奇异值$\sigma_i$就是$AA^T,A^TA$的第i大特征值的平方根了。&lt;/p&gt;
+&lt;p&gt;但是你可能又注意到了，一个数的平方根有两个啊，所以我们为了保证唯一性还会要求各奇异值＞0，也就是大家都取算术平方根。&lt;/p&gt;
+&lt;p&gt;所以最后的最后，A的第i奇异值$\sigma_i$就是$AA^T,A^TA$的第i大特征值的算术平方根了。&lt;/p&gt;
+&lt;p&gt;而再观察前面的式子P和Q就是$AA^T,A^TA$的特征向量拼成的矩阵，也可以跟着求得。&lt;/p&gt;
+&lt;p&gt;我们来试试看，对&lt;/p&gt;
+&lt;p&gt;$A=\begin{pmatrix}
+1 &amp;amp; 2  \
+2 &amp;amp; 0  \
+0 &amp;amp; 2
+\end{pmatrix}$进行奇异值分解。&lt;/p&gt;
+&lt;p&gt;首先计算$A^TA$的特征值特征向量，得到特征值为9,4&lt;/p&gt;
+&lt;p&gt;所以A的第一奇异值是3，第二奇异值是2。&lt;/p&gt;
+&lt;p&gt;因此对角阵$D=\begin{pmatrix}
+3 &amp;amp; 0 \
+0 &amp;amp; 2  \
+0 &amp;amp; 0
+\end{pmatrix}$&lt;/p&gt;
+&lt;p&gt;嗯，你会发现，由于A不是方阵，所以D也不是方阵，所以D其实不是对角阵，但是他的第i行第i列还是填的第i奇异值。&lt;/p&gt;
+&lt;p&gt;如果你发现最后奇异值不够用了，少了，那么你就在矩阵里补0就可以了。&lt;/p&gt;
+&lt;p&gt;至于P和Q，我们可以用$A^TA$的特征向量拼出$Q=\begin{pmatrix}
+\frac{1}{\sqrt 5} &amp;amp; \frac{2}{\sqrt 5} \
+\frac{2}{\sqrt 5} &amp;amp; \frac{-1}{\sqrt 5}
+\end{pmatrix}$&lt;/p&gt;
+&lt;p&gt;那P呢，你也可以对$AA^T$继续求特征向量啦，但其实没有必要。&lt;/p&gt;
+&lt;p&gt;你看哈，$A=PDQ^T$，我们两边右乘Q就有$AQ=PD$，从而就有$Aq_i=\sigma_ip_i$，其中$p_i,q_i$是P和Q的特征向量。&lt;/p&gt;
+&lt;p&gt;式子里AQD都是已知的，我们就可以直接求出$q_i$了。&lt;/p&gt;
+&lt;p&gt;（其实，要求P，直接$P=AQD^{-1}$就可以了，也用不着这个什么性质，但我这边特绕远就是为了说奇异值有这个性质而已）&lt;/p&gt;
+&lt;p&gt;类似地，我们还能求出$A^Tp_i=\sigma_i q_i$。&lt;/p&gt;
+&lt;p&gt;奇异值分解在这个系列里的用途主要是，可以用奇异值求矩阵的2-范数。&lt;/p&gt;
+&lt;h3 id=&#34;赋范空间&#34;&gt;赋范空间
+&lt;/h3&gt;&lt;p&gt;我们已经不止一次提到，满足下面八大条的非空集合就是线性空间&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;设V是一个非空集合，P是一个&lt;strong&gt;域（不只是数域）&lt;/strong&gt;。若：&lt;/p&gt;
+&lt;p&gt;1.在V中定义了一种运算，称为加法，即对V中任意两个元素α与β都按某一法则对应于V内惟一确定的一个元素α+β，称为α与β的和。&lt;/p&gt;
+&lt;p&gt;2.在P与V的元素间定义了一种运算，称为纯量乘法（亦称数量乘法），即对V中任意元素α和P中任意元素k，都按某一法则对应V内惟一确定的一个元素kα，称为k与α的积。&lt;/p&gt;
+&lt;p&gt;3.加法与纯量乘法满足以下条件：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;α+β=β+α，对任意α，β∈V.&lt;/li&gt;
+&lt;li&gt;α+(β+γ)=(α+β)+γ，对任意α，β，γ∈V.&lt;/li&gt;
+&lt;li&gt;存在一个元素0∈V，对一切α∈V有α+0=α，元素0称为V的零元.&lt;/li&gt;
+&lt;li&gt;对任一α∈V，都存在β∈V使α+β=0，β称为α的负元素，记为-α.&lt;/li&gt;
+&lt;li&gt;对P中单位元1，有1α=α(α∈V).&lt;/li&gt;
+&lt;li&gt;对任意k，l∈P，α∈V有(kl)α=k(lα).&lt;/li&gt;
+&lt;li&gt;对任意k，l∈P，α∈V有(k+l)α=kα+lα.&lt;/li&gt;
+&lt;li&gt;对任意k∈P，α，β∈V有k(α+β)=kα+kβ，&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;我们可以给线性空间增加内积结构把他变成内积空间（也叫欧几里得空间）。&lt;/p&gt;
+&lt;p&gt;在这里，我们要给他增加距离结构，或者叫范数。&lt;/p&gt;
+&lt;p&gt;所谓范数就是长度的推广，所以我们要求范数满足长度的基本性质。并且要明确，范数的结果是数，所以范数是线性空间内的向量到数的一元映射。&lt;/p&gt;
+&lt;p&gt;设V是数域P上的抽象的线性空间，我们在V上定义V到数域P的映射$| .|$，如果他满足下面三个长度应该满足的基本性质&lt;/p&gt;
+&lt;p&gt;1.非负性：即V上任意抽象的向量的范数都大于等于0，并且只有零向量的范数为0。&lt;/p&gt;
+&lt;p&gt;2.齐次性：即对于V上的任意抽象的向量x，P上的任意数k，有$|kx|=|k||x|$，也就是常数k可以提出来。&lt;/p&gt;
+&lt;p&gt;3.三角不等式：即两边之和大于第三边，也就是对于V上的任意抽象的向量x,y，都有$|x+y|\le|x|+|y|$。&lt;/p&gt;
+&lt;p&gt;那么我们就称映射$| .|$是抽象的线性空间V上的范数，此时我们称V加上范数组成的代数结构为赋范线性空间。&lt;/p&gt;
+&lt;p&gt;以前我们用抽象向量的内积定义过距离，这其实也就意味着由内积空间可以诱导出赋范空间，但是反过来是不行的。也就是我们不能由范数得到内积。&lt;/p&gt;
+&lt;p&gt;在这里，线性空间、内积空间、赋范空间都是抽象的，我们并没有指明所谓是向量一定是高中学的那种n维向量，它完全可以是矩阵、可以是函数、也可以是别的什么东西。&lt;/p&gt;
+&lt;p&gt;那我们取一些特例。&lt;/p&gt;
+&lt;h3 id=&#34;向量范数&#34;&gt;向量范数
+&lt;/h3&gt;&lt;p&gt;对于n维向量$x=(x_1,x_2,x_3,&amp;hellip;,x_n)$，有一类特殊的范数称为p-范数。&lt;/p&gt;
+&lt;p&gt;他是$|x|_p=^\sqrt[p]{x_1^p+x_2^p+&amp;hellip;+x_n^p}$。&lt;/p&gt;
+&lt;p&gt;当p=1时，1-范数就是各分量绝对值的和。&lt;/p&gt;
+&lt;p&gt;当p=2时，就是我们熟知的现实生活中的距离。&lt;/p&gt;
+&lt;p&gt;更特殊的是p=+∞的时候，无穷范数实际上是x的最大分量的绝对值。&lt;/p&gt;
+&lt;p&gt;当然，虽然范数有很多，但是p-范数之间是等价的。&lt;/p&gt;
+&lt;p&gt;也就是说，你搞一个n维向量的点列$x_n$，只要$x_n$的任意一个范数趋于$x_0$，那么$x_n$的其他范数也是趋于$x_0$的。&lt;/p&gt;
+&lt;h3 id=&#34;矩阵范数&#34;&gt;矩阵范数
+&lt;/h3&gt;&lt;p&gt;n维向量有范数，而我们知道，mxn的矩阵全体也是一个抽象线性空间，所以它也能定义范数。&lt;/p&gt;
+&lt;p&gt;一个简单的想法是继续沿用向量p-范数的定义，例如我们定义一个矩阵的范数是各个元素的平方和再开根号。&lt;/p&gt;
+&lt;p&gt;这当然是可以的，只要我们定义的范数满足三个长度的基本性质就可以了。&lt;/p&gt;
+&lt;p&gt;其实我刚刚随口胡诌的范数是矩阵的F-范数。&lt;/p&gt;
+&lt;p&gt;一个更常见的矩阵范数是由刚刚说的向量的p-范数诱导出来的。&lt;/p&gt;
+&lt;p&gt;所以这种范数被称为诱导范数，也称为矩阵的p-范数。&lt;/p&gt;
+&lt;p&gt;他是这么想的，$A$是一个矩阵，但是矩阵乘以向量就得到向量了啊，我们可以用$Ax$的范数定义A的函数。&lt;/p&gt;
+&lt;p&gt;但是取什么样的x呢？&lt;/p&gt;
+&lt;p&gt;答案是取单位向量x，但是单位向量又有无穷多个，又该取哪个呢？&lt;/p&gt;
+&lt;p&gt;这里啊，诱导范数选择的是取$Ax$最大的那个。&lt;/p&gt;
+&lt;p&gt;所以最终矩阵的p-范数定义是，&lt;/p&gt;
+&lt;p&gt;$|A|_p=\max |Ax|_p$&lt;/p&gt;
+&lt;p&gt;其中x是单位向量，也就是x的p-范数为1。&lt;/p&gt;
+&lt;p&gt;但是你在其他地方看到的矩阵范数可能不长这样，他们没有要求x是单位向量而是在范数的结果上除以了x的范数，这是等价的。&lt;/p&gt;
+&lt;p&gt;矩阵p-范数的等价定义是&lt;/p&gt;
+&lt;p&gt;$|A|_p=\max \frac{|Ax|_p}{|x|_p}$&lt;/p&gt;
+&lt;p&gt;但是我们必然是不会傻乎乎地用定义去算矩阵范数的。&lt;/p&gt;
+&lt;p&gt;而是选择直接预制公式。&lt;/p&gt;
+&lt;p&gt;例如矩阵的2-范数其实是A的第一奇异值。&lt;/p&gt;
+&lt;p&gt;比如$A=\begin{pmatrix}
+2 &amp;amp; 1 \
+-2 &amp;amp; 1
+\end{pmatrix}$&lt;/p&gt;
+&lt;p&gt;我们求$A^TA=\begin{pmatrix}
+8 &amp;amp; 0 \
+0 &amp;amp; 2
+\end{pmatrix}$&lt;/p&gt;
+&lt;p&gt;的最大特征值，再开根号就得到了A的第一奇异值，也是A的2-范数。&lt;/p&gt;
+&lt;p&gt;下面给予证明。&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max \frac{|Ax|_2}{|x|_2}$&lt;/p&gt;
+&lt;p&gt;而右边分子分母都是向量的2-范数。&lt;/p&gt;
+&lt;p&gt;我们知道n维向量$x=(x_1,x_2,x_3,&amp;hellip;,x_n)$的2-范数是$\sqrt{(x_1^2+x_2^2+&amp;hellip;+x_n^2)}$，这也可以表示为$\sqrt{x^Tx}$。&lt;/p&gt;
+&lt;p&gt;从而就有&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max \frac{|Ax|_2}{|x|_2}=\max \sqrt{\frac{x^TA^TAx}{x^Tx}}$&lt;/p&gt;
+&lt;p&gt;这里已经出现了熟悉的$A^TA$了。&lt;/p&gt;
+&lt;p&gt;我们对$A^TA$进行正交相似对角化，即找一个单位正交矩阵P和对角阵D使得$A^TA=P^{T}DP$&lt;/p&gt;
+&lt;p&gt;代入得&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max \frac{|Ax|_2}{|x|_2}=\max\sqrt{\frac{x^TP^TD(Px)}{x^Tx}}=\max\sqrt{\frac{(Px)^TD(Px)}{x^Tx}}$&lt;/p&gt;
+&lt;p&gt;由于P是正交矩阵，所以$PP^T=E$&lt;/p&gt;
+&lt;p&gt;那我就在分母动点手脚。&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max\sqrt{\frac{(Px)^TD(Px)}{x^Tx}}=\max\sqrt{\frac{(Px)^TD(Px)}{x^TP^TPx}}=\max\sqrt{\frac{(Px)^TD(Px)}{(Px)^T(Px)}}$&lt;/p&gt;
+&lt;p&gt;现在进行换元，令$y=Px$&lt;/p&gt;
+&lt;p&gt;则&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max\sqrt{\frac{y^TDy}{y^Ty}}$&lt;/p&gt;
+&lt;p&gt;分子分母其实都是关于y的二次型，或者说我们把矩阵乘法展开&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max\sqrt{\frac{y^TDy}{y^Ty}}=\max\sqrt{\frac{\lambda_1y_1^2+\lambda_2y_2+&amp;hellip;+\lambda_ny_n^2}{y_1^2+y_2^2+&amp;hellip;+y_n^2}}$&lt;/p&gt;
+&lt;p&gt;然后进行放缩。&lt;/p&gt;
+&lt;p&gt;我们先给$A^TA$的特征值，也就是A的奇异值进行排序，认为$\lambda_1\ge\lambda_2\ge&amp;hellip;\ge\lambda_n$&lt;/p&gt;
+&lt;p&gt;现在我把所有的$\lambda_i$都放大为$\lambda_1$。&lt;/p&gt;
+&lt;p&gt;就有：&lt;/p&gt;
+&lt;p&gt;$|A|_2=\max\sqrt{\frac{\lambda_1y_1^2+\lambda_2y_2+&amp;hellip;+\lambda_ny_n^2}{y_1^2+y_2^2+&amp;hellip;+y_n^2}}\le \sqrt{\lambda_1\frac{y_1^2+y_2^2+&amp;hellip;+y_n^2}{y_1^2+y_2^2+&amp;hellip;+y_n^2}}=\sqrt{\lambda_1}$&lt;/p&gt;
+&lt;p&gt;现在只要证明&lt;/p&gt;
+&lt;p&gt;$\sqrt{\frac{y^TDy}{y^Ty}}$能取到$\lambda_1$就可以了，这是显然的，我们取$y=(1,0,0,0,0,&amp;hellip;,0)$就可以了。&lt;/p&gt;
+&lt;p&gt;所以最终结论，A的2-范数就是A的第一奇异值。&lt;/p&gt;
+&lt;p&gt;矩阵的1范数和无穷范数就比较简单了。&lt;/p&gt;
+&lt;p&gt;我举个例子秒会算。&lt;/p&gt;
+&lt;p&gt;$A=\begin{pmatrix}
+2 &amp;amp; 1 \
+-2 &amp;amp; 1
+\end{pmatrix}$&lt;/p&gt;
+&lt;p&gt;要算1-范数，就先算每一列元素的绝对值的和即4，2&lt;/p&gt;
+&lt;p&gt;然后取最大的那个。&lt;/p&gt;
+&lt;p&gt;无穷范数就是计算每一行元素的绝对值的和即3,3&lt;/p&gt;
+&lt;p&gt;然后取最大的那个3。&lt;/p&gt;
+&lt;p&gt;也因为1-范数是先算列元素，所以他也叫列范数，无穷范数则叫行范数。&lt;/p&gt;
+&lt;p&gt;这里比较容易把行和列搞反，但是你得知道1是竖着写的，竖着的是列啊！∞是横着写的，横着是行。&lt;/p&gt;
+&lt;p&gt;我们以1-范数为例证明一下。&lt;/p&gt;
+&lt;p&gt;我们把$Ax$写成$\begin{pmatrix}
+a_1, &amp;amp; a_2, &amp;amp; &amp;hellip;&amp;amp;a_n
+\end{pmatrix}\begin{pmatrix}
+x_1 \
+x_2 \&amp;hellip;\x_n
+\end{pmatrix}=a_1x_1+a_2x_2+&amp;hellip;+a_nx_n$&lt;/p&gt;
+&lt;p&gt;然后取范数就有&lt;/p&gt;
+&lt;p&gt;$|Ax|&lt;em&gt;1=|a_1x_1+a_2x_2+&amp;hellip;+a_nx_n|&lt;/em&gt;{1}$&lt;/p&gt;
+&lt;p&gt;再运用三角不等式，&lt;/p&gt;
+&lt;p&gt;$|Ax|&lt;em&gt;1=|a_1x_1+a_2x_2+&amp;hellip;+a_nx_n|&lt;/em&gt;{1}\le|x_1||a_1|_1+|x_2||a_2|_1+&amp;hellip;+|x_n||a_n|_1$&lt;/p&gt;
+&lt;p&gt;然后我们再把$a_i$放大为最大的那个$a_k$&lt;/p&gt;
+&lt;p&gt;$|Ax|&lt;em&gt;1=|a_1x_1+a_2x_2+&amp;hellip;+a_nx_n|&lt;/em&gt;{1}\le|x_1||a_1|_1+|x_2||a_2|_1+&amp;hellip;+|x_n||a_n|_1\le(|x_1|+|x_2|+&amp;hellip;+|x_n|)|a_k|_1$&lt;/p&gt;
+&lt;p&gt;式子左边的括号就是x的1-范数，所以&lt;/p&gt;
+&lt;p&gt;$|Ax|_1\le|x|_1|a_k|_1$&lt;/p&gt;
+&lt;p&gt;而$|A|_1=\max \frac{|Ax|_1}{|x|_1}\le\frac{|x|_1|a_k|_1}{|x|_1}=|a_k|_1$&lt;/p&gt;
+&lt;p&gt;也就是说A的1-范数小于等于第k列的1-范数，而$a_k$是一个向量，他的1-范数就是各分量绝对值的和，所以$|a_k|_1$就是第k列元素绝对值的和。&lt;/p&gt;
+&lt;p&gt;现在只需要说明$|a_k|_1$是能取到的就可以了，这个非常简单，只需取$x_k=1$，其他都为0即可。&lt;/p&gt;
+&lt;p&gt;无穷范数是类似的，差个转置而已，就不浪费时间说明了。&lt;/p&gt;
 </description>
         </item>
         <item>
