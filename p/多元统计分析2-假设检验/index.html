@@ -603,7 +603,7 @@ $$Z=\frac{\mu-\mu_0}{\sqrt{\frac{\sigma^2}{n}}}$$<p>利用该枢轴变量服从�
 </ul>
 <h3 id="相关分析的r语言实现">相关分析的R语言实现
 </h3><p>这个话题本来不应该出现在这里的，但是这部分实在太短，没地方放。</p>
-<p>在R语言中内置了很多相关系数，例如pearson、kendall、spearman相关系数，他们都是用函数<code>cor(x,y,method = &quot;kendall&quot;)</code>给出的。</p>
+<p>在R语言中内置了很多相关系数，例如pearson、kendall、spearman相关系数（没错，统计学里其实有很多相关系数），他们都是用函数<code>cor(x,y,method = &quot;kendall&quot;)</code>给出的。</p>
 <p>这里x,y是待分析的两组数据，method=后面传的是具体的相关系数的名称。</p>
 <p>至于相关分析的检验，其实和前面的没有任何区别，要借助cor.test函数。</p>
 <div class="highlight"><div class="chroma">

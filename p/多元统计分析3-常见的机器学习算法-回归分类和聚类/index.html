@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="在机器学习理论中，回归和分类是最经典的两个有监督学习问题，而聚类则是最经典的无监督学习方法。\n其中，线性回归模型是最简单的一个回归模型，我们以此为例进行介绍。\n">
+<title>多元统计分析(3) 常见的机器学习算法 回归分类和聚类</title>
+
+<link rel='canonical' href='https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%903-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E5%9B%9E%E5%BD%92%E5%88%86%E7%B1%BB%E5%92%8C%E8%81%9A%E7%B1%BB/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="多元统计分析(3) 常见的机器学习算法 回归分类和聚类">
+<meta property='og:description' content="在机器学习理论中，回归和分类是最经典的两个有监督学习问题，而聚类则是最经典的无监督学习方法。\n其中，线性回归模型是最简单的一个回归模型，我们以此为例进行介绍。\n">
+<meta property='og:url' content='https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%903-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E5%9B%9E%E5%BD%92%E5%88%86%E7%B1%BB%E5%92%8C%E8%81%9A%E7%B1%BB/'>
+<meta property='og:site_name' content='ColaBlack个人文档'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-12-26T14:06:47&#43;08:00'/><meta property='article:modified_time' content='2024-12-26T14:06:47&#43;08:00'/>
+<meta name="twitter:title" content="多元统计分析(3) 常见的机器学习算法 回归分类和聚类">
+<meta name="twitter:description" content="在机器学习理论中，回归和分类是最经典的两个有监督学习问题，而聚类则是最经典的无监督学习方法。\n其中，线性回归模型是最简单的一个回归模型，我们以此为例进行介绍。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😜</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ColaBlack个人文档</a></h1>
+            <h2 class="site-description">一个文档，记录我用得上的一些信息。也算不上是什么博客了啦。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/colablack'
+                        target="_blank"
+                        title="gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg t="1731323057361" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4248" width="200" height="200"><path d="M512 992C246.895625 992 32 777.104375 32 512S246.895625 32 512 32s480 214.895625 480 480-214.895625 480-480 480z m242.9521875-533.3278125h-272.56875a23.7121875 23.7121875 0 0 0-23.71125 23.7121875l-0.024375 59.255625c0 13.08 10.6078125 23.7121875 23.6878125 23.7121875h165.96c13.104375 0 23.7121875 10.6078125 23.7121875 23.6878125v11.855625a71.1121875 71.1121875 0 0 1-71.1121875 71.1121875h-225.215625a23.7121875 23.7121875 0 0 1-23.6878125-23.7121875V423.1278125a71.1121875 71.1121875 0 0 1 71.0878125-71.1121875h331.824375a23.7121875 23.7121875 0 0 0 23.6878125-23.71125l0.0721875-59.2565625a23.7121875 23.7121875 0 0 0-23.68875-23.7121875H423.08a177.76875 177.76875 0 0 0-177.76875 177.7921875V754.953125c0 13.1034375 10.60875 23.7121875 23.713125 23.7121875h349.63125a159.984375 159.984375 0 0 0 159.984375-159.984375V482.36a23.7121875 23.7121875 0 0 0-23.7121875-23.6878125z" fill="#707070" p-id="4249"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ColaBlack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#线性回归的r语言实现">线性回归的R语言实现</a></li>
+        <li><a href="#线性判别分析lda">线性判别分析LDA</a></li>
+        <li><a href="#等级聚类层次聚类系统聚类">等级聚类/层次聚类/系统聚类</a></li>
+        <li><a href="#k-means聚类">k-means聚类</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%903-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E5%9B%9E%E5%BD%92%E5%88%86%E7%B1%BB%E5%92%8C%E8%81%9A%E7%B1%BB/">多元统计分析(3) 常见的机器学习算法 回归分类和聚类</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-26</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在机器学习理论中，回归和分类是最经典的两个有监督学习问题，而聚类则是最经典的无监督学习方法。</p>
+<p>其中，线性回归模型是最简单的一个回归模型，我们以此为例进行介绍。</p>
+<h3 id="线性回归的r语言实现">线性回归的R语言实现
+</h3><p>由于线性回归在传统的一元概率论与数理统计课程中已经介绍过了，所以这里直接介绍他的R语言实现。</p>
+<p>线性回归的R语言实现，核心函数是lm。</p>
+<p>而在概率论与数理统计的课程中应该也介绍过广义线性回归模型，例如$y=e^{ax+b}$次方，只需要两边取对数就又是线性回归了。</p>
+<p>这种广义线性回归模型在R语言中借助函数glm实现。</p>
+<p>例如:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 创建数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">y</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="n">x</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 线性回归</span>
+</span></span><span class="line"><span class="cl"><span class="n">model_lm</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">summary</span><span class="p">(</span><span class="n">model_lm</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 广义线性回归（这里是两边取对数后为线性回归）</span>
+</span></span><span class="line"><span class="cl"><span class="n">model_glm</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span><span class="nf">poisson</span><span class="p">(),</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">summary</span><span class="p">(</span><span class="n">model_glm</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这里lm函数语法是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="n">model</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="kc">...</span><span class="p">)</span>		
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>formula</code>: 一个公式对象，指定了因变量和自变量之间的关系。例如，<code>y ~ x</code> 表示 <code>y</code> 是因变量，<code>x</code> 是自变量。</li>
+<li><code>data</code>: 一个数据框，包含了模型中的变量。</li>
+<li><code>...</code>: 其他参数，如 <code>method</code> 指定求解方法。</li>
+</ul>
+<p>在本例中lm的summary是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="n">Call</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nf">lm</span><span class="p">(</span><span class="n">formula</span> <span class="o">=</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Residuals</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">         <span class="m">1</span>          <span class="m">2</span>          <span class="m">3</span>          <span class="m">4</span>          <span class="m">5</span> 
+</span></span><span class="line"><span class="cl"> <span class="m">2.184e-16</span> <span class="m">-4.138e-16</span>  <span class="m">1.514e-16</span>  <span class="m">6.514e-17</span> <span class="m">-2.111e-17</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Coefficients</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">              <span class="n">Estimate</span> <span class="n">Std.</span> <span class="n">Error</span>    <span class="n">t</span> <span class="n">value</span> <span class="nf">Pr</span><span class="p">(</span><span class="o">&gt;|</span><span class="n">t</span><span class="o">|</span><span class="p">)</span>    
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">Intercept</span><span class="p">)</span> <span class="m">-7.944e-16</span>  <span class="m">3.007e-16</span> <span class="m">-2.642e+00</span>   <span class="m">0.0775</span> <span class="n">. </span> 
+</span></span><span class="line"><span class="cl"><span class="n">x</span>            <span class="m">1.000e+00</span>  <span class="m">9.065e-17</span>  <span class="m">1.103e+16</span>   <span class="o">&lt;</span><span class="m">2e-16</span> <span class="o">***</span>
+</span></span><span class="line"><span class="cl"><span class="o">---</span>
+</span></span><span class="line"><span class="cl"><span class="n">Signif.</span> <span class="n">codes</span><span class="o">:</span>  <span class="m">0</span> ‘<span class="o">***</span>’ <span class="m">0.001</span> ‘<span class="o">**</span>’ <span class="m">0.01</span> ‘<span class="o">*</span>’ <span class="m">0.05</span> ‘<span class="n">.’</span> <span class="m">0.1</span> ‘ ’ <span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Residual</span> <span class="n">standard</span> <span class="n">error</span><span class="o">:</span> <span class="m">2.867e-16</span> <span class="n">on</span> <span class="m">3</span> <span class="n">degrees</span> <span class="n">of</span> <span class="n">freedom</span>
+</span></span><span class="line"><span class="cl"><span class="n">Multiple</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="o">:</span>      <span class="m">1</span><span class="p">,</span>     <span class="n">Adjusted</span> <span class="n">R</span><span class="o">-</span><span class="n">squared</span><span class="o">:</span>      <span class="m">1</span> 
+</span></span><span class="line"><span class="cl"><span class="bp">F</span><span class="o">-</span><span class="n">statistic</span><span class="o">:</span> <span class="m">1.217e+32</span> <span class="n">on</span> <span class="m">1</span> <span class="n">and</span> <span class="m">3</span> <span class="n">DF</span><span class="p">,</span>  <span class="n">p</span><span class="o">-</span><span class="n">value</span><span class="o">:</span> <span class="o">&lt;</span> <span class="m">2.2e-16</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p><strong>Call</strong>: 显示了用于拟合模型的 <code>lm()</code> 函数的调用。</p>
+</li>
+<li>
+<p><strong>Residuals</strong>: 是每个数据拟合后的残差，可以看到他们接近于零，这说明模型完美地拟合了数据。</p>
+</li>
+<li>
+<p>Coefficients是系数的意思：</p>
+<ul>
+<li>
+<p><code>(Intercept)</code>: 截距项。</p>
+</li>
+<li>
+<p><code>x</code>: 自变量x的系数。</p>
+<p>表中的第一列是各系数的估计值。</p>
+<p>第二列是标准差。</p>
+<p>第三列是进行显著性检验时需要的t统计量的值。</p>
+<p>第四列是p-value</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Residual standard error</strong>: 残差的标准误差，如果非常小，就说明模型完美地拟合了数据。</p>
+</li>
+<li>
+<p><strong>Multiple R-squared</strong>: 决定系数为 1，这意味着模型解释了所有变异。</p>
+</li>
+<li>
+<p><strong>F-statistic</strong>: F统计量非常大，p值非常小，这表明模型整体上是显著的。</p>
+</li>
+</ul>
+<p>而glm的summary内容和lm的是一样的。</p>
+<p>需要注意的是，glm在调用的时候要额外给出family表示你要对数据进行怎样的变换。</p>
+<p>R语言提供了很多family，例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="nf">binomial</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;logit&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">gaussian</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;identity&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">Gamma</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;inverse&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">inverse.gaussian</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;1/mu^2&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">poisson</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;log&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">quasi</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;identity&#34;</span><span class="p">,</span> <span class="n">variance</span> <span class="o">=</span> <span class="s">&#34;constant&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">quasibinomial</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;logit&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">quasipoisson</span><span class="p">(</span><span class="n">link</span> <span class="o">=</span> <span class="s">&#34;log&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我无法逐一说明，感兴趣就自己上网查询。</p>
+<p>在这里，如果选择poisson就是我们前面举例子的那个情况，拟合$y=e^{ax+b}$次方。</p>
+<p>但是回归分析其实不能光看summary的报告，还得进行回归诊断。</p>
+<p>需要通过残差分析验证拟合后的残差是否合理，通过影响分析观察数据有没有异常点或强影响点，通过共线性诊断判断变量是否有较强的共线性。</p>
+<p>在R语言中进行残差分析只需要使用函数residuals(fit) rstandard(fit) rstudent(fit) （fit为函数lm()生成的对象）就可以计算模型的残差、标准化残差和学生化残差。</p>
+<p>然后可以绘制这样的残差分析图：</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735194638255_%e6%ae%8b%e5%b7%ae%e5%88%86%e6%9e%90%e5%9b%be.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="残差分析图.png"
+	
+	
+></p>
+<p>上图中只有图a是正常的残差，具有随机性。</p>
+<p>b图是很明显的二次曲线，应该在拟合的时候引入交叉型或平方项。</p>
+<p>图c残差在左边靠的很近，右边离得很远呈现喇叭口样式，我们说这种模型主差齐性不成立，你可以试着给Y取个对数、倒数、开平方或者进行box-cox变换再拟合看看。</p>
+<p>图d的话就是观测值不独立。总之，只有图a才是最理想的残差图。</p>
+<p>如果要进行影响分析，也就是查看数据有没有异常点或者强影响点，可以计算数据的标准化残差，如果某个数据的标准化残差大于2小于3，则他是可疑点。但如果他的标准化残差比3大，按照正态分布的$3\sigma$原则，他是异常点。</p>
+<p>当然，其实还可以用帽子矩阵计算杠杆值，如果杠杆值比较大就说明那个样本是强影响点，或者计算库克距离（其实统计学里除了马氏距离还有绝对值距离、闵可夫斯基距离、切比雪夫距离、兰氏距离等很多距离），如果样本的库克距离大于1则是异常点。不过这两个比较进阶高级，你大概率没听过他的理论，也就不再介绍了。在R语言中通过函数<code>influence.measures(fit模型)</code>就可以直接计算前面说的什么库克距离啊之类的统计量了。</p>
+<p>至于共线性诊断，主流的有3种方法，分布是特征值法、条件指数法、方差碰撞因子法。在此只介绍方差膨胀因子法。</p>
+<p>在R语言中，安装扩展包DAAG，然后使用函数<code>vif（fit模型,计算精确到小数点后几位）</code>就可以计算方差膨胀因子了。</p>
+<p>一般我们认为，如果方差碰撞因子＞10则模型有很强的共线性问题，这时候需要用自回归模型来拟合而不是线性模型。</p>
+<p>最后补充一嘴，线性回归还可以通过计算参数CP/AIC/BIC来衡量其优越程度，一般说来这三个参数越小越好。</p>
+<h3 id="线性判别分析lda">线性判别分析LDA
+</h3><p>在机器学习中有很多能实现分类问题的算法，如神经网络（好好好上来就开大是吧）、决策树、朴素贝叶斯分类器、支持向量机等等。我们这里就介绍最最简单的距离判别和线性判别分析lda。</p>
+<p>所谓距离判别，简单地不能再简单了。</p>
+<p>就是一个新样本离哪个总体近就认为这个样本属于哪个总体。</p>
+<p>那什么是样本离总体的距离呢？</p>
+<p>就是样本离该总体的均值的距离。</p>
+<p>好，说完了。</p>
+<p>距离判别只需要你选定一个距离，例如马氏距离。</p>
+<p>然后你计算已知总体的均值。</p>
+<p>接下来，每来一个新的样本，你就计算这个样本到各个总体的均值的距离，然后哪个总体到这个样本的距离最小，这个样本就分类为哪个样本。</p>
+<p>线性判别分析LDA是一种fisher判别法，他先将数据进行线性变换，希望<strong>最大化两个或多个群体之间的距离</strong>。然后再进行判别。</p>
+<p>也就是说，当你收到两个群体的数据的时候，你首先计算他们的均值$y_1,y_2$，然后施加线性变换得到$z_1=a^Ty_1,z_2=a^Ty_2$。</p>
+<p>然后要找a，使得$z_1,z_2$的马氏距离最远。</p>
+<p>而方差未知情形的两正态总体的方差我们在上一期已经说过，就是$(\frac{1}{n_1}+\frac{1}{n_2})a^TS_{pl}a$</p>
+<p>因此我们要最大化的马氏距离的平方为$t^2(a)=\frac{(a^T(y_1-y_2))^T(a^T(y_1-y_2))}{(\frac{1}{n_1}+\frac{1}{n_2})a^TS_{pl}a}$</p>
+<p>只需要使用柯西不等式$(a^Tb)^2\le(a^TWa)(b^TWb)$即可求解，得到$a=S_{pl}^{-1}(y_1-y_2)$。</p>
+<p>其中a被称为判别函数系数，$z=a^Ty$则是fisher线性判别函数。</p>
+<p>但是以上是两群体的情况，如果是多群体就麻烦多了。</p>
+<p>这里只说最终结论。</p>
+<p>需要构造组间离差矩阵$B=\sum_{k=1}^g(\overline y_k-\overline y)(\overline y_k-\overline y)^T$和组内离差矩阵$W=\sum_{k=1}^g\sum_{i=1}^{k_n}(y_{ki}-\overline y_k)(y_{ki}-\overline y_k)^T$</p>
+<p>然后求矩阵$W^{-1}B$的特征值和特征向量。其中最大的特征值对应的特征向量就是a。</p>
+<p>当求出a以后，就可以将所有的数据进行变换，从而得到一个一维的数据。</p>
+<p>所以从某种意义上看，fisher判别分析也实现了一种降维。</p>
+<p>而当数据变成这样的一维数据以后，我们再使用任意算法进行判别就会变得非常容易了，例如继续使用刚刚的距离判别法。</p>
+<p>在R语言中只需要使用MASS库的lda函数就可以很简单地实现fisher线性判别分析了，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 安装和加载MASS包</span>
+</span></span><span class="line"><span class="cl"><span class="nf">install.packages</span><span class="p">(</span><span class="s">&#34;MASS&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">library</span><span class="p">(</span><span class="n">MASS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建示例数据</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 两组数据，每组各有三个特征</span>
+</span></span><span class="line"><span class="cl"><span class="n">group1</span> <span class="o">&lt;-</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">x1</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">                <span class="n">x2</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">                <span class="n">x3</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">group2</span> <span class="o">&lt;-</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">x1</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">                <span class="n">x2</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">                <span class="n">x3</span> <span class="o">=</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将数据组合在一起，并添加组标签</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">group</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="s">&#34;Group1&#34;</span><span class="p">,</span> <span class="m">10</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="s">&#34;Group2&#34;</span><span class="p">,</span> <span class="m">10</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用lda()函数进行Fisher线性判别</span>
+</span></span><span class="line"><span class="cl"><span class="n">lda_model</span> <span class="o">&lt;-</span> <span class="nf">lda</span><span class="p">(</span><span class="n">group</span> <span class="o">~</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">x3</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看模型摘要</span>
+</span></span><span class="line"><span class="cl"><span class="nf">summary</span><span class="p">(</span><span class="n">lda_model</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用模型进行预测</span>
+</span></span><span class="line"><span class="cl"><span class="n">predictions</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">lda_model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看预测结果</span>
+</span></span><span class="line"><span class="cl"><span class="n">predictions</span><span class="o">$</span><span class="n">class</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="等级聚类层次聚类系统聚类">等级聚类/层次聚类/系统聚类
+</h3><p>接下来是聚类的话题。</p>
+<p>聚类是一种无监督学习算法。</p>
+<p>他和前面说的判别分析的不同之处在于，判别分析需要你先喂一些数据，告诉模型哪些数据属于A类，哪些属于B类，而无监督学习不需要。</p>
+<p>这里要介绍的是一种最为简单的聚类方法，叫做层次聚类，也叫做系统聚类，还叫做等级聚类。</p>
+<p>他的核心就是，让人来聚类啊哈哈哈。</p>
+<p>说错了。</p>
+<p>他的思想就是我每次都将距离最近的两个样本合并，认为他们属于同一个类别。</p>
+<p>然后算法什么时候停止呢？等所有样本都被划分为一个类的时候停止，然后画出一张分析图，最后交由人工判别。</p>
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 创建示例数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">rnorm</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">1</span><span class="p">),</span> <span class="n">nrow</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="m">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用hclust()函数进行层次聚类</span>
+</span></span><span class="line"><span class="cl"><span class="n">hclust_result</span> <span class="o">&lt;-</span> <span class="nf">hclust</span><span class="p">(</span><span class="nf">dist</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#34;complete&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 绘制聚类树状图</span>
+</span></span><span class="line"><span class="cl"><span class="nf">plot</span><span class="p">(</span><span class="n">hclust_result</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#34;层次聚类树状图&#34;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#34;样本&#34;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&#34;距离&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 根据树状图切割聚类</span>
+</span></span><span class="line"><span class="cl"><span class="nf">cutree</span><span class="p">(</span><span class="n">hclust_result</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们先用rnorm生成标准正态分布的随机数，把它放在10*10的矩阵里。</p>
+<p>然后调用hclust函数进行层次聚类，最后进行绘图，你会收获这样的聚类图。</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735198177011_image.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+></p>
+<p>这个聚类图是从下往上读的，首先因为样本6和10距离最近，所以先将6和10合并为一个总体，此时得到右下角第一个合并，他的纵坐标是合并时的距离。</p>
+<p>接着，5号和7号进行了合并，然后是3号和（5,7）这个整体进行了合并。</p>
+<p>然后8号和9号合并，2号和（6,10）进行合并，1号和（2,6,10）进行合并。4号和（8,9）进行合并。</p>
+<p>然后（3,5,7）与（1,2,6,10）进行合并。</p>
+<p>最后（4,8,9）与（3,5,7,1,2,6,10）进行合并，到这里所有元素都归于一个类的，算法结束。</p>
+<p>通过这张图，接下来由我们人工进行聚类。</p>
+<p>例如我就想聚1类，那么就取最后一次合并的结果也就是1-10全部。</p>
+<p>如果想分两类，就取倒数第二次合并的结果也就是（4,8,9）一类，其余一类。</p>
+<p>想分三类就取倒数第三次的结果，以此类推。</p>
+<p>借助函数<code>cutree(hclust_result, k = 3)</code>可以直接得到分3类的结果，这样你就不用自己手工去数了。</p>
+<p>这就是层次聚类。</p>
+<p>但是在层次聚类的时候，结果可能会因为细节的不同而不同。</p>
+<p>例如我可能认为，所谓的距离是欧氏距离，也可能认为是马氏距离等等。</p>
+<p>我可能认为，一个样本到总体的距离是指样本到总体的均值的距离，样本到总体最近（或最远）的点的距离等等。</p>
+<p>我可能认为一个总体到另一个总体的距离是他们均值的距离，也可能认为是各个样本点距离的均值，等等。</p>
+<p>反正就是有这么多变化。</p>
+<h3 id="k-means聚类">k-means聚类
+</h3><p>在R语言中实现k-means聚类非常简单。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 示例数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="m">6</span><span class="p">,</span> <span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 选择簇的数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">k</span> <span class="o">&lt;-</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用kmeans函数进行聚类</span>
+</span></span><span class="line"><span class="cl"><span class="nf">set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="c1"># 设置随机数种子以确保结果的可重复性</span>
+</span></span><span class="line"><span class="cl"><span class="n">kmeans_result</span> <span class="o">&lt;-</span> <span class="nf">kmeans</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">nstart</span><span class="o">=</span><span class="m">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 输出聚类结果</span>
+</span></span><span class="line"><span class="cl"><span class="nf">print</span><span class="p">(</span><span class="n">kmeans_result</span><span class="o">$</span><span class="n">cluster</span><span class="p">)</span> <span class="c1"># 每个数据点所属的簇的标签</span>
+</span></span><span class="line"><span class="cl"><span class="nf">print</span><span class="p">(</span><span class="n">kmeans_result</span><span class="o">$</span><span class="n">centers</span><span class="p">)</span> <span class="c1"># 每个簇的中心点</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>而k-means本身也非常简单。</p>
+<p>k-means和层次聚类不同，他需要用户先指定要分为k个类。</p>
+<p>然后算法会随机选择k个初始聚类中心，接着将各个样本分类给距离他最近的距离中心。</p>
+<p>然后再把各聚类中心的均值作为新的聚类中心。</p>
+<p>依次重复，直到聚类中心不再移动。（收敛了）</p>
+<p>就这么几句话就说完了，而且没有什么计算。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 ColaBlack
+    </section>
+    
+    <section class="powerby">
+        
+            一个小网站，用于文档查阅 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+  
+  const cssPath = "https://ColaBlack.github.io/waifu/waifu.css"
+  const tipsJsonPath = "https://ColaBlack.github.io/waifu/waifu-tips.json"
+  
+  const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+  
+  function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+          let tag;
+          if (type === "css") {
+              tag = document.createElement("link");
+              tag.rel = "stylesheet";
+              tag.href = url;
+          }
+          else if (type === "js") {
+              tag = document.createElement("script");
+              tag.src = url;
+          }
+          if (tag) {
+              tag.onload = () => resolve(url);
+              tag.onerror = () => reject(url);
+              document.head.appendChild(tag);
+          }
+      });
+  }
+
+  
+  if (screen.width >= 768) {
+      Promise.all([
+          loadExternalResource(cssPath, "css"),
+          loadExternalResource(live2d_path + "live2d.min.js", "js"),
+          loadExternalResource(live2d_path + "waifu-tips.js", "js")
+      ]).then(() => {
+          
+          initWidget({
+              waifuPath: tipsJsonPath,
+              cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+              tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+          });
+      });
+  }
+</script>
+
+    </body>
+</html>
