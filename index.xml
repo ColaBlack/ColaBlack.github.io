@@ -7,7 +7,337 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Sun, 22 Dec 2024 16:31:40 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 26 Dec 2024 11:54:29 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>多元统计分析(2) 假设检验</title>
+        <link>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%902-%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/</link>
+        <pubDate>Thu, 26 Dec 2024 11:54:29 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%902-%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/</guid>
+        <description>&lt;p&gt;上一期咱们介绍了多维随机变量的矩估计和极大似然估计以及他们的R语言实现。这一期理所应当的要介绍多元正态分布的假设检验。&lt;/p&gt;
+&lt;p&gt;假设检验其实是能检验很多的，但是最经典的是对均值向量和方差的检验。而他们的检验全部依赖于统计距离。&lt;/p&gt;
+&lt;h3 id=&#34;统计距离&#34;&gt;统计距离
+&lt;/h3&gt;&lt;p&gt;我们知道多维随机变量实际上是一个向量，而向量我们是有长度/范数/模的概念的。&lt;/p&gt;
+&lt;p&gt;在统计学里，我们常见的所谓距离被称为欧几里得距离，简称欧氏距离。&lt;/p&gt;
+&lt;p&gt;也就是，对两个列向量X,Y，他们之间的欧几里得距离定义为$d(X,Y)=\sqrt{(X-Y)^T(X-Y)}$，也就是X-Y的2-范数。&lt;/p&gt;
+&lt;p&gt;这个欧氏距离就是我们现实中两点的距离，但是他在统计学中没有那么好用。&lt;/p&gt;
+&lt;p&gt;这是因为欧氏距离没有考虑到数据本身的变化尺度不同，也没有考虑到变量之间的相关性，更没有克服量纲的影响。&lt;/p&gt;
+&lt;p&gt;比如说随机变量只在（-1千克(kg),1kg）变化，那原来-1kg到1kg距离差是2kg，在欧氏距离下就是2。&lt;/p&gt;
+&lt;p&gt;可是我现在如果用克(g)做单位，那-1kg到1kg的距离差就变成2000了，这显然是不合理的，甚至可以说是不可理喻的。&lt;/p&gt;
+&lt;p&gt;也因此，我们在统计学中会使用由马哈拉诺比斯提出的马氏距离。&lt;/p&gt;
+&lt;p&gt;其实说起来也非常简单，你不是要克服量纲的影响吗？&lt;/p&gt;
+&lt;p&gt;给随机变量标准化一下不就行了？&lt;/p&gt;
+&lt;p&gt;例如，两个随机变量X,Y，我们都进行标准化（也就是左乘协方差的根号的逆矩阵），然后再计算他们的欧氏距离。&lt;/p&gt;
+&lt;p&gt;这里先说明一下，在一元情况下，方差D(X)是标准差$\sigma$的平方也就是$\sigma^2$，而现在我们已知的是方差，因此标准差$\sigma=\sqrt{D(X)}$。&lt;/p&gt;
+&lt;p&gt;但是对于多元情况，D（X）是一个矩阵，但是你给矩阵开根号是什么意思呢？&lt;/p&gt;
+&lt;p&gt;我们在上一个系列——数值计算方法中提过矩阵的平方根分解：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由Cholesky分解还可以进一步得到平方分解。&lt;/p&gt;
+&lt;p&gt;对于正定矩阵A它可以分解为$LDL^T$&lt;/p&gt;
+&lt;p&gt;但是D也可以进一步拆分啊。&lt;/p&gt;
+&lt;p&gt;再构造一个对角阵$D&amp;rsquo;=diag(\sqrt{d_{11}},\sqrt{d_{22}},&amp;hellip;,\sqrt{d_{nn}})$&lt;/p&gt;
+&lt;p&gt;那么D就可以看作是$D&amp;rsquo;D&amp;rsquo;^T$&lt;/p&gt;
+&lt;p&gt;所以$A=LDL^T=LD&amp;rsquo;D&amp;rsquo;^TL^T=(LD&amp;rsquo;)(LD&amp;rsquo;)^T$&lt;/p&gt;
+&lt;p&gt;如果我设$L&amp;rsquo;=LD&amp;rsquo;$则$A=L&amp;rsquo;L&amp;rsquo;^T$&lt;/p&gt;
+&lt;p&gt;此时我们说$L&amp;rsquo;=\sqrt A$&lt;/p&gt;
+&lt;p&gt;这就是A的平方根分解。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;我们这里指的就是这样的矩阵开根号。&lt;/p&gt;
+&lt;p&gt;好了，现在来计算一下马氏距离的计算公式。&lt;/p&gt;
+&lt;p&gt;因为要先进行标准化，所以先得到X,Y的协方差矩阵$\Sigma$。&lt;/p&gt;
+&lt;p&gt;然后我们来计算马氏距离的平方$D^2(X,Y)=|\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y|_2^2=(\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y)^T(\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y)$&lt;/p&gt;
+&lt;p&gt;所以$D^2(X,Y)=(X-Y)^T(\sqrt{\Sigma}^{-1})^T\sqrt{\Sigma}^{-1}(X-Y)$&lt;/p&gt;
+&lt;p&gt;别忘了$\Sigma$是对称矩阵哦。&lt;/p&gt;
+&lt;p&gt;因此$D^2(X,Y)=(X-Y)^T\Sigma^{-1}(X-Y)$&lt;/p&gt;
+&lt;p&gt;所以$D(X,Y)=\sqrt{(X-Y)^T\Sigma^{-1}(X-Y)}$&lt;/p&gt;
+&lt;p&gt;这就是马氏距离的计算公式了。而当X,Y的协方差矩阵为单位阵I的时候，马氏距离就退化为了欧氏距离。&lt;/p&gt;
+&lt;h3 id=&#34;方差已知情形的均值检验&#34;&gt;方差已知情形的均值检验
+&lt;/h3&gt;&lt;p&gt;在一元情况，针对标题说的这种方差已知的均值检验我们用的是z检验法。&lt;/p&gt;
+&lt;p&gt;也就是$H_0:\mu=\mu_0,H_1:\mu\neq\mu_0$,方差$\sigma^2$已知时，寻找枢轴统计量&lt;/p&gt;
+$$Z=\frac{\mu-\mu_0}{\sqrt{\frac{\sigma^2}{n}}}$$&lt;p&gt;利用该枢轴变量服从标准正态分布来进行检验。&lt;/p&gt;
+&lt;p&gt;你睁大眼睛看看，Z不就是$\mu$和$\mu_0$的马氏距离吗？&lt;/p&gt;
+&lt;p&gt;可以想象，如果$\mu=\mu_0$，那么样本的均值应该和他声称的均值的距离很小才对，这就是方差已知情况的均值检验的原理。&lt;/p&gt;
+&lt;p&gt;现在针对多元情况我们仍然是这么做的。&lt;/p&gt;
+&lt;p&gt;检验枢轴统计量$\overline X$与$\mu_0$的马氏距离的平方是否很小。&lt;/p&gt;
+&lt;p&gt;即检验$T^2=n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$是否很小。&lt;/p&gt;
+&lt;p&gt;需要注意的是，前面我们说过，均值$\overline X$服从的是均值为$\mu$，方差为$\frac{\Sigma}{n}$的正态分布，所以在上面是式子里，那个分子上的n其实是从$\overline X-\mu_0$的方差的分母上翻上去的。&lt;/p&gt;
+&lt;p&gt;但是，这个统计量服从什么分布呢？&lt;/p&gt;
+&lt;p&gt;这个分布由霍特林和许宝禄分别由不同方法导出，不过现在国际上还是叫霍特林T²分布。&lt;/p&gt;
+&lt;p&gt;一般地，如果X服从$N_p(\mu,\Sigma)$,S服从$W_p(n,\Sigma)$且X与S独立而且n≥p，则统计量$T^2=nX^TS^{-1}X$服从非中心的霍特林$T^2$分布，记作$T^2(p,n,\mu)$。当$\mu=0$时，称为中心霍特林T²分布，记作$T^2(p,n)$。&lt;/p&gt;
+&lt;p&gt;显然，这个定义和我们推导的式子可以说是一一对应，从而我们知道刚刚找到枢轴统计量服从$T^2(p,n-1)$分布。&lt;/p&gt;
+&lt;p&gt;并且这个T²分布就是一维情况下t分布的推广。&lt;/p&gt;
+&lt;p&gt;除此之外，$T^2(p,n)$还可以转化为F分布，这是因为统计量$\frac{n-p+1}{np}T^2$服从$F(p,n-p+1)$分布。&lt;/p&gt;
+&lt;p&gt;从而，协方差已知情况下，均值向量检验也可以用刚刚的定理转化为F检验。&lt;/p&gt;
+&lt;p&gt;只需要构造枢轴统计量$\frac{(n-1)-p+1}{(n-1)p}T^2=\frac{(n-1)-p+1}{(n-1)p}n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$，他就服从F(p,n-p)了。&lt;/p&gt;
+&lt;p&gt;但是实际上我们用的最多的都不是前面说的两者。&lt;/p&gt;
+&lt;p&gt;这是因为，你仔细看看，$T^2=n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$这是二次型啊，它是服从自由度为p的卡方分布的啊。&lt;/p&gt;
+&lt;p&gt;所以我们最常用的其实是卡方检验。&lt;/p&gt;
+&lt;h3 id=&#34;方差未知的均值检验&#34;&gt;方差未知的均值检验
+&lt;/h3&gt;&lt;p&gt;那如果是方差未知的均值检验，我们又该怎么做呢？&lt;/p&gt;
+&lt;p&gt;其实答案非常显而易见，就是用样本的协方差S估计随机变量的方差。&lt;/p&gt;
+&lt;p&gt;例如我们使用霍特林T²检验就构造统计量&lt;/p&gt;
+&lt;p&gt;$T^2=n(\overline X-\mu_0)^TS^{-1}(\overline X-\mu_0)$他就服从$T^2(p,n-1)$了。&lt;/p&gt;
+&lt;p&gt;同样地，我们还是可以把他转成F分布，只需要构造枢轴统计量$\frac{(n-1)-p+1}{(n-1)p}T^2=\frac{(n-1)-p+1}{(n-1)p}n(\overline X-\mu_0)^TS^{-1}(\overline X-\mu_0)$，他就服从F(p,n-p)了。&lt;/p&gt;
+&lt;h3 id=&#34;两样本的均值检验&#34;&gt;两样本的均值检验
+&lt;/h3&gt;&lt;p&gt;如果是两样本的均值检验，我们是要按有没有共同已知的协方差阵分情况讨论的。&lt;/p&gt;
+&lt;p&gt;待检验的原假设$H_0:\mu_1-\mu_2=0$，备择假设$H_1:\mu_1-\mu_2\neq0$&lt;/p&gt;
+&lt;p&gt;我已经特意写成了单样本的情况，显然这里只需要检验$\overline X_1-\overline X_2$与均值0的关系就可以了，这是一个单样本的均值检验。&lt;/p&gt;
+&lt;p&gt;不过需要注意的是$X=\overline X_1-\overline X_2$的方差是$\overline X_1,\overline X_2$方差的和。&lt;/p&gt;
+&lt;p&gt;现在直接将方差代入单样本的霍特林T²检验，形式上你就会得到$T^2=\frac{(\overline X_1-\overline X_2)^T(\overline X_1-\overline X_2)}{\frac{\Sigma}{n_1}+\frac{\Sigma}{n_2}}$&lt;/p&gt;
+&lt;p&gt;但我们知道，矩阵怎么会有除法呢？所以要整理一下变成真正的矩阵运算的样子，&lt;/p&gt;
+&lt;p&gt;构造$T^2=\frac{n_1n_2}{n_1+n_2}(\overline X_1-\overline X_2)^T\Sigma^{-1}(\overline X_1-\overline X_2)$&lt;/p&gt;
+&lt;p&gt;当然，他也服从霍特林T²分布，也服从自由度为p的卡方分布，也可以转化为F分布。&lt;/p&gt;
+&lt;p&gt;如果是有共同未知的协方差矩阵的两样本，那和一元情况一样我们用$S_{pl}=\frac{(n_1-1)S_1+(n_2-1)S_2}{n_1+n_2-2}$替代随机变量的方差即可。&lt;/p&gt;
+&lt;p&gt;至于其他情形，要么推导和前面的方法一致要么就过于复杂，在此不再介绍。&lt;/p&gt;
+&lt;p&gt;最后提一下，我们在以前学习一元检验的时候就知道，单因素方差分析其实就是多正态总体的均值向量检验。&lt;/p&gt;
+&lt;p&gt;而在多元情况下，我们需要使用威尔克斯分布才行。&lt;/p&gt;
+&lt;p&gt;如果X服从$W_p(n_1,\Sigma),n_1\ge p$,Y服从$W_p(n_2,\Sigma),\Sigma\gt0$，且X,Y独立，则$\Lambda=\frac{|X|}{|X+Y|}$服从威尔克斯分布，记作$\Lambda(p,n_1,n_2)$。&lt;/p&gt;
+&lt;p&gt;如果要把威尔克斯分布转为F分布，需要先转为霍特林T²分布再转为F分布，至于这么转。。。&lt;/p&gt;
+&lt;p&gt;也比较复杂，需要一张关系表才能表示清楚，反正不是随随便便哪个人能碰的啊哈哈。（彻底陷入疯癫）&lt;/p&gt;
+&lt;p&gt;除此之外，巴特莱特（Bartlett）还提出了用卡方分布来近似威尔克斯分布的办法，Rao则研究出了用F分布近似的办法。但都挺麻烦的。。。&lt;/p&gt;
+&lt;p&gt;至于你要对多元情况进行方差分析，你得构造似然比统计量，这个已经远远超出大部分人的能力了，还是散了吧。&lt;/p&gt;
+&lt;p&gt;协方差阵的检验的话，单正态总体就比较复杂了，构造的检验统计量里既要算e指数，又要搞什么矩阵开方，搞什么行列式云云的，完事最后还只能用极限分布是卡方分布来算，反正也麻烦得要死。。。&lt;/p&gt;
+&lt;p&gt;多样本协方差阵的话，只会更加恐怖。（但是有方法）&lt;/p&gt;
+&lt;h3 id=&#34;区间估计和假设检验的r语言实现&#34;&gt;区间估计和假设检验的R语言实现
+&lt;/h3&gt;&lt;p&gt;虽然上面扯得看起来很复杂，但是到R语言实现的时候反而很简单。&lt;/p&gt;
+&lt;p&gt;我们只以单样本，方差未知时的均值t检验为例简介。因为真的简单到没边了。&lt;/p&gt;
+&lt;p&gt;只需要借助函数t.test即可。&lt;/p&gt;
+&lt;p&gt;先看帮助文档。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735190490447_t.test.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;t.test.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;具体做起来，代码很简单。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-R&#34; data-lang=&#34;R&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;490&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;506&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;508&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;502&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;498&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;511&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;510&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;515&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;512&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 创建一个包含9个数据的向量x&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nf&#34;&gt;t.test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mu&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;500&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 对x进行单样本t检验，检验其均值是否等于500&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;啊，就没了。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;t.test(x, y = NULL, alternative = c(&amp;quot;two.sided&amp;quot;, &amp;quot;less&amp;quot;, &amp;quot;greater&amp;quot;), mu = 0, sigma.x = NULL, sigma.y = NULL, conf.level = 0.95, ...)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果简单地说，t.test的语法是这样的。&lt;/p&gt;
+&lt;p&gt;这里：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;x&lt;/code&gt;：第一个样本数据。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;y&lt;/code&gt;：第二个样本数据，如果是单样本t检验，则不需要提供。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;alternative&lt;/code&gt;：备择假设，可以是&amp;quot;two.sided&amp;quot;（双尾检验，默认值）、“less”（左尾检验）或&amp;quot;greater&amp;quot;（右尾检验）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mu&lt;/code&gt;：已知总体均值，默认为0。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sigma.x&lt;/code&gt;和&lt;code&gt;sigma.y&lt;/code&gt;：已知样本的标准差，如果未提供，则从数据中估计。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;conf.level&lt;/code&gt;：置信水平，默认为0.95。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当然，实际是t.test比这个强大多了，你想看全部的功能还是参考上面的文档吧。&lt;/p&gt;
+&lt;p&gt;我们运行一下，然后解析一下运行结果。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735190846210_t.test%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;t.test运行结果.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;运行结果上看：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;One Sample t-test&lt;/strong&gt;：表示进行的是单样本t检验。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;data: x&lt;/strong&gt;：说明检验的数据是变量x。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;t = 2.1979&lt;/strong&gt;：t检验的枢轴统计量值。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;df = 8&lt;/strong&gt;：枢轴统计量的自由度。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;p-value = 0.05919&lt;/strong&gt;：p值，用于判断统计显著性。通常，如果p值小于0.05，我们认为结果在统计上是显著的。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;alternative hypothesis: true mean is not equal to 500&lt;/strong&gt;：备择假设，你只要翻译一下这句英文就可以了，这里是真实均值不等于500。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;95 percent confidence interval:&lt;/strong&gt;：95%置信区间。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;499.7158 511.8398&lt;/strong&gt;：置信区间的具体范围。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;sample estimates:&lt;/strong&gt;：样本估计值。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mean of x&lt;/strong&gt;：x的样本均值。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;505.7778&lt;/strong&gt;：x的样本均值具体值。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;从这里我们可以看到，t.test同时给出了假设检验需要的p-value和区间估计，所以这一个函数一次性就干了两件事，这也是为什么上一期我没有介绍区间估计的原因。&lt;/p&gt;
+&lt;h3 id=&#34;方差分析的r语言实现&#34;&gt;方差分析的R语言实现
+&lt;/h3&gt;&lt;p&gt;如果要用R语言实现方差分析也很简单，核心是使用aov函数和gl函数。&lt;/p&gt;
+&lt;p&gt;gl函数是用来生成水平的，或者说生成数据。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gl&lt;/code&gt;函数的基本语法如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-R&#34; data-lang=&#34;R&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nf&#34;&gt;gl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;length.out&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;labels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ordered&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;FALSE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;k&lt;/code&gt;：水平的数量，即因子的不同类别数。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;n&lt;/code&gt;：每个水平的重复次数。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;length.out&lt;/code&gt;：结果向量的长度，如果提供，则&lt;code&gt;n&lt;/code&gt;会被忽略。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;labels&lt;/code&gt;：水平的标签，如果未提供，则默认为1到&lt;code&gt;k&lt;/code&gt;的整数。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ordered&lt;/code&gt;：逻辑值，指示生成的因子是否为有序因子，默认为&lt;code&gt;FALSE&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;gl&lt;/code&gt;函数返回一个因子向量，其中包含指定数量和重复次数的水平。&lt;/p&gt;
+&lt;p&gt;例如：&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192089399_gl.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;gl.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;gl(3,4)表示有3个水平，每个水平出现4次，然后labels没输入所以是默认值，也就是1,2,3。&lt;/p&gt;
+&lt;p&gt;因此他会返回1111 2222 3333这样的因子向量。&lt;/p&gt;
+&lt;p&gt;而方差分析最核心的函数是aov。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192280345_aov.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;aov.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;aov的基本语法是&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;aov(formula, data, projections = FALSE, qr = TRUE, contrasts = NULL, ...)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;formula&lt;/code&gt;：是指定了模型的结构的公式。例如，&lt;code&gt;y ~ A + B&lt;/code&gt;表示y是因变量，A和B是自变量（因素），如果要考虑交互作用的话可以写&lt;code&gt;y~A*B&lt;/code&gt;或者&lt;code&gt;y~A+B+A:B&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data&lt;/code&gt;：一个数据框，包含用于分析的数据。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;projections&lt;/code&gt;：逻辑值，指示是否计算投影矩阵。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;qr&lt;/code&gt;：逻辑值，指示是否使用QR分解。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;contrasts&lt;/code&gt;：一个列表，指定因素的水平对比方式。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;...&lt;/code&gt;：其他可选参数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;然后&lt;code&gt;aov&lt;/code&gt;函数会返回一个对象里面包含结果，但是我们想查看的话通常要结束summary函数。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-R&#34; data-lang=&#34;R&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 创建一个数值向量X，包含20个观测值&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;25.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;22.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;28.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;29.8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;24.4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;30.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;29.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;27.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;25.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;27.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;       &lt;span class=&#34;m&#34;&gt;23.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;32.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;28.8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;28.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;31.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;25.9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;20.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;21.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;22.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;21.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 使用gl函数创建一个因子向量A，表示5个水平，每个水平重复4次&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;gl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 使用aov函数进行方差分析，模型为X对A的单一因素方差分析&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;aov&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;~&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 使用summary函数查看方差分析的结果&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nf&#34;&gt;summary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;而summary后的报告也非常容易阅读，其实就是一元方差分析中介绍的方差统计表。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192544830_aov%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;aov运行结果.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Df&lt;/code&gt;：自由度（Degrees of Freedom）
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;A&lt;/code&gt;：因素A的自由度，为水平数减1，即5-1=4。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Residuals&lt;/code&gt;：残差的自由度，为15。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Sum Sq&lt;/code&gt;：平方和（Sum of Squares）
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;A&lt;/code&gt;：因素A的平方和，表示由于因素A的不同水平引起的变异。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Residuals&lt;/code&gt;：残差的平方和，表示除因素A外其他因素引起的变异。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Mean Sq&lt;/code&gt;：均方（Mean Square）
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;A&lt;/code&gt;：因素A的均方，为平方和除以自由度，即132.0/4=32.99。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Residuals&lt;/code&gt;：残差的均方，为平方和除以自由度，即114.9/15=7.66。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;F value&lt;/code&gt;：F值，为因素A的均方除以残差的均方，即32.99/7.66=4.306。F值用于检验因素A的显著性。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Pr(&amp;gt;F)&lt;/code&gt;：p值，表示在零假设（因素A对结果没有影响）为真时，观察到当前或更极端结果的概率。本例中p值为0.0162，小于0.05，表明因素A对结果有显著影响。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;相关分析的r语言实现&#34;&gt;相关分析的R语言实现
+&lt;/h3&gt;&lt;p&gt;这个话题本来不应该出现在这里的，但是这部分实在太短，没地方放。&lt;/p&gt;
+&lt;p&gt;在R语言中内置了很多相关系数，例如pearson、kendall、spearman相关系数，他们都是用函数&lt;code&gt;cor(x,y,method = &amp;quot;kendall&amp;quot;)&lt;/code&gt;给出的。&lt;/p&gt;
+&lt;p&gt;这里x,y是待分析的两组数据，method=后面传的是具体的相关系数的名称。&lt;/p&gt;
+&lt;p&gt;至于相关分析的检验，其实和前面的没有任何区别，要借助cor.test函数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-R&#34; data-lang=&#34;R&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 使用cor.test函数检验x和y的Kendall相关系数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nf&#34;&gt;cor.test&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;method&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;kendall&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;你会得到这样的结果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-R&#34; data-lang=&#34;R&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## Kendall&amp;#39;s rank correlation tau&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## data: x and y&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## T = 102, p-value = 1.016e-09&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## alternative hypothesis: true tau is not equal to 0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## sample estimates:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## tau &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;## 0.9428571&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Kendall&#39;s rank correlation tau&lt;/code&gt;：表示进行的是Kendall相关系数检验。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data: x and y&lt;/code&gt;：说明检验的数据是变量x和y。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;T = 102&lt;/code&gt;：Kendall检验的T统计量值，它是用于计算相关系数的统计量。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;p-value = 1.016e-09&lt;/code&gt;：p值，如果这个p值小于0.05，表明x和y之间存在非常显著的相关性。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;alternative hypothesis: true tau is not equal to 0&lt;/code&gt;：备择假设，表示真实的Kendall相关系数（tau）不等于0，即x和y之间存在相关性。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sample estimates:&lt;/code&gt;：样本估计值。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tau&lt;/code&gt;：Kendall相关系数的估计值，范围为-1到1。接近1或-1表示强相关性，接近0表示无相关性。本例中tau值为0.9428571，表明x和y之间存在很强的正相关性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;啊就这么索然无味。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>多元统计分析(1) 参数估计</title>
         <link>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%901-%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1/</link>
         <pubDate>Sun, 22 Dec 2024 16:31:40 +0800</pubDate>

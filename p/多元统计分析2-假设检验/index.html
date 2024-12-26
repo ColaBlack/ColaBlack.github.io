@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="上一期咱们介绍了多维随机变量的矩估计和极大似然估计以及他们的R语言实现。这一期理所应当的要介绍多元正态分布的假设检验。\n假设检验其实是能检验很多的，但是最经典的是对均值向量和方差的检验。而他们的检验全部依赖于统计距离。\n">
+<title>多元统计分析(2) 假设检验</title>
+
+<link rel='canonical' href='https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%902-%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="多元统计分析(2) 假设检验">
+<meta property='og:description' content="上一期咱们介绍了多维随机变量的矩估计和极大似然估计以及他们的R语言实现。这一期理所应当的要介绍多元正态分布的假设检验。\n假设检验其实是能检验很多的，但是最经典的是对均值向量和方差的检验。而他们的检验全部依赖于统计距离。\n">
+<meta property='og:url' content='https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%902-%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/'>
+<meta property='og:site_name' content='ColaBlack个人文档'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-12-26T11:54:29&#43;08:00'/><meta property='article:modified_time' content='2024-12-26T11:54:29&#43;08:00'/>
+<meta name="twitter:title" content="多元统计分析(2) 假设检验">
+<meta name="twitter:description" content="上一期咱们介绍了多维随机变量的矩估计和极大似然估计以及他们的R语言实现。这一期理所应当的要介绍多元正态分布的假设检验。\n假设检验其实是能检验很多的，但是最经典的是对均值向量和方差的检验。而他们的检验全部依赖于统计距离。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😜</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">ColaBlack个人文档</a></h1>
+            <h2 class="site-description">一个文档，记录我用得上的一些信息。也算不上是什么博客了啦。</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://gitee.com/colablack'
+                        target="_blank"
+                        title="gitee"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg t="1731323057361" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4248" width="200" height="200"><path d="M512 992C246.895625 992 32 777.104375 32 512S246.895625 32 512 32s480 214.895625 480 480-214.895625 480-480 480z m242.9521875-533.3278125h-272.56875a23.7121875 23.7121875 0 0 0-23.71125 23.7121875l-0.024375 59.255625c0 13.08 10.6078125 23.7121875 23.6878125 23.7121875h165.96c13.104375 0 23.7121875 10.6078125 23.7121875 23.6878125v11.855625a71.1121875 71.1121875 0 0 1-71.1121875 71.1121875h-225.215625a23.7121875 23.7121875 0 0 1-23.6878125-23.7121875V423.1278125a71.1121875 71.1121875 0 0 1 71.0878125-71.1121875h331.824375a23.7121875 23.7121875 0 0 0 23.6878125-23.71125l0.0721875-59.2565625a23.7121875 23.7121875 0 0 0-23.68875-23.7121875H423.08a177.76875 177.76875 0 0 0-177.76875 177.7921875V754.953125c0 13.1034375 10.60875 23.7121875 23.713125 23.7121875h349.63125a159.984375 159.984375 0 0 0 159.984375-159.984375V482.36a23.7121875 23.7121875 0 0 0-23.7121875-23.6878125z" fill="#707070" p-id="4249"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/ColaBlack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#统计距离">统计距离</a></li>
+        <li><a href="#方差已知情形的均值检验">方差已知情形的均值检验</a></li>
+        <li><a href="#方差未知的均值检验">方差未知的均值检验</a></li>
+        <li><a href="#两样本的均值检验">两样本的均值检验</a></li>
+        <li><a href="#区间估计和假设检验的r语言实现">区间估计和假设检验的R语言实现</a></li>
+        <li><a href="#方差分析的r语言实现">方差分析的R语言实现</a></li>
+        <li><a href="#相关分析的r语言实现">相关分析的R语言实现</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%902-%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/">多元统计分析(2) 假设检验</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-26</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>上一期咱们介绍了多维随机变量的矩估计和极大似然估计以及他们的R语言实现。这一期理所应当的要介绍多元正态分布的假设检验。</p>
+<p>假设检验其实是能检验很多的，但是最经典的是对均值向量和方差的检验。而他们的检验全部依赖于统计距离。</p>
+<h3 id="统计距离">统计距离
+</h3><p>我们知道多维随机变量实际上是一个向量，而向量我们是有长度/范数/模的概念的。</p>
+<p>在统计学里，我们常见的所谓距离被称为欧几里得距离，简称欧氏距离。</p>
+<p>也就是，对两个列向量X,Y，他们之间的欧几里得距离定义为$d(X,Y)=\sqrt{(X-Y)^T(X-Y)}$，也就是X-Y的2-范数。</p>
+<p>这个欧氏距离就是我们现实中两点的距离，但是他在统计学中没有那么好用。</p>
+<p>这是因为欧氏距离没有考虑到数据本身的变化尺度不同，也没有考虑到变量之间的相关性，更没有克服量纲的影响。</p>
+<p>比如说随机变量只在（-1千克(kg),1kg）变化，那原来-1kg到1kg距离差是2kg，在欧氏距离下就是2。</p>
+<p>可是我现在如果用克(g)做单位，那-1kg到1kg的距离差就变成2000了，这显然是不合理的，甚至可以说是不可理喻的。</p>
+<p>也因此，我们在统计学中会使用由马哈拉诺比斯提出的马氏距离。</p>
+<p>其实说起来也非常简单，你不是要克服量纲的影响吗？</p>
+<p>给随机变量标准化一下不就行了？</p>
+<p>例如，两个随机变量X,Y，我们都进行标准化（也就是左乘协方差的根号的逆矩阵），然后再计算他们的欧氏距离。</p>
+<p>这里先说明一下，在一元情况下，方差D(X)是标准差$\sigma$的平方也就是$\sigma^2$，而现在我们已知的是方差，因此标准差$\sigma=\sqrt{D(X)}$。</p>
+<p>但是对于多元情况，D（X）是一个矩阵，但是你给矩阵开根号是什么意思呢？</p>
+<p>我们在上一个系列——数值计算方法中提过矩阵的平方根分解：</p>
+<blockquote>
+<p>由Cholesky分解还可以进一步得到平方分解。</p>
+<p>对于正定矩阵A它可以分解为$LDL^T$</p>
+<p>但是D也可以进一步拆分啊。</p>
+<p>再构造一个对角阵$D&rsquo;=diag(\sqrt{d_{11}},\sqrt{d_{22}},&hellip;,\sqrt{d_{nn}})$</p>
+<p>那么D就可以看作是$D&rsquo;D&rsquo;^T$</p>
+<p>所以$A=LDL^T=LD&rsquo;D&rsquo;^TL^T=(LD&rsquo;)(LD&rsquo;)^T$</p>
+<p>如果我设$L&rsquo;=LD&rsquo;$则$A=L&rsquo;L&rsquo;^T$</p>
+<p>此时我们说$L&rsquo;=\sqrt A$</p>
+<p>这就是A的平方根分解。</p>
+</blockquote>
+<p>我们这里指的就是这样的矩阵开根号。</p>
+<p>好了，现在来计算一下马氏距离的计算公式。</p>
+<p>因为要先进行标准化，所以先得到X,Y的协方差矩阵$\Sigma$。</p>
+<p>然后我们来计算马氏距离的平方$D^2(X,Y)=|\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y|_2^2=(\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y)^T(\sqrt{\Sigma}^{-1}X-\sqrt{\Sigma}^{-1}Y)$</p>
+<p>所以$D^2(X,Y)=(X-Y)^T(\sqrt{\Sigma}^{-1})^T\sqrt{\Sigma}^{-1}(X-Y)$</p>
+<p>别忘了$\Sigma$是对称矩阵哦。</p>
+<p>因此$D^2(X,Y)=(X-Y)^T\Sigma^{-1}(X-Y)$</p>
+<p>所以$D(X,Y)=\sqrt{(X-Y)^T\Sigma^{-1}(X-Y)}$</p>
+<p>这就是马氏距离的计算公式了。而当X,Y的协方差矩阵为单位阵I的时候，马氏距离就退化为了欧氏距离。</p>
+<h3 id="方差已知情形的均值检验">方差已知情形的均值检验
+</h3><p>在一元情况，针对标题说的这种方差已知的均值检验我们用的是z检验法。</p>
+<p>也就是$H_0:\mu=\mu_0,H_1:\mu\neq\mu_0$,方差$\sigma^2$已知时，寻找枢轴统计量</p>
+$$Z=\frac{\mu-\mu_0}{\sqrt{\frac{\sigma^2}{n}}}$$<p>利用该枢轴变量服从标准正态分布来进行检验。</p>
+<p>你睁大眼睛看看，Z不就是$\mu$和$\mu_0$的马氏距离吗？</p>
+<p>可以想象，如果$\mu=\mu_0$，那么样本的均值应该和他声称的均值的距离很小才对，这就是方差已知情况的均值检验的原理。</p>
+<p>现在针对多元情况我们仍然是这么做的。</p>
+<p>检验枢轴统计量$\overline X$与$\mu_0$的马氏距离的平方是否很小。</p>
+<p>即检验$T^2=n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$是否很小。</p>
+<p>需要注意的是，前面我们说过，均值$\overline X$服从的是均值为$\mu$，方差为$\frac{\Sigma}{n}$的正态分布，所以在上面是式子里，那个分子上的n其实是从$\overline X-\mu_0$的方差的分母上翻上去的。</p>
+<p>但是，这个统计量服从什么分布呢？</p>
+<p>这个分布由霍特林和许宝禄分别由不同方法导出，不过现在国际上还是叫霍特林T²分布。</p>
+<p>一般地，如果X服从$N_p(\mu,\Sigma)$,S服从$W_p(n,\Sigma)$且X与S独立而且n≥p，则统计量$T^2=nX^TS^{-1}X$服从非中心的霍特林$T^2$分布，记作$T^2(p,n,\mu)$。当$\mu=0$时，称为中心霍特林T²分布，记作$T^2(p,n)$。</p>
+<p>显然，这个定义和我们推导的式子可以说是一一对应，从而我们知道刚刚找到枢轴统计量服从$T^2(p,n-1)$分布。</p>
+<p>并且这个T²分布就是一维情况下t分布的推广。</p>
+<p>除此之外，$T^2(p,n)$还可以转化为F分布，这是因为统计量$\frac{n-p+1}{np}T^2$服从$F(p,n-p+1)$分布。</p>
+<p>从而，协方差已知情况下，均值向量检验也可以用刚刚的定理转化为F检验。</p>
+<p>只需要构造枢轴统计量$\frac{(n-1)-p+1}{(n-1)p}T^2=\frac{(n-1)-p+1}{(n-1)p}n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$，他就服从F(p,n-p)了。</p>
+<p>但是实际上我们用的最多的都不是前面说的两者。</p>
+<p>这是因为，你仔细看看，$T^2=n(\overline X-\mu_0)^T\Sigma^{-1}(\overline X-\mu_0)$这是二次型啊，它是服从自由度为p的卡方分布的啊。</p>
+<p>所以我们最常用的其实是卡方检验。</p>
+<h3 id="方差未知的均值检验">方差未知的均值检验
+</h3><p>那如果是方差未知的均值检验，我们又该怎么做呢？</p>
+<p>其实答案非常显而易见，就是用样本的协方差S估计随机变量的方差。</p>
+<p>例如我们使用霍特林T²检验就构造统计量</p>
+<p>$T^2=n(\overline X-\mu_0)^TS^{-1}(\overline X-\mu_0)$他就服从$T^2(p,n-1)$了。</p>
+<p>同样地，我们还是可以把他转成F分布，只需要构造枢轴统计量$\frac{(n-1)-p+1}{(n-1)p}T^2=\frac{(n-1)-p+1}{(n-1)p}n(\overline X-\mu_0)^TS^{-1}(\overline X-\mu_0)$，他就服从F(p,n-p)了。</p>
+<h3 id="两样本的均值检验">两样本的均值检验
+</h3><p>如果是两样本的均值检验，我们是要按有没有共同已知的协方差阵分情况讨论的。</p>
+<p>待检验的原假设$H_0:\mu_1-\mu_2=0$，备择假设$H_1:\mu_1-\mu_2\neq0$</p>
+<p>我已经特意写成了单样本的情况，显然这里只需要检验$\overline X_1-\overline X_2$与均值0的关系就可以了，这是一个单样本的均值检验。</p>
+<p>不过需要注意的是$X=\overline X_1-\overline X_2$的方差是$\overline X_1,\overline X_2$方差的和。</p>
+<p>现在直接将方差代入单样本的霍特林T²检验，形式上你就会得到$T^2=\frac{(\overline X_1-\overline X_2)^T(\overline X_1-\overline X_2)}{\frac{\Sigma}{n_1}+\frac{\Sigma}{n_2}}$</p>
+<p>但我们知道，矩阵怎么会有除法呢？所以要整理一下变成真正的矩阵运算的样子，</p>
+<p>构造$T^2=\frac{n_1n_2}{n_1+n_2}(\overline X_1-\overline X_2)^T\Sigma^{-1}(\overline X_1-\overline X_2)$</p>
+<p>当然，他也服从霍特林T²分布，也服从自由度为p的卡方分布，也可以转化为F分布。</p>
+<p>如果是有共同未知的协方差矩阵的两样本，那和一元情况一样我们用$S_{pl}=\frac{(n_1-1)S_1+(n_2-1)S_2}{n_1+n_2-2}$替代随机变量的方差即可。</p>
+<p>至于其他情形，要么推导和前面的方法一致要么就过于复杂，在此不再介绍。</p>
+<p>最后提一下，我们在以前学习一元检验的时候就知道，单因素方差分析其实就是多正态总体的均值向量检验。</p>
+<p>而在多元情况下，我们需要使用威尔克斯分布才行。</p>
+<p>如果X服从$W_p(n_1,\Sigma),n_1\ge p$,Y服从$W_p(n_2,\Sigma),\Sigma\gt0$，且X,Y独立，则$\Lambda=\frac{|X|}{|X+Y|}$服从威尔克斯分布，记作$\Lambda(p,n_1,n_2)$。</p>
+<p>如果要把威尔克斯分布转为F分布，需要先转为霍特林T²分布再转为F分布，至于这么转。。。</p>
+<p>也比较复杂，需要一张关系表才能表示清楚，反正不是随随便便哪个人能碰的啊哈哈。（彻底陷入疯癫）</p>
+<p>除此之外，巴特莱特（Bartlett）还提出了用卡方分布来近似威尔克斯分布的办法，Rao则研究出了用F分布近似的办法。但都挺麻烦的。。。</p>
+<p>至于你要对多元情况进行方差分析，你得构造似然比统计量，这个已经远远超出大部分人的能力了，还是散了吧。</p>
+<p>协方差阵的检验的话，单正态总体就比较复杂了，构造的检验统计量里既要算e指数，又要搞什么矩阵开方，搞什么行列式云云的，完事最后还只能用极限分布是卡方分布来算，反正也麻烦得要死。。。</p>
+<p>多样本协方差阵的话，只会更加恐怖。（但是有方法）</p>
+<h3 id="区间估计和假设检验的r语言实现">区间估计和假设检验的R语言实现
+</h3><p>虽然上面扯得看起来很复杂，但是到R语言实现的时候反而很简单。</p>
+<p>我们只以单样本，方差未知时的均值t检验为例简介。因为真的简单到没边了。</p>
+<p>只需要借助函数t.test即可。</p>
+<p>先看帮助文档。</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735190490447_t.test.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="t.test.png"
+	
+	
+></p>
+<p>具体做起来，代码很简单。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">490</span><span class="p">,</span> <span class="m">506</span><span class="p">,</span> <span class="m">508</span><span class="p">,</span> <span class="m">502</span><span class="p">,</span> <span class="m">498</span><span class="p">,</span> <span class="m">511</span><span class="p">,</span> <span class="m">510</span><span class="p">,</span> <span class="m">515</span><span class="p">,</span> <span class="m">512</span><span class="p">)</span>  <span class="c1"># 创建一个包含9个数据的向量x</span>
+</span></span><span class="line"><span class="cl"><span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="m">500</span><span class="p">)</span>  <span class="c1"># 对x进行单样本t检验，检验其均值是否等于500</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>啊，就没了。</p>
+<p><code>t.test(x, y = NULL, alternative = c(&quot;two.sided&quot;, &quot;less&quot;, &quot;greater&quot;), mu = 0, sigma.x = NULL, sigma.y = NULL, conf.level = 0.95, ...)</code></p>
+<p>如果简单地说，t.test的语法是这样的。</p>
+<p>这里：</p>
+<ul>
+<li><code>x</code>：第一个样本数据。</li>
+<li><code>y</code>：第二个样本数据，如果是单样本t检验，则不需要提供。</li>
+<li><code>alternative</code>：备择假设，可以是&quot;two.sided&quot;（双尾检验，默认值）、“less”（左尾检验）或&quot;greater&quot;（右尾检验）。</li>
+<li><code>mu</code>：已知总体均值，默认为0。</li>
+<li><code>sigma.x</code>和<code>sigma.y</code>：已知样本的标准差，如果未提供，则从数据中估计。</li>
+<li><code>conf.level</code>：置信水平，默认为0.95。</li>
+</ul>
+<p>当然，实际是t.test比这个强大多了，你想看全部的功能还是参考上面的文档吧。</p>
+<p>我们运行一下，然后解析一下运行结果。</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735190846210_t.test%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="t.test运行结果.png"
+	
+	
+></p>
+<p>运行结果上看：</p>
+<ol>
+<li><strong>One Sample t-test</strong>：表示进行的是单样本t检验。</li>
+<li><strong>data: x</strong>：说明检验的数据是变量x。</li>
+<li><strong>t = 2.1979</strong>：t检验的枢轴统计量值。</li>
+<li><strong>df = 8</strong>：枢轴统计量的自由度。</li>
+<li><strong>p-value = 0.05919</strong>：p值，用于判断统计显著性。通常，如果p值小于0.05，我们认为结果在统计上是显著的。</li>
+<li><strong>alternative hypothesis: true mean is not equal to 500</strong>：备择假设，你只要翻译一下这句英文就可以了，这里是真实均值不等于500。</li>
+<li><strong>95 percent confidence interval:</strong>：95%置信区间。</li>
+<li><strong>499.7158 511.8398</strong>：置信区间的具体范围。</li>
+<li><strong>sample estimates:</strong>：样本估计值。</li>
+<li><strong>mean of x</strong>：x的样本均值。</li>
+<li><strong>505.7778</strong>：x的样本均值具体值。</li>
+</ol>
+<p>从这里我们可以看到，t.test同时给出了假设检验需要的p-value和区间估计，所以这一个函数一次性就干了两件事，这也是为什么上一期我没有介绍区间估计的原因。</p>
+<h3 id="方差分析的r语言实现">方差分析的R语言实现
+</h3><p>如果要用R语言实现方差分析也很简单，核心是使用aov函数和gl函数。</p>
+<p>gl函数是用来生成水平的，或者说生成数据。</p>
+<p><code>gl</code>函数的基本语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="nf">gl</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">length.out</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>k</code>：水平的数量，即因子的不同类别数。</li>
+<li><code>n</code>：每个水平的重复次数。</li>
+<li><code>length.out</code>：结果向量的长度，如果提供，则<code>n</code>会被忽略。</li>
+<li><code>labels</code>：水平的标签，如果未提供，则默认为1到<code>k</code>的整数。</li>
+<li><code>ordered</code>：逻辑值，指示生成的因子是否为有序因子，默认为<code>FALSE</code>。</li>
+</ul>
+<p><code>gl</code>函数返回一个因子向量，其中包含指定数量和重复次数的水平。</p>
+<p>例如：<img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192089399_gl.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="gl.png"
+	
+	
+></p>
+<p>gl(3,4)表示有3个水平，每个水平出现4次，然后labels没输入所以是默认值，也就是1,2,3。</p>
+<p>因此他会返回1111 2222 3333这样的因子向量。</p>
+<p>而方差分析最核心的函数是aov。</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192280345_aov.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="aov.png"
+	
+	
+></p>
+<p>aov的基本语法是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">aov(formula, data, projections = FALSE, qr = TRUE, contrasts = NULL, ...)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>formula</code>：是指定了模型的结构的公式。例如，<code>y ~ A + B</code>表示y是因变量，A和B是自变量（因素），如果要考虑交互作用的话可以写<code>y~A*B</code>或者<code>y~A+B+A:B</code></li>
+<li><code>data</code>：一个数据框，包含用于分析的数据。</li>
+<li><code>projections</code>：逻辑值，指示是否计算投影矩阵。</li>
+<li><code>qr</code>：逻辑值，指示是否使用QR分解。</li>
+<li><code>contrasts</code>：一个列表，指定因素的水平对比方式。</li>
+<li><code>...</code>：其他可选参数。</li>
+</ul>
+<p>然后<code>aov</code>函数会返回一个对象里面包含结果，但是我们想查看的话通常要结束summary函数。</p>
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 创建一个数值向量X，包含20个观测值</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">25.6</span><span class="p">,</span> <span class="m">22.2</span><span class="p">,</span> <span class="m">28.0</span><span class="p">,</span> <span class="m">29.8</span><span class="p">,</span> <span class="m">24.4</span><span class="p">,</span> <span class="m">30.0</span><span class="p">,</span> <span class="m">29.0</span><span class="p">,</span> <span class="m">27.5</span><span class="p">,</span> <span class="m">25.0</span><span class="p">,</span> <span class="m">27.7</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">       <span class="m">23.0</span><span class="p">,</span> <span class="m">32.2</span><span class="p">,</span> <span class="m">28.8</span><span class="p">,</span> <span class="m">28.0</span><span class="p">,</span> <span class="m">31.5</span><span class="p">,</span> <span class="m">25.9</span><span class="p">,</span> <span class="m">20.6</span><span class="p">,</span> <span class="m">21.2</span><span class="p">,</span> <span class="m">22.0</span><span class="p">,</span> <span class="m">21.2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用gl函数创建一个因子向量A，表示5个水平，每个水平重复4次</span>
+</span></span><span class="line"><span class="cl"><span class="n">A</span> <span class="o">&lt;-</span> <span class="nf">gl</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用aov函数进行方差分析，模型为X对A的单一因素方差分析</span>
+</span></span><span class="line"><span class="cl"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">aov</span><span class="p">(</span><span class="n">X</span> <span class="o">~</span> <span class="n">A</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用summary函数查看方差分析的结果</span>
+</span></span><span class="line"><span class="cl"><span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>而summary后的报告也非常容易阅读，其实就是一元方差分析中介绍的方差统计表。</p>
+<p><img src="https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735192544830_aov%e8%bf%90%e8%a1%8c%e7%bb%93%e6%9e%9c.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="aov运行结果.png"
+	
+	
+></p>
+<ul>
+<li><code>Df</code>：自由度（Degrees of Freedom）
+<ul>
+<li><code>A</code>：因素A的自由度，为水平数减1，即5-1=4。</li>
+<li><code>Residuals</code>：残差的自由度，为15。</li>
+</ul>
+</li>
+<li><code>Sum Sq</code>：平方和（Sum of Squares）
+<ul>
+<li><code>A</code>：因素A的平方和，表示由于因素A的不同水平引起的变异。</li>
+<li><code>Residuals</code>：残差的平方和，表示除因素A外其他因素引起的变异。</li>
+</ul>
+</li>
+<li><code>Mean Sq</code>：均方（Mean Square）
+<ul>
+<li><code>A</code>：因素A的均方，为平方和除以自由度，即132.0/4=32.99。</li>
+<li><code>Residuals</code>：残差的均方，为平方和除以自由度，即114.9/15=7.66。</li>
+</ul>
+</li>
+<li><code>F value</code>：F值，为因素A的均方除以残差的均方，即32.99/7.66=4.306。F值用于检验因素A的显著性。</li>
+<li><code>Pr(&gt;F)</code>：p值，表示在零假设（因素A对结果没有影响）为真时，观察到当前或更极端结果的概率。本例中p值为0.0162，小于0.05，表明因素A对结果有显著影响。</li>
+</ul>
+<h3 id="相关分析的r语言实现">相关分析的R语言实现
+</h3><p>这个话题本来不应该出现在这里的，但是这部分实在太短，没地方放。</p>
+<p>在R语言中内置了很多相关系数，例如pearson、kendall、spearman相关系数，他们都是用函数<code>cor(x,y,method = &quot;kendall&quot;)</code>给出的。</p>
+<p>这里x,y是待分析的两组数据，method=后面传的是具体的相关系数的名称。</p>
+<p>至于相关分析的检验，其实和前面的没有任何区别，要借助cor.test函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1"># 使用cor.test函数检验x和y的Kendall相关系数</span>
+</span></span><span class="line"><span class="cl"><span class="nf">cor.test</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#34;kendall&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你会得到这样的结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-R" data-lang="R"><span class="line"><span class="cl"><span class="c1">## Kendall&#39;s rank correlation tau</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## </span>
+</span></span><span class="line"><span class="cl"><span class="c1">## data: x and y</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## T = 102, p-value = 1.016e-09</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## alternative hypothesis: true tau is not equal to 0</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## sample estimates:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## tau </span>
+</span></span><span class="line"><span class="cl"><span class="c1">## 0.9428571</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>Kendall's rank correlation tau</code>：表示进行的是Kendall相关系数检验。</li>
+<li><code>data: x and y</code>：说明检验的数据是变量x和y。</li>
+<li><code>T = 102</code>：Kendall检验的T统计量值，它是用于计算相关系数的统计量。</li>
+<li><code>p-value = 1.016e-09</code>：p值，如果这个p值小于0.05，表明x和y之间存在非常显著的相关性。</li>
+<li><code>alternative hypothesis: true tau is not equal to 0</code>：备择假设，表示真实的Kendall相关系数（tau）不等于0，即x和y之间存在相关性。</li>
+<li><code>sample estimates:</code>：样本估计值。</li>
+<li><code>tau</code>：Kendall相关系数的估计值，范围为-1到1。接近1或-1表示强相关性，接近0表示无相关性。本例中tau值为0.9428571，表明x和y之间存在很强的正相关性。</li>
+</ul>
+<p>啊就这么索然无味。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 ColaBlack
+    </section>
+    
+    <section class="powerby">
+        
+            一个小网站，用于文档查阅 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+  
+  const cssPath = "https://ColaBlack.github.io/waifu/waifu.css"
+  const tipsJsonPath = "https://ColaBlack.github.io/waifu/waifu-tips.json"
+  
+  const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
+
+  
+  function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+          let tag;
+          if (type === "css") {
+              tag = document.createElement("link");
+              tag.rel = "stylesheet";
+              tag.href = url;
+          }
+          else if (type === "js") {
+              tag = document.createElement("script");
+              tag.src = url;
+          }
+          if (tag) {
+              tag.onload = () => resolve(url);
+              tag.onerror = () => reject(url);
+              document.head.appendChild(tag);
+          }
+      });
+  }
+
+  
+  if (screen.width >= 768) {
+      Promise.all([
+          loadExternalResource(cssPath, "css"),
+          loadExternalResource(live2d_path + "live2d.min.js", "js"),
+          loadExternalResource(live2d_path + "waifu-tips.js", "js")
+      ]).then(() => {
+          
+          initWidget({
+              waifuPath: tipsJsonPath,
+              cdnPath: "https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/",
+              tools: ["hitokoto", "asteroids", "switch-model", "switch-texture", "photo", "info", "quit"]
+          });
+      });
+  }
+</script>
+
+    </body>
+</html>
