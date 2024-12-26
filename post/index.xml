@@ -7,7 +7,77 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>ColaBlack</copyright>
-        <lastBuildDate>Thu, 26 Dec 2024 14:06:47 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 26 Dec 2024 16:04:55 +0800</lastBuildDate><atom:link href="https://ColaBlack.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>多元统计分析(5) 拾遗 相应分析和典型相关分析</title>
+        <link>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%905-%E6%8B%BE%E9%81%97-%E7%9B%B8%E5%BA%94%E5%88%86%E6%9E%90%E5%92%8C%E5%85%B8%E5%9E%8B%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90/</link>
+        <pubDate>Thu, 26 Dec 2024 16:04:55 +0800</pubDate>
+        
+        <guid>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%905-%E6%8B%BE%E9%81%97-%E7%9B%B8%E5%BA%94%E5%88%86%E6%9E%90%E5%92%8C%E5%85%B8%E5%9E%8B%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90/</guid>
+        <description>&lt;p&gt;这是本系列最后一期了，最后一期就是个拾遗。&lt;/p&gt;
+&lt;p&gt;多元统计分析里还有两个常见的算法没有介绍，他们是相应分析和典型相关分析。&lt;/p&gt;
+&lt;h3 id=&#34;相应分析&#34;&gt;相应分析
+&lt;/h3&gt;&lt;p&gt;相应分析是因子分析的一种延伸。&lt;/p&gt;
+&lt;p&gt;在因子分析里其实我们可以做两种因子分析。&lt;/p&gt;
+&lt;p&gt;我们只介绍了提取同一种事物的n个属性这样的因子分析，这种我们称为R型因子分析。&lt;/p&gt;
+&lt;p&gt;还有一种因子分析是Q型因子分析，他是在不同样品中提取n个公共因子。&lt;/p&gt;
+&lt;p&gt;我之所以只介绍一种因子分析，是因为我们可以由一种因子分析的结果得到另一种因子分析的结果。&lt;/p&gt;
+&lt;p&gt;这就是相应分析干的事。&lt;/p&gt;
+&lt;p&gt;但是相应分析的推导并不简单，所以这里只说结论。&lt;/p&gt;
+&lt;p&gt;首先，我们有一个样本资料矩阵K。&lt;/p&gt;
+&lt;p&gt;接下来我们要做一件事。&lt;/p&gt;
+&lt;p&gt;就是计算K的全部元素的和，然后再给K的每个元素都除以刚刚计算的和，得到一个频率矩阵F。&lt;/p&gt;
+&lt;p&gt;我们可以把F视为一元统计分析里的列联表，所以沿用那里的记号和统计量统计方法。&lt;/p&gt;
+&lt;p&gt;不过这与相应分析无关。&lt;/p&gt;
+&lt;p&gt;在相应分析里，下一步是计算一个过渡矩阵Z。&lt;/p&gt;
+&lt;p&gt;其中Z的(i,j)元$z_{ij}=\frac{f_{ij}-f_{i.}f_{.j}}{\sqrt{f_{i.}f_{.j}}}$&lt;/p&gt;
+&lt;p&gt;然后就能得到结论。&lt;/p&gt;
+&lt;p&gt;R型因子分析需要的协方差矩阵$\Sigma_r=ZZ^T$，而Q型因子分析需要的协方差矩阵是$\Sigma_q=Z^TZ$。&lt;/p&gt;
+&lt;p&gt;根据线性代数的知识，他们应该具有相同的特征值、特征向量。&lt;/p&gt;
+&lt;p&gt;所以由其中一个因子分析得到的特征值、特征向量，可以复用到另一个因子分析上。&lt;/p&gt;
+&lt;p&gt;这就是相应分析的理论成果。&lt;/p&gt;
+&lt;p&gt;但是在实践上，我们为什么会需要同时进行Q型和R型因子分析呢？&lt;/p&gt;
+&lt;p&gt;那是因为我们想作图观察他们的公共因子的联系。&lt;/p&gt;
+&lt;p&gt;所以这时候，我们往往会取出两次因子分析的前两个公共因子，然后将他们绘制在一张散点图上，如果两个公共因子靠得非常近就表明他们具有联系。(具体什么联系还得用其他方法判断)&lt;/p&gt;
+&lt;h3 id=&#34;典型相关分析&#34;&gt;典型相关分析
+&lt;/h3&gt;&lt;p&gt;而典型相关分析，实用性会更强一些，但是他的理论推导也非常麻烦，甚至使用起来就很痛苦。&lt;/p&gt;
+&lt;p&gt;典型相关分析是分析两组多维随机向量直接的相关性的方法。&lt;/p&gt;
+&lt;p&gt;他的思想是，对两组多维随机向量X,Y进行线性变换得到$X&amp;rsquo;=aX,Y&amp;rsquo;=bY$，然后找a和b使得$X&amp;rsquo;,Y&amp;rsquo;$的相关系数最大。&lt;/p&gt;
+&lt;p&gt;为了保证结果的唯一性，我们还会要求$D(X&amp;rsquo;)=D(Y&amp;rsquo;)=1$&lt;/p&gt;
+&lt;p&gt;而他的推导，涉及到剖分、拉格朗日乘数法等多种数学方法，技巧性也很强，这里不说了。&lt;/p&gt;
+&lt;p&gt;反正结论是：&lt;/p&gt;
+&lt;p&gt;我们先引入记号，用$X^{(1)},X^{(2)}$表示待讨论的两组随机变量，$\Sigma_{ij}=cov(X^{(i)},X^{(j)})$&lt;/p&gt;
+&lt;p&gt;再引入矩阵$M_1=\Sigma_{11}^{-1}\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21},M_2=\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}$&lt;/p&gt;
+&lt;p&gt;然后变换$X=aX^{(1)}$的系数a就是$M_1$的最大特征值对应的特征向量，同理$Y=bX^{(2)}$的系数b就是$M_2$的最大特征值对应的特征向量。&lt;/p&gt;
+&lt;p&gt;而我们可以证明$M_1,M_2$具有相同的特征值，也因此我们把它最大的特征值称为第一典型相关系数。&lt;/p&gt;
+&lt;p&gt;显然，这里有第一，就可以按大小排序得到第二第三典型相关系数。&lt;/p&gt;
+&lt;p&gt;典型相关系数可以衡量两个变量间的相关性。&lt;/p&gt;
+&lt;p&gt;并且我们可以进行显著性检验。&lt;/p&gt;
+&lt;p&gt;但是显著性检验又涉及到了似然比统计量，并且他的对数的极限分布才是卡方分布，具体计算的时候又得搞一堆特征值的连乘什么的，非常炸裂。&lt;/p&gt;
+&lt;p&gt;这里给出教材上的说明吧，这个内容网上还真的很难找到。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735202051494_IMG_20241226_163250.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;IMG_20241226_163250.jpg&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://27ed0b40.cloudflare-imgbed-bo7.pages.dev/file/1735202052185_IMG_20241226_163317.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;IMG_20241226_163317.jpg&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;可以想象，下一步继续典型载荷分析和典型冗余分析的式子会有多么炸裂。。。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>多元统计分析(3) 常见的机器学习算法 回归分类和聚类</title>
         <link>https://ColaBlack.github.io/p/%E5%A4%9A%E5%85%83%E7%BB%9F%E8%AE%A1%E5%88%86%E6%9E%903-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95-%E5%9B%9E%E5%BD%92%E5%88%86%E7%B1%BB%E5%92%8C%E8%81%9A%E7%B1%BB/</link>
         <pubDate>Thu, 26 Dec 2024 14:06:47 +0800</pubDate>
