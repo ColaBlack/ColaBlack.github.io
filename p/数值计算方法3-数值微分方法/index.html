@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n我们先从比较简单的估计导数值来开篇。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="初次发布于我的个人文档\n上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n">
 <title>数值计算方法(3) 数值微分方法</title>
 
 <link rel='canonical' href='https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%953-%E6%95%B0%E5%80%BC%E5%BE%AE%E5%88%86%E6%96%B9%E6%B3%95/'>
 
 <link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="数值计算方法(3) 数值微分方法">
-<meta property='og:description' content="上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n我们先从比较简单的估计导数值来开篇。\n">
+<meta property='og:description' content="初次发布于我的个人文档\n上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n">
 <meta property='og:url' content='https://ColaBlack.github.io/p/%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%953-%E6%95%B0%E5%80%BC%E5%BE%AE%E5%88%86%E6%96%B9%E6%B3%95/'>
 <meta property='og:site_name' content='ColaBlack个人文档'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-12-21T15:45:47&#43;08:00'/><meta property='article:modified_time' content='2024-12-21T15:45:47&#43;08:00'/>
 <meta name="twitter:title" content="数值计算方法(3) 数值微分方法">
-<meta name="twitter:description" content="上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n我们先从比较简单的估计导数值来开篇。\n">
+<meta name="twitter:description" content="初次发布于我的个人文档\n上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。\n更何况数值微分方法其实是基于数值积分方法得到的。\n">
     </head>
     <body class="
     article-page
@@ -329,7 +329,9 @@
     <section class="article-content">
     
     
-    <p>上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。</p>
+    <p>初次发布于<a class="link" href="https://colablack.github.io/"  target="_blank" rel="noopener"
+    >我的个人文档</a></p>
+<p>上一期讲了数值积分方法，这一次自然是要讲数值微分方法的，不然太不完善了。</p>
 <p>更何况数值微分方法其实是基于数值积分方法得到的。</p>
 <p>我们先从比较简单的估计导数值来开篇。</p>
 <h3 id="差商方法">差商方法
@@ -374,7 +376,7 @@
 	
 ></p>
 <p>它这里的微分方程近似解是一个多项式，而我们这里说的微分方程数值解不是这样的东西。</p>
-<p>针对这样的初值问题，你给我一个步长h，我求出微分方程的解g(x)在x+h，x+2h,&hellip;等处的函数值，我们这里说的数值解是这样的东西。</p>
+<p>针对这样的初值问题，你告诉我你想求微分方程的解这个函数，在哪个点的取值，然后我自己拟定一个步长h，我求出微分方程的解g(x)在x+h，x+2h,&hellip;等处的函数值，最后我告诉你你要的那个点的函数值，我们这里说的数值解是这样的东西。</p>
 <p>当然，为了保证初值问题有且只有唯一的解，我们仍然要求f(x,y)关于y满足利普希茨条件。（没听过不用管，这是因为你没上过《常微分方程》这门课，总之就是要保证解存在且唯一而已，这个条件后文不会使用）</p>
 <p>好接下来开始推导。</p>
 <p>对微分方程</p>
@@ -418,7 +420,11 @@
 <p>例如，使用显式欧拉格式预报$y_{n+1}=y_n+hf(x_n,y_n )$</p>
 <p>然后再把这个预报的$y_{n+1}$代入隐式欧拉，这就是改进欧拉格式了。</p>
 <p>这样的一套系统我们称为预报-矫正系统。</p>
-<p>你其实是可以任意组合的。</p>
+<p>你其实是可以任意组合和重复的。</p>
+<p>你先通过一个显式格式预报第一次$y_{n+1}$。</p>
+<p>然后利用一个隐式格式预报$y_{n+1}$，</p>
+<p>再用任何一个隐式格式预报，哪怕是刚刚用过的也可以。</p>
+<p>这样一直预报下去，我们得到的$y_{n+1}$的精度就会不断提高。</p>
 <p>但是这样的方法仍然没有脱离求积公式的桎梏，而下面的方法就是重新开了一个方向了。</p>
 <h3 id="龙格-库塔方法">龙格-库塔方法
 </h3><p>这个龙格-库塔方法从另一个角度看问题，他是这么说的。</p>
@@ -606,7 +612,9 @@
     <section class="copyright">
         &copy; 
         
-        2024 ColaBlack
+            2024 - 
+        
+        2025 ColaBlack
     </section>
     
     <section class="powerby">

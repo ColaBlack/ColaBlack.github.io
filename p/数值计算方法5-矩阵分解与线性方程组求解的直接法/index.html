@@ -511,6 +511,18 @@ d_{11} &amp; 0 &amp; 0 \
 <p>只不过，相比于上一种方法这个方法其实计算量更大。</p>
 <p>这个叫平方根法，前面那种方法我们叫改进平方根法。</p>
 <p>啊哈哈，这次反而是先推出改进版的方法。</p>
+<p>不过其实平方根分解还可以由谱分解导出。</p>
+<p>如果矩阵A可正交相似对角化，那么就存在一个正交矩阵P和对角阵D，使得$A=PDP^{-1}$</p>
+<p>我们知道，P矩阵实际上就是A的各正交特征向量$e_{i}$，D矩阵的对角元就是A的特征值$\lambda_{i}$。</p>
+<p>但是，这个式子稍加变化就可以直接得出A的平方根分解了。</p>
+<p>我们设$\Lambda=diag(\sqrt{\lambda_1},\sqrt{\lambda_2},&hellip;,\sqrt{\lambda_n})$，</p>
+<p>那么就有$D=\Lambda\Lambda=\Lambda\Lambda^{T}$，实际上我们在这里顺便对对角矩阵D进行了平方根分解。</p>
+<p>但是把D的平方根分解代入得$A=P\Lambda\Lambda P^{-1}$</p>
+<p>我们知道P是正交阵，所以$P^{-1}=P^{T}$。</p>
+<p>从而$A=P\Lambda \Lambda^{T}P^{T}=P\Lambda(P\Lambda)^T$</p>
+<p>所以所以，$P\Lambda$就是A的平方根。</p>
+<p>如果我们将$P\Lambda$写开就是$(e_1\sqrt{\lambda_1},e_2\sqrt{\lambda_2},&hellip;,e_n\sqrt{\lambda_n})$</p>
+<p>之后你将多次看到这个矩阵，实际上是我们用谱分解进行了一次平方根分解。</p>
 <h3 id="追赶法">追赶法
 </h3><p>之前我们就说过，三对角矩阵可以用追赶法来求解。</p>
 <p>现在重要可以来唠唠追赶法了。</p>
@@ -786,7 +798,9 @@ x_2 \&hellip;\x_n
     <section class="copyright">
         &copy; 
         
-        2024 ColaBlack
+            2024 - 
+        
+        2025 ColaBlack
     </section>
     
     <section class="powerby">
