@@ -56,7 +56,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                        <img src="/img/avatar_hu_c7d29f5a59151a2e.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -347,8 +347,7 @@
     >kafka_2.13-3.9.0.tgz</a> (<a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.asc"  target="_blank" rel="noopener"
     >asc</a>, <a class="link" href="https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz.sha512"  target="_blank" rel="noopener"
     >sha512</a>)</li>
-</ul>
-</blockquote>
+</ul></blockquote>
 <p>选择下面那个就可以了。</p>
 <p>这里简单说明一下</p>
 <blockquote>
@@ -398,8 +397,7 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
 <p>We build for multiple versions of Scala. This only matters if you are using Scala and you want a version built for the same Scala version you use. Otherwise, any version should work (2.13 is recommended).</p>
 <p>我们为多个版本的 Scala 进行构建。这只有在您使用 Scala 并且希望使用与您使用的相同 Scala 版本构建的版本时才重要。否则，任何版本都应该可以工作（推荐使用 2.13）。</p>
 </li>
-</ul>
-</blockquote>
+</ul></blockquote>
 <p>kafka 3.9.0在官网上是的这样的，</p>
 <p>额，下面的中文官网是没有的，是已经翻译之后的。</p>
 <p>kafka提供了三种下载方式，通过docker镜像可以一键安装部署。</p>
@@ -409,8 +407,7 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
 <p>这是scala的版本，kafka是基于scala构建的所以这里有不同版本的scala编译的程序。</p>
 <p>虽然kafka是基于scala构建的，但scala和kotlin类似也是一门jvm语言，所以你运行的话只需要准备java环境就可以了不需要下载scala。</p>
 <blockquote>
-<p>总结：下载kafka安装包，准备java运行环境即可。</p>
-</blockquote>
+<p>总结：下载kafka安装包，准备java运行环境即可。</p></blockquote>
 <h3 id="2解压">2.解压
 </h3><p>额，就是字面意思，解压压缩包就可以了。</p>
 <p>Windows不用教了吧，下个什么7-zip，bandizip之类的解压就可以了。</p>
@@ -431,16 +428,14 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
 <p>然后进入kafka\config用vim或记事本打开里面的server.properties。</p>
 <p>找到62行</p>
 <blockquote>
-<p>log.dirs=/tmp/kafka-logs</p>
-</blockquote>
+<p>log.dirs=/tmp/kafka-logs</p></blockquote>
 <p>这是日志文件的地址，很显然这不是Windows文件系统应该有的地址。</p>
 <p>现在换成你刚刚建的文件夹的位置。</p>
 <p>但是注意，要把路径的单斜杠\重复一遍进行转义，即把\换成 \\</p>
 <p>接下来的步骤，不管部署在Windows还是linux上都要进行处理。</p>
 <p>找到34行</p>
 <blockquote>
-<p>listeners=PLAINTEXT://:9092</p>
-</blockquote>
+<p>listeners=PLAINTEXT://:9092</p></blockquote>
 <p>这是是kafka的地址，改成</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -753,8 +748,7 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
 <p><a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz"  target="_blank" rel="noopener"
     >Apache ZooKeeper 3.9.3 Source Release</a>(<a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz.asc"  target="_blank" rel="noopener"
     >asc</a>, <a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3.tar.gz.sha512"  target="_blank" rel="noopener"
-    >sha512</a>)</p>
-</blockquote>
+    >sha512</a>)</p></blockquote>
 <p>在这里，我选择下载zookeeper 3.9.3</p>
 <p>点击<a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
     >Apache ZooKeeper 3.9.3</a>(<a class="link" href="https://downloads.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz.asc"  target="_blank" rel="noopener"
@@ -766,8 +760,7 @@ Scala 2.13 - kafka_2.13-3.9.0.tgz (asc, sha512)</li>
     ><strong>https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz</strong></a></p>
 <p>Alternate download locations are suggested below.</p>
 <p>It is essential that you <a class="link" href="https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz#verify"  target="_blank" rel="noopener"
-    >verify the integrity</a> of the downloaded file using the PGP signature ( <code>.asc</code> file) or a hash ( <code>.md5</code> or <code>.sha*</code> file).</p>
-</blockquote>
+    >verify the integrity</a> of the downloaded file using the PGP signature ( <code>.asc</code> file) or a hash ( <code>.md5</code> or <code>.sha*</code> file).</p></blockquote>
 <p>然后你会看到这样的页面，点击上面的链接，<a class="link" href="https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz"  target="_blank" rel="noopener"
     ><strong>https://dlcdn.apache.org/zookeeper/zookeeper-3.9.3/apache-zookeeper-3.9.3-bin.tar.gz</strong></a>就可以下载到zookeeper安装包了。</p>
 <p>然后找个地方解压就可以了。</p>

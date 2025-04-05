@@ -56,7 +56,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                        <img src="/img/avatar_hu_c7d29f5a59151a2e.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -434,7 +434,7 @@ $$W_{p\times p}=\sum_{a=1}^nX_{(a)}X_{(a)}^T$$<p>就服从非中心威沙特分�
 ></p>
 <p>你将看到这四个函数。</p>
 <p>d是密度函数的意思，p是累积分布函数，q是下$\alpha$分位点，r是随机数。而norm是正态分布的意思。</p>
-<p>dnorm的第一个参数的密度函数的自变量，mean是正态分布的均值（默认为0），sd是<strong>标准差</strong>（默认为1），参数log或log.p是要不要给概率取对数的意思，默认是不取对数的。</p>
+<p>dnorm的第一个参数是密度函数的自变量，mean是正态分布的均值（默认为0），sd是<strong>标准差</strong>（默认为1），参数log或log.p是要不要给概率取对数的意思，默认是不取对数的。</p>
 <p>pnorm是累积分布函数，第一个参数q是分布函数的自变量。lower.tail是指要不要“反转”。我们知道分布函数是从-∞积分到x，如果你把lower.tail改成FALSE（或者F），那R语言给你的分布函数就是从x积分到+∞。</p>
 <p>qnorm其实是分位点，他的第一个参数p是自变量，lower.tail如果是默认的TRUE（或者T）那么R语言会给你下$\alpha$分位点，反之给你上$\alpha$分位点。</p>
 <p>rnorm则是随机数，n表示你要几个随机数。</p>
@@ -691,7 +691,7 @@ $$\ln(L)=\sum_{i=1}^n\ln(P=(X=X_i))$$<p>现在我们以多元正态分布$N_p(\m
 <h3 id="矩阵和向量的导数">矩阵和向量的导数
 </h3><p>所以现在还得倒过来补补基础了。</p>
 <p>最基础的情况是一个多元函数对向量的导数。</p>
-<p>然而，这里有两种写法。一种被称为分母布局，一种被称为分子布局，两种差一个转置。</p>
+<p>然而，这里有两种写法。一种被称为分母布局，一种被称为分子布局，二者差一个转置。</p>
 <p>对于多元函数$f(x_1,x_2,&hellip;,x_n)$和n维向量$X=(x_1,x_2,x_3,&hellip;,x_n)^T$，</p>
 <p>分母布局的结果是$\frac{\partial f}{\partial X}=(\frac{\partial f}{\partial x_1},\frac{\partial f}{\partial x_2},\frac{\partial f}{\partial x_3},&hellip;,\frac{\partial f}{\partial x_n})^T$</p>
 <p>这也就是所谓的f的梯度$\nabla f(X)$。</p>

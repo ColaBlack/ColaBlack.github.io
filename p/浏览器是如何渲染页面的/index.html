@@ -56,7 +56,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                        <img src="/img/avatar_hu_c7d29f5a59151a2e.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -333,8 +333,7 @@
     >我的个人文档</a>。（每次都是个人文档优先发布哦）</p>
 <blockquote>
 <p>在上次我们以浏览器的事件循环为例简要介绍了如何调度异步资源，这一次要来填个坑，介绍一下浏览器是如何渲染页面的。没看过上一期的话就先看一下<a class="link" href="https://colablack.github.io/p/%E5%BC%82%E6%AD%A5%E4%B8%8E%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6-%E4%BB%A5%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E4%B8%BA%E4%BE%8B/"  target="_blank" rel="noopener"
-    >上一期</a>的开头，了解一下浏览器的多进程图景。</p>
-</blockquote>
+    >上一期</a>的开头，了解一下浏览器的多进程图景。</p></blockquote>
 <h3 id="1解析html">1.解析HTML
 </h3><p>在上一期我们讲到，浏览器的页面由渲染进程完成，在这一期你将看到渲染进程是一个包含了渲染主线程等多个线程的进程。</p>
 <p>当浏览器通过网络进程向服务器发送请求得到响应的HTML文本后，他要做的第一个工作就是解析收到的HTML文本。</p>
@@ -361,8 +360,7 @@
 <p>由于存在规定</p>
 <blockquote>
 <p>内容必须在行盒中</p>
-<p>行盒和块盒不能相邻</p>
-</blockquote>
+<p>行盒和块盒不能相邻</p></blockquote>
 <p>所以，在布局这一步还会生成一些匿名的行盒或者块盒来使得页面满足这一规则。</p>
 <h3 id="4分层">4.分层
 </h3><p>接下来，渲染主线程会对布局树的元素进行分层。这是一个优化的方法，当将来某一层改变后就只需要对这一层的元素进行对应改变就可以了，这将提高浏览器的性能。</p>

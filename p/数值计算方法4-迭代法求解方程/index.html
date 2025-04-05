@@ -56,7 +56,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                        <img src="/img/avatar_hu_c7d29f5a59151a2e.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -357,13 +357,11 @@ $$x_{k+1}=g(x_k)$$<p>这就是不动点迭代求方程的根的方法。</p>
 <p>2.$\exist 0 \le L &lt;1,s.t. \forall x\in [a,b],|g&rsquo;(x)|\le L$</p>
 <p>则迭代过程</p>
 <p>$x_{k+1}=g(x_k)$收敛，且有误差估计式：</p>
-<p>$|x^*-x_k|\le \frac{L^k}{1-L}|x_1-x_0|$</p>
-</blockquote>
+<p>$|x^*-x_k|\le \frac{L^k}{1-L}|x_1-x_0|$</p></blockquote>
 <p>这个是简化版的压缩映像原理了，如果你学过《泛函分析和实变函数》那么你见到的压缩映像原理应该是这样的：</p>
 <blockquote>
 <p>设(X,d)是完备的距离空间，T是其中自身到自身的映射即X→X，如果$\forall x,y\in X,\exist L\in(0,1), d(Tx,Ty) \le Ld(x,y)$（满足这样条件的映射称为压缩映射），则存在唯一的$x^<em>$使得$Tx^</em>=x^*$</p>
-<p>用一句话来说就是，完备的距离空间上到自身的压缩映射必有唯一不动点。</p>
-</blockquote>
+<p>用一句话来说就是，完备的距离空间上到自身的压缩映射必有唯一不动点。</p></blockquote>
 <p>别扯那么多了，还是看简化版的吧。简化版还有误差估计式嘞。</p>
 <p>从简化版的误差估计式看，k越大估计值$x_k$会离准确值$x^*$越来越近。</p>
 <p>这就足以为不动点迭代法背书了。</p>

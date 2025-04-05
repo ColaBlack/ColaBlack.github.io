@@ -56,7 +56,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu8408018346616742451.jpg" width="300"
+                        <img src="/img/avatar_hu_c7d29f5a59151a2e.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -353,8 +353,7 @@ $$-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)=C_1$$<p>也就是$(x-\mu)^T\Sigma^{-1}
 <p>如果我们已知A的特征值$\lambda_1,\lambda_2,&hellip;,\lambda_n$和对应的特征向量$e_1,e_2,&hellip;,e_n$，则</p>
 <p>Q=($e_1,e_2,&hellip;,e_n$)，$\Lambda =diag(\lambda_1,\lambda_2,&hellip;,\lambda_n)$</p>
 <p>这意味着:</p>
-$$A=Q\Lambda Q^T$$$$=(e_1,e_2,...,e_n)diag(\lambda_1,\lambda_2,...,\lambda_n)(e_1,e_2,...,e_n)^T$$$$=(\lambda_1 e_1,\lambda_2 e_2,...,\lambda_n e_n)(e_1,e_2,...,e_n)^T$$$$=\lambda_1 e_1 e_1^T + \lambda_2 e_2 e_2^T +...+ \lambda_n e_n e_n^T$$$$=\sum_{i=1}^n\lambda_i e_i e_i^T$$<p>这就是谱分解了。</p>
-</blockquote>
+$$A=Q\Lambda Q^T$$$$=(e_1,e_2,...,e_n)diag(\lambda_1,\lambda_2,...,\lambda_n)(e_1,e_2,...,e_n)^T$$$$=(\lambda_1 e_1,\lambda_2 e_2,...,\lambda_n e_n)(e_1,e_2,...,e_n)^T$$$$=\lambda_1 e_1 e_1^T + \lambda_2 e_2 e_2^T +...+ \lambda_n e_n e_n^T$$$$=\sum_{i=1}^n\lambda_i e_i e_i^T$$<p>这就是谱分解了。</p></blockquote>
 <p>我们假设$\Sigma$的特征值为$\lambda_1,\lambda_2,&hellip;,\lambda_p$，对应的特征向量为$e_1,e_2,&hellip;,e_p$，那么$\Sigma$就可以谱分解为</p>
 <p>$\Sigma=\sum_{i=1}^p\lambda_i e_i e_i^T$，将他代入概率密度等高线方程就有，</p>
 <p>$(x-\mu)^T{(\sum_{i=1}^p\lambda_i e_i e_i^T)}^{-1}(x-\mu)=C_2$</p>
@@ -516,6 +515,9 @@ $$Y_i=l_{i1}F_1+l_{i2}F_2+...+l_{im}F_m+\epsilon_i$$<p>其中，$F_j$是潜变�
 <p>则$\Sigma=\Lambda_2 \Lambda_2$。</p>
 <p>其实就是在数值计算方法里说的，利用矩阵的谱分解对这个矩阵进行平方根分解。</p>
 <p>当$\Sigma$的后p-m个特征值很小的时候，我们就可以忽略掉后面的项，用$\Lambda_2$的前m项估计A，从而$D_\epsilon=\Sigma-AA^{-1}$也就可以计算了。</p>
+<blockquote>
+<p>这里需要注意一下，我们的因子分析也是一种降维的方法，你仔细看前面的因子模型，我们假设有m个潜变量，并且我们要求m小于原来的原始变量的数量n。</p>
+<p>也就是说，这里的矩阵A只有m列而不是n列，因此其实这里也不完全是所谓的对$\Sigma$的平方根分解，而是只取了平方根分解的前m列。</p></blockquote>
 <p>你也可以理解为，我们暂时认为$D_\epsilon$是零，从而A就是$\Sigma$的平方根分解，或者说我们用$\Sigma$的平方根分解估计A。</p>
 <p>而当我们估计出A后，又可以利用估计出的A迭代得到更好的对$D_{\epsilon}$的估计。只能说，这种玩法在数值计算方法里玩了很多次了。</p>
 <h5 id="主轴因子法">主轴因子法
@@ -523,7 +525,8 @@ $$Y_i=l_{i1}F_1+l_{i2}F_2+...+l_{im}F_m+\epsilon_i$$<p>其中，$F_j$是潜变�
 <p>我们知道</p>
 <p>$\Sigma=AA^{-1}+D_\epsilon$</p>
 <p>前面说的主成分法实际上是先估计$D_{\epsilon}=0$，然后再估计A，再用估计的A得到对$D_{\epsilon}$的更好的估计。</p>
-<p>但是我们对$D_{\epsilon}$的初始估计未必是0啊。</p>
+<p>而当你得到了对$D_{\epsilon}$更好的估计，你又可以倒回去估计A了，然后就循环了。你可以一直这样迭代，直到结果收敛。</p>
+<p>在主轴因子法里，我们对$D_{\epsilon}$的初始估计未必是0，这也使得主轴因子法更泛用。</p>
 <p>那如果我们对$D_{\epsilon}$进行了非0的估计，A就是$\Sigma-D_{\epsilon}$的平方根分解了。</p>
 <p>不过，我们在讨论主轴因子法的时候往往先将原始变量进行标准化从而协方差矩阵$\Sigma=原始变量的相关系数矩阵R$</p>
 <p>那么所谓的$\Sigma-D_{\epsilon}$就是约相关系数矩阵$R^*=R-D_\epsilon=AA^{-1}$，</p>

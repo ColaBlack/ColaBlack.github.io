@@ -25,8 +25,7 @@
 &lt;p&gt;后端基于java语言开发，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/tea_ai_backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;项目地址&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;前端基于vue开发，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/tea_ai_frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;项目地址&lt;/a&gt;。&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;项目地址&lt;/a&gt;。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;model系列项目
 &lt;blockquote&gt;
@@ -41,8 +40,7 @@
     &gt;地址&lt;/a&gt;，具有请求函数生成、全局路由管理、全局状态管理、用户管理等特性。&lt;/p&gt;
 &lt;p&gt;react-model是预期制作的react项目模版，预期从Template Stack项目中抽象。&lt;/p&gt;
 &lt;p&gt;VScode_conf是为了解决编程新手难以配置C语言 vscode 环境的问题，提供了一套个人自用的配置，&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/VScode_conf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;地址&lt;/a&gt;即下即用。&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;地址&lt;/a&gt;即下即用。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;ZAFUnity
 &lt;blockquote&gt;
@@ -50,8 +48,7 @@
 &lt;p&gt;前端使用uniapp基于wot-design-uni开发。&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/ZAFUnity-frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;项目地址&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;后端基于kotlin和java混合开发，是一个分布式微服务项目。&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/ZAFUnity-backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;项目地址&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;项目地址&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;google-dinosaur
 &lt;blockquote&gt;
@@ -59,8 +56,7 @@
 &lt;p&gt;基于phaser+typescript+react+vite&lt;/p&gt;
 &lt;p&gt;界面懒得美化了，都集成到react里面了，接下来只要按正常方法写页面就能美化了。&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/google-dinosaur&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;项目地址&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;项目地址&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;litter_insight
 &lt;blockquote&gt;
@@ -68,14 +64,12 @@
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/litter_backend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;后端地址&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/litter_insight_frontend&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;前端地址&lt;/a&gt;。&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;前端地址&lt;/a&gt;。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;li&gt;StudyStart
 &lt;blockquote&gt;
 &lt;p&gt;StudyStart是基于Python DrissionPage 和 tkinter制作的学习通作业答案提取、上传脚本，由于学习通网页的变动现已无法使用，但仍然开放源代码供大家参考：&lt;a class=&#34;link&#34; href=&#34;https://github.com/ColaBlack/StudyStart&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;地址&lt;/a&gt;。&lt;/p&gt;
-&lt;/blockquote&gt;
+    &gt;地址&lt;/a&gt;。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 </description>
